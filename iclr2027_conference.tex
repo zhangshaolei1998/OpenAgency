@@ -390,7 +390,7 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the acceptance rule refused, and the rubric dimension on which the accepted edits pay off.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the acceptance rule refused, and the component measurement on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
@@ -405,7 +405,7 @@ Evolution also shrinks the graph when coordination is unnecessary. AutomationBen
 
 \subsection{Compute Budget of Protocol Evolution}
 
-Protocol evolution installs retry edges and separate verification roles, and both consume additional compute, so part of the reported gain could be bought with tokens. To relate the compute cost of evolution to its accuracy gain, we record the average number of tokens an instance consumes at every round alongside the primary metric of that round on all fourteen benchmarks. As shown in Table~\ref{tab:budget_all} and Figure~\ref{fig:budget}, the gain does not track the budget. SWE-bench Verified absorbs $26$K extra tokens for $7.4$ points while DDR-Bench absorbs $34$K for $32.0$ points, so a comparable increment buys gains that differ by a factor of four. Evolution also moves in the opposite direction when coordination is unnecessary, since AutomationBench collapses a two-node pipeline into a single self-verifying solver and gains $28.7$ points while its budget falls by $2$K. What decides the outcome is which handoffs evolution keeps, so the gain reported in Section~\ref{sec:evolution_effect} is attributable to the protocol structure and not to a larger compute allowance.
+Protocol evolution installs retry edges and separate verification roles, and both consume additional compute, so part of the reported gain could be bought with tokens. To relate the compute cost of evolution to its accuracy gain, we record the average number of tokens an instance consumes at every round alongside the primary metric of that round on all fourteen benchmarks. As shown in Table~\ref{tab:budget_all} and Figure~\ref{fig:budget}, the gain does not track the budget. SWE-bench Verified absorbs $26$K extra tokens for $7.4$ points while DDR-Bench absorbs $34$K for $32.0$ points, so a comparable increment buys gains that differ by a factor of four. The ordering can also invert, since TheAgentCompany takes $20$K for $7.4$ points while DevEval takes only $14$K for $14.8$ points. What decides the outcome is which handoffs evolution keeps, so the gain reported in Section~\ref{sec:evolution_effect} is attributable to the protocol structure and not to a larger compute allowance.
 
 \begin{table}[H]
 \caption{Average tokens per instance and the primary metric across the four evolution rounds. Each metric column is in the benchmark's native metric and matches Table~\ref{tab:evolution_all}.}
@@ -447,48 +447,58 @@ OfficeQA Pro & 8 & 26 & 33 & 40 & 31.6 & 62.4 & 67.7 & 69.9 \\
 
 \subsection{Candidate Protocols Refused by the Acceptance Rule}
 
-Every round proposes several bounded edits and keeps only the one the held-out acceptance rule admits, so the reported trajectory says nothing about how the accepted edit compares with the alternatives it displaced. To expose that comparison, we score each candidate protocol proposed in the first two AutomationBench rounds on the complete $600$-task set under the same executor and tool surface. As shown in Table~\ref{tab:candidates}, adding a node improves nothing by itself. A planner placed before the executor reaches $23.6$ and a cleanup node placed after it reaches $23.2$, both below the $23.7$ of the single-agent ablation, while the two candidates that attach an explicit verification duty reach $26.1$ and $28.4$. The accepted candidate is also the smallest, since folding verification into the solver as an internal phase outscores the two-node executor-verifier pipeline it competed against. Agent count therefore carries no accuracy on its own, and what the acceptance rule selects is the edit that adds a checkable duty.
+Each round proposes several bounded edits and the held-out acceptance rule admits at most one, so the reported trajectory says nothing about the alternatives that were displaced. To expose that comparison, we score every candidate proposed on SWE-bench Verified and DevEval over the complete task set of each benchmark under the same executor and tool budget, and record the decision the acceptance rule returned. As shown in Table~\ref{tab:candidates}, the two refused candidates are the ones that enlarge the material an existing role receives. Injecting the unit tests into the reviewer loop drops DevEval acceptance from $82.1$ to $75.0$, and widening the discovery scope with multi-file edit instructions drops SWE-bench file matching from $86.2$ to $85.6$. Every admitted candidate attaches or tightens a duty that can be checked, from an extra repair round to a structural verification step to self-verification before handoff. The rule therefore admits obligations and refuses material, and a system that took every proposal would have carried the $75.0$ candidate forward as its incumbent.
 
 \begin{table}[H]
-\caption{Candidate protocols scored on the full AutomationBench task set during the first two evolution rounds. Nodes is the number of agent roles the candidate defines, and the accepted candidate is the one the held-out acceptance rule admitted.}
+\caption{Candidate protocols scored over the complete task set of each benchmark, in the order the evolver proposed them. SWE-bench Verified is scored by file match and DevEval by acceptance-test pass rate, and the decision column records the verdict of the held-out acceptance rule.}
 \label{tab:candidates}
 \begin{center}
 \small
-\setlength{\tabcolsep}{7pt}
+\setlength{\tabcolsep}{6pt}
 \begin{tabular}{lcc}
 \toprule
-\textbf{Candidate protocol} & \textbf{Nodes} & \textbf{Acc (\%)} \\
+\textbf{Candidate edit} & \textbf{Metric (\%)} & \textbf{Decision} \\
 \midrule
-Single-agent ablation & 1 & 23.7 \\
-Planner then executor & 2 & 23.6 \\
-Executor then cleanup & 2 & 23.2 \\
-Executor then verifier & 2 & 26.1 \\
-\rowcolor{gray!12}
-\textbf{Executor with an internal verification phase} & \textbf{1} & \textbf{28.4} \\
+\multicolumn{3}{c}{\emph{SWE-bench Verified, file match}} \\
+Three-level context with five retries & 78.8 & Accepted as $v_1$ \\
+Larger turn and timeout allowance & 85.6 & Accepted as $v_2$ \\
+Test-path enrichment with eight retries & 85.8 & Accepted as $v_3$ \\
+Test imports mapped to candidate files & 86.2 & Accepted as $v_4$ \\
+Wider discovery with multi-file edit instructions & 85.6 & Refused \\
+\midrule
+\multicolumn{3}{c}{\emph{DevEval, acceptance test}} \\
+Reviewer with two repair rounds & 82.1 & Accepted as $v_1$ \\
+Unit tests injected into the reviewer loop & 75.0 & Refused \\
+Five repair rounds with an error-pattern checklist & 83.9 & Accepted as $v_2$ \\
+Test-driven coder with structural verification & 90.6 & Accepted as $v_3$ \\
+Self-verification before handoff with root-cause grouping & 96.9 & Accepted as $v_4$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-\subsection{Dimension-level Gain on MARBLE}
+\subsection{Where the Gain Lands inside a Benchmark}
 
-MARBLE scores every task along separate rubric dimensions, so its aggregate hides which quality the evolved protocol actually improves. To locate the gain, we read the rubric dimensions at the single-agent ablation and at rounds $v_2$ through $v_4$, covering the three research dimensions and the buyer and seller dimensions of the world tasks. As shown in Table~\ref{tab:marble_dims}, the dimensions improve in a definite order. Safety and feasibility move first, rising from $60.0$ at the single-agent ablation to $100.0$ by $v_3$, and innovation stays flat until the final round lifts it from $80.0$ to $100.0$ with safety holding at $93.3$, far above the $60.0$ of the single-agent ablation. The order follows the case study of Appendix~\ref{app:case_study}, where the feasibility-driven retry edge from the Critic back to the Generator is installed before the round that revises the generation predicate. Evolution therefore secures the dimensions a verification role can check before it touches the one the generation step itself decides.
+A primary metric can improve for more than one reason, and the aggregate does not say which failure mode the evolved protocol removed. To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval result of every round into its component measurements. As shown in Table~\ref{tab:subdim}, the two benchmarks improve at different points. On SWE-bench Verified the file-match rate restricted to instances that produced a patch starts at $84.6$ and ends at $86.2$, while the fraction of instances that produce a patch at all rises from $79.2$ to $100.0$, so the gain comes from closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} are written to close. On DevEval the unit-test rate stays in a narrow band near saturation across the four rounds, while acceptance rises from $82.1$ to $96.9$, so the admitted edits act on the repository-level correctness that unit tests leave unchecked. The component that moves is in both cases the one the accepted edit was written to address, which is the correspondence a governed protocol is meant to produce.
 
 \begin{table}[H]
-\caption{Rubric dimensions on MARBLE across the single-agent ablation and evolution rounds $v_2$ to $v_4$. Innovation, safety, and feasibility are the research dimensions, and buyer and seller average the three world dimensions of each side.}
-\label{tab:marble_dims}
+\caption{Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table~\ref{tab:deveval}.}
+\label{tab:subdim}
 \begin{center}
 \small
-\setlength{\tabcolsep}{9pt}
-\begin{tabular}{lcccc}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Dimension} & \textbf{Single-agent} & $v_2$ & $v_3$ & $v_4$ \\
+\textbf{Component measurement} & \textbf{Init} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
 \midrule
-Innovation  & 80.0 & 80.0 & 80.0 & \textbf{100.0} \\
-Safety      & 60.0 & 100.0 & 100.0 & 93.3 \\
-Feasibility & 60.0 & 80.0 & 100.0 & \textbf{100.0} \\
-Buyer       & 93.3 & 100.0 & 100.0 & \textbf{100.0} \\
-Seller      & 86.7 & 93.3 & 93.3 & \textbf{100.0} \\
+\multicolumn{6}{c}{\emph{SWE-bench Verified}} \\
+Patch applied & 79.2 & 93.4 & 100.0 & 100.0 & \textbf{100.0} \\
+File match & 67.0 & 78.8 & 85.6 & 85.8 & \textbf{86.2} \\
+File match given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
+\midrule
+\multicolumn{6}{c}{\emph{DevEval}} \\
+Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
+Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \bottomrule
 \end{tabular}
 \end{center}
