@@ -46,12 +46,7 @@ Large language models (LLMs)~\citep{gpt4,chatgpt} have shown strong capabilities
 
 Evolving the way agents collaborate requires flexibility and controllability at the same time. Flexibility matters because a multi-agent system, unlike a single agent that revises its own reasoning inside one context, must recover what went wrong across roles, and a system that cannot repair a failed handoff at runtime loses the remainder of the run along with it. Controllability is equally necessary, since an update is informative only when the system can tell which coordination step was responsible and can verify that the revised collaboration remains admissible. Once either property is missing, cross-run improvement falls back to a blind search driven by the final score. For instance, on SWE-bench Verified~\citep{jimenez2024swebench}, a free-form multi-agent baseline reaches only $51.4\%$ file match and an SOP-based baseline reaches $59.8\%$, far below the $86.2\%$ attained once the collaboration itself can be revised from execution traces (Table~\ref{tab:free_form}).
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.94\linewidth]{figures/intro.pdf}
-\caption{OpenAgency represents multi-agent collaboration as a governed protocol with an admissible handoff set $\Gamma$ and evolves the protocol template $\mathcal{P}^{(v)}$ from immutable execution traces, without prescribing one route through the graph.}
-\label{fig:intro}
-\end{figure}
+
 
 Existing collaboration representations hold only one of these two properties. \emph{Blueprint-driven} systems encode a graph, workflow, or standard operating procedure~\citep{hong2024metagptmetaprogrammingmultiagent,wu2023autogenenablingnextgenllm,fourney2024magenticonegeneralistmultiagentsolving}, and recent methods automate this design through workflow search or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}. Such designs are controllable, yet each selected workflow still determines the exact route taken during execution, and a runtime deviation therefore cannot be repaired locally. \emph{Agent-driven} systems let debate, dialogue, or dynamic connectivity emerge at runtime~\citep{li2023camelcommunicativeagentsmind,du2023improvingfactualityreasoninglanguage,liu2024dynamicllmpoweredagentnetwork,park2023generativeagentsinteractivesimulacra}, and a learned orchestrator can further reorder agent activations from reward~\citep{dang2025puppeteer}. Flexibility here costs transparency, since the realized coordination stays opaque and is hard to attribute or revise across runs. One line of work fixes the route and the other hides it, so neither yields a representation that is checkable at runtime and revisable from experience.
 
@@ -72,10 +67,20 @@ Experiments across fourteen benchmarks covering general question answering, long
 
 In this work, we study which representation of collaboration can support evolution at all. OpenAgency defines a governed protocol that fixes admissible handoffs and completion conditions without prescribing one route through the graph. Agents therefore keep local choices during execution while every decision remains checkable, and this pairing is what makes the protocol revisable from immutable traces across runs. The difference from workflow search and orchestrator learning lies in the object being optimized. OpenAgency evolves the governance boundary that admits runtime decisions, while those methods optimize the executed route or the policy that produces it.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.99\linewidth]{model.pdf}
+\caption{Overview of OpenAgency.}
+\label{fig:intro}
+\end{figure}
+
+
 \section{OpenAgency}
 \label{sec:method}
 
 OpenAgency treats collaboration as a first-class object separated from the executors that realize each role. It combines a layered architecture (Section~\ref{sec:architecture}), a governed protocol that makes coordination inspectable (Section~\ref{sec:protocol}), and bounded protocol evolution driven by execution traces (Section~\ref{sec:self_evolving}). Figure~\ref{fig:intro} illustrates the overall pipeline.
+
+
 
 \subsection{Multi-agent Architecture}
 \label{sec:architecture}
@@ -152,15 +157,15 @@ Governed collaboration and its evolution have to be separated from the executor'
 \subsection{Main Results}
 \label{sec:main_results}
 
-\begin{wrapfigure}{r}{0.44\textwidth}
-\vspace{-6mm}
-\centering
-\includegraphics[width=\linewidth]{figures/main_radar.pdf}
-\vspace{-4mm}
-\caption{OpenAgency against each benchmark's prior reference across three categories. The same protocol runs on all fourteen benchmarks.}
-\label{fig:main_radar}
-\vspace{-4mm}
-\end{wrapfigure}
+% \begin{wrapfigure}{r}{0.44\textwidth}
+% \vspace{-6mm}
+% \centering
+% \includegraphics[width=0.7\linewidth]{figures/main_radar.pdf}
+% \vspace{-4mm}
+% \caption{OpenAgency against each benchmark's prior reference across three categories. The same protocol runs on all fourteen benchmarks.}
+% \label{fig:main_radar}
+% \vspace{-4mm}
+% \end{wrapfigure}
 \begin{table}[t]
 \caption{OpenAgency and its ablations, listed against each benchmark's prior reference. Prior Ref. is a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the OpenAgency single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three OpenAgency conditions run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric.}
 \label{tab:main}
@@ -195,7 +200,7 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \end{center}
 \end{table}
 
-\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Under a common GPT-5.5 executor, we compare OpenAgency with the single-agent ablation, the unstructured multi-agent initialization, and each benchmark's strongest prior reference. As shown in Table~\ref{tab:main} and summarized across the three categories in Figure~\ref{fig:main_radar}, OpenAgency obtains the best primary metric on all five benchmarks, reaching $100.0$ pass@1 on HumanEval and lifting MATH from $32.4$ to $87.0$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace repeatedly flags as ineffective, and each benchmark settles on a tight solve-critique-revise loop matched to its dominant failure mode. On HotpotQA the admissible set further rejects the collapsing edges that free-form communication produces once a single answer has to be preserved, so the protocol turns a short chain into a verified one.
+\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Under a common GPT-5.5 executor, we compare OpenAgency with the single-agent ablation, the unstructured multi-agent initialization, and each benchmark's strongest prior reference. As shown in Table~\ref{tab:main}, OpenAgency obtains the best primary metric on all five benchmarks, reaching $100.0$ pass@1 on HumanEval and lifting MATH from $32.4$ to $87.0$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace repeatedly flags as ineffective, and each benchmark settles on a tight solve-critique-revise loop matched to its dominant failure mode. On HotpotQA the admissible set further rejects the collapsing edges that free-form communication produces once a single answer has to be preserved, so the protocol turns a short chain into a verified one.
 
 
 \textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. We compare OpenAgency with a monolithic single-agent solver and each benchmark's strongest prior reference. Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE against $18.0$. What produces the lead is visible in the protocol each benchmark converges to. On SWE-bench the evolver installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a dedicated Verifier the user-specified constraints one at a time under the validity operator, turning a brittle end-to-end plan into a chain of locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers straight to completion and sending refused or low-confidence ones back through a retry edge, which concentrates effort on the questions that need another pass. All three shapes are reached from the same initialization, so it is the handoff and completion rules that adapt when local errors are unrecoverable.
@@ -255,10 +260,10 @@ To identify which part of the trace the evolver actually consumes, we compare th
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
 
-OpenAgency keeps the collaboration structure explicit and revisable, while free-form systems leave it implicit and standard-operating-procedure systems fix it at design time. To compare the three substrates directly, we evaluate a free-form message-exchange baseline (AutoGen) and two standard-operating-procedure baselines (ChatDev and MetaGPT) on four benchmarks. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score on all four benchmarks and the lowest SWE-bench Verified standard deviation across three random seeds, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified file match. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their procedure is fixed at design time and cannot absorb trace-level failure signals. The remaining gap therefore tracks how much of the collaboration structure stays revisable after deployment.
+OpenAgency keeps the collaboration structure explicit and revisable, while free-form systems leave it implicit and standard-operating-procedure systems fix it at design time. To compare the three substrates directly, we evaluate a free-form message-exchange baselines \citep{wu2023autogenenablingnextgenllm,qian2024chatdevcommunicativeagentssoftware,hong2024metagptmetaprogrammingmultiagent,hong2024metagptmetaprogrammingmultiagent} on four benchmarks. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score on all four benchmarks and the lowest SWE-bench Verified standard deviation across three random seeds, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their procedure is fixed at design time and cannot absorb trace-level failure signals. The remaining gap therefore tracks how much of the collaboration structure stays revisable after deployment.
 
 \begin{table}[t]
-\caption{OpenAgency against the free-form and SOP baselines AutoGen \citep{wu2023autogenenablingnextgenllm}, ChatDev \citep{qian2024chatdevcommunicativeagentssoftware}, and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} under identical model, tools, and per-agent budgets. SWE Std is the SWE-bench Verified standard deviation over three random seeds.}
+\caption{OpenAgency against the free-form and SOP baselines. SWE Std is the SWE-bench Verified standard deviation over three random seeds.}
 \label{tab:free_form}
 \begin{center}
 \small
@@ -277,7 +282,7 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 & 3.4 \\
 \end{center}
 \end{table}
 
-\subsection{Evolution under a Fixed Topology}
+\subsection{Advantage of Governed Collaboration Protocols for Evolution}
 \label{sec:fixed_topology}
 
 \begin{figure}[tb]
