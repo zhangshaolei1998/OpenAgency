@@ -1,0 +1,9 @@
+{
+  "note": "Ablation of the evolving space: three nested spaces under one initialization and one evolution loop. full = all three levels editable (number of agents, collaboration topology, functional division). fixed_count = node count |N| held at the initialization, topology and division still editable. division_only = whole graph frozen, only the functional division editable.",
+  "benchmarks": ["SWE-bench\n(FM)", "DDR-Bench\n(Overall)", "DevEval\n(AT)"],
+  "variants": {
+    "full": [86.2, 76.0, 96.9],
+    "fixed_count": [80.4, 60.7, 84.3],
+    "division_only": [78.1, 55.8, 79.1]
+  }
+}

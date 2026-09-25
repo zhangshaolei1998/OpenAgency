@@ -88,8 +88,8 @@
 \newlabel{sec:ablation_multi}{{5.2}{8}{Advantage of Multi-agent Protocols}{subsection.26}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Ablation of the Evolving Space}{8}{subsection.29}\protected@file@percent }
 \newlabel{sec:ablation_space}{{5.3}{8}{Ablation of the Evolving Space}{subsection.29}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces A fixed collaboration graph against the full evolving space. The fixed-graph arm holds $|\mathcal  {N}|$ and $(\mathcal  {H},\mu )$ at the initialization and edits only the functional division. Both OfficeQA Pro arms are scored on the same $133$ tasks.}}{8}{figure.31}\protected@file@percent }
-\newlabel{fig:evo_space}{{4}{8}{A fixed collaboration graph against the full evolving space. The fixed-graph arm holds $|\mathcal {N}|$ and $(\mathcal {H},\mu )$ at the initialization and edits only the functional division. Both OfficeQA Pro arms are scored on the same $133$ tasks}{figure.31}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal  {N}|$ at the initialization, and the division-only arm freezes the whole graph and edits only the functional division.}}{8}{figure.31}\protected@file@percent }
+\newlabel{fig:evo_space}{{4}{8}{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal {N}|$ at the initialization, and the division-only arm freezes the whole graph and edits only the functional division}{figure.31}{}}
 \citation{wu2023autogenenablingnextgenllm}
 \citation{qian2024chatdevcommunicativeagentssoftware}
 \citation{hong2024metagptmetaprogrammingmultiagent}
@@ -168,36 +168,21 @@
 \newlabel{app:benchmarks}{{A}{14}{Benchmark Details}{appendix.40}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {B}Case Study of Protocol Evolution}{14}{appendix.41}\protected@file@percent }
 \newlabel{app:case_study}{{B}{14}{Case Study of Protocol Evolution}{appendix.41}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, which form the rows. Solid ovals are agent roles, small pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. A panel shows everything the protocol carries at that round, where boxed text pinned to an element is a transition or completion predicate and the lower container holds the shared rule and culture. Elements introduced by the current round are drawn in the color of their edit level from Section\nobreakspace  {}\ref  {sec:self_evolving}, and elements carried from an earlier round are drawn in gray, so a round that leaves the graph unchanged still shows what it revised.}}{16}{figure.43}\protected@file@percent }
-\newlabel{fig:case_evo}{{6}{16}{Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, which form the rows. Solid ovals are agent roles, small pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. A panel shows everything the protocol carries at that round, where boxed text pinned to an element is a transition or completion predicate and the lower container holds the shared rule and culture. Elements introduced by the current round are drawn in the color of their edit level from Section~\ref {sec:self_evolving}, and elements carried from an earlier round are drawn in gray, so a round that leaves the graph unchanged still shows what it revised}{figure.43}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, one per row. Solid ovals are agent roles, pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. Boxed text pinned to an element is a transition or completion predicate, and the lower container holds the shared rule and culture. Elements introduced by the current round carry the color of their edit level from Section\nobreakspace  {}\ref  {sec:self_evolving} and earlier elements are gray, so a round that leaves the graph unchanged still shows what it revised.}}{16}{figure.43}\protected@file@percent }
+\newlabel{fig:case_evo}{{6}{16}{Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, one per row. Solid ovals are agent roles, pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. Boxed text pinned to an element is a transition or completion predicate, and the lower container holds the shared rule and culture. Elements introduced by the current round carry the color of their edit level from Section~\ref {sec:self_evolving} and earlier elements are gray, so a round that leaves the graph unchanged still shows what it revised}{figure.43}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table\nobreakspace  {}\ref  {tab:deveval}.}}{17}{table.47}\protected@file@percent }
+\newlabel{tab:subdim}{{3}{17}{Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table~\ref {tab:deveval}}{table.47}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma (n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed.}}{17}{table.50}\protected@file@percent }
+\newlabel{tab:handoff}{{4}{17}{Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma (n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed}{table.50}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {C}Additional Analysis}{17}{appendix.44}\protected@file@percent }
 \newlabel{app:extra}{{C}{17}{Additional Analysis}{appendix.44}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Compute Budget of Protocol Evolution}{17}{subsection.45}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Average tokens per instance and the primary metric across the four evolution rounds. Each metric column is in the benchmark's native metric and matches Table\nobreakspace  {}\ref  {tab:evolution_all}.}}{17}{table.47}\protected@file@percent }
-\newlabel{tab:budget_all}{{3}{17}{Average tokens per instance and the primary metric across the four evolution rounds. Each metric column is in the benchmark's native metric and matches Table~\ref {tab:evolution_all}}{table.47}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Primary metric against average tokens per instance across the four evolution rounds, with markers running from $v_1$ to $v_4$ in increasing darkness. The view separates the accuracy gain from the compute cost of new roles and retry edges.}}{17}{figure.49}\protected@file@percent }
-\newlabel{fig:budget}{{7}{17}{Primary metric against average tokens per instance across the four evolution rounds, with markers running from $v_1$ to $v_4$ in increasing darkness. The view separates the accuracy gain from the compute cost of new roles and retry edges}{figure.49}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.2}Component Measurements behind the Gain}{17}{subsection.50}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table\nobreakspace  {}\ref  {tab:deveval}.}}{18}{table.52}\protected@file@percent }
-\newlabel{tab:subdim}{{4}{18}{Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table~\ref {tab:deveval}}{table.52}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.3}Activity of the Admissible Handoff Set}{18}{subsection.53}\protected@file@percent }
-\newlabel{sec:admissible}{{C.3}{18}{Activity of the Admissible Handoff Set}{subsection.53}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma (n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed.}}{18}{table.55}\protected@file@percent }
-\newlabel{tab:handoff}{{5}{18}{Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma (n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed}{table.55}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Component Measurements behind the Gain}{17}{subsection.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.2}Activity of the Admissible Handoff Set}{17}{subsection.48}\protected@file@percent }
+\newlabel{sec:admissible}{{C.2}{17}{Activity of the Admissible Handoff Set}{subsection.48}{}}
 \citation{chen2021humaneval}
 \citation{austin2021mbpp}
 \citation{cobbe2021gsm8k}
 \citation{hendrycks2021math}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Primary metric across the four evolution rounds, each row in the benchmark's native metric.}}{19}{table.58}\protected@file@percent }
-\newlabel{tab:evolution_all}{{6}{19}{Primary metric across the four evolution rounds, each row in the benchmark's native metric}{table.58}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {D}Per-benchmark Detailed Results}{19}{appendix.56}\protected@file@percent }
-\newlabel{app:detail}{{D}{19}{Per-benchmark Detailed Results}{appendix.56}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Performance on HumanEval \citep  {chen2021humaneval}. The metric is pass@1.}}{19}{table.60}\protected@file@percent }
-\newlabel{tab:humaneval}{{7}{19}{Performance on HumanEval \citep {chen2021humaneval}. The metric is pass@1}{table.60}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Performance on MBPP \citep  {austin2021mbpp}. The metric is pass@1.}}{19}{table.62}\protected@file@percent }
-\newlabel{tab:mbpp}{{8}{19}{Performance on MBPP \citep {austin2021mbpp}. The metric is pass@1}{table.62}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Performance on GSM8K \citep  {cobbe2021gsm8k}. The metric is exact-match accuracy.}}{19}{table.64}\protected@file@percent }
-\newlabel{tab:gsm8k}{{9}{19}{Performance on GSM8K \citep {cobbe2021gsm8k}. The metric is exact-match accuracy}{table.64}{}}
 \citation{yang2018hotpotqa}
 \citation{jimenez2024swebench}
 \citation{jimenez2024swebench}
@@ -217,26 +202,36 @@
 \citation{shepard2026automationbench}
 \citation{opsahlong2026officeqa}
 \citation{opsahlong2026officeqa}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Performance on SWE-bench Verified \citep  {jimenez2024swebench}. FM is file match, and the first three rows are reported by that work.}}{20}{table.70}\protected@file@percent }
-\newlabel{tab:swe}{{12}{20}{Performance on SWE-bench Verified \citep {jimenez2024swebench}. FM is file match, and the first three rows are reported by that work}{table.70}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Performance on DeepPlanning \citep  {zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work.}}{20}{table.72}\protected@file@percent }
-\newlabel{tab:dp}{{13}{20}{Performance on DeepPlanning \citep {zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work}{table.72}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Performance on MATH \citep  {hendrycks2021math}. The metric is exact-match accuracy.}}{20}{table.66}\protected@file@percent }
-\newlabel{tab:math}{{10}{20}{Performance on MATH \citep {hendrycks2021math}. The metric is exact-match accuracy}{table.66}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Performance on HotpotQA \citep  {yang2018hotpotqa}. The metric is token-level F1.}}{20}{table.68}\protected@file@percent }
-\newlabel{tab:hotpot}{{11}{20}{Performance on HotpotQA \citep {yang2018hotpotqa}. The metric is token-level F1}{table.68}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Performance on the Humanity's Last Exam text-only subset \citep  {phan2025hle}. External rows are reported by that work.}}{21}{table.74}\protected@file@percent }
-\newlabel{tab:hle}{{14}{21}{Performance on the Humanity's Last Exam text-only subset \citep {phan2025hle}. External rows are reported by that work}{table.74}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Performance on DevEval \citep  {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation.}}{21}{table.76}\protected@file@percent }
-\newlabel{tab:deveval}{{15}{21}{Performance on DevEval \citep {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation}{table.76}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Performance on the DDR-Bench 10-K subset \citep  {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work.}}{21}{table.78}\protected@file@percent }
-\newlabel{tab:ddr}{{16}{21}{Performance on the DDR-Bench 10-K subset \citep {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work}{table.78}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Performance on TheAgentCompany \citep  {xu2024theagentcompany}. Score is the aggregated task score, and Steps is the average number of steps. External rows are reported by that work.}}{22}{table.80}\protected@file@percent }
-\newlabel{tab:tac}{{17}{22}{Performance on TheAgentCompany \citep {xu2024theagentcompany}. Score is the aggregated task score, and Steps is the average number of steps. External rows are reported by that work}{table.80}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces Performance on MARBLE \citep  {zhu2025marble}. Overall averages Research and World scores. External rows are reported by that work.}}{22}{table.82}\protected@file@percent }
-\newlabel{tab:marble}{{18}{22}{Performance on MARBLE \citep {zhu2025marble}. Overall averages Research and World scores. External rows are reported by that work}{table.82}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {19}{\ignorespaces Performance on AutomationBench \citep  {shepard2026automationbench}. External rows are reported by that work.}}{22}{table.84}\protected@file@percent }
-\newlabel{tab:autobench}{{19}{22}{Performance on AutomationBench \citep {shepard2026automationbench}. External rows are reported by that work}{table.84}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {20}{\ignorespaces Performance on OfficeQA Pro \citep  {opsahlong2026officeqa}. External rows are reported by that work.}}{22}{table.86}\protected@file@percent }
-\newlabel{tab:officeqa}{{20}{22}{Performance on OfficeQA Pro \citep {opsahlong2026officeqa}. External rows are reported by that work}{table.86}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Primary metric across the four evolution rounds, each row in the benchmark's native metric.}}{18}{table.53}\protected@file@percent }
+\newlabel{tab:evolution_all}{{5}{18}{Primary metric across the four evolution rounds, each row in the benchmark's native metric}{table.53}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Performance on HumanEval \citep  {chen2021humaneval}. The metric is pass@1.}}{18}{table.55}\protected@file@percent }
+\newlabel{tab:humaneval}{{6}{18}{Performance on HumanEval \citep {chen2021humaneval}. The metric is pass@1}{table.55}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {D}Per-benchmark Detailed Results}{18}{appendix.51}\protected@file@percent }
+\newlabel{app:detail}{{D}{18}{Per-benchmark Detailed Results}{appendix.51}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Performance on MBPP \citep  {austin2021mbpp}. The metric is pass@1.}}{19}{table.57}\protected@file@percent }
+\newlabel{tab:mbpp}{{7}{19}{Performance on MBPP \citep {austin2021mbpp}. The metric is pass@1}{table.57}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Performance on GSM8K \citep  {cobbe2021gsm8k}. The metric is exact-match accuracy.}}{19}{table.59}\protected@file@percent }
+\newlabel{tab:gsm8k}{{8}{19}{Performance on GSM8K \citep {cobbe2021gsm8k}. The metric is exact-match accuracy}{table.59}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Performance on MATH \citep  {hendrycks2021math}. The metric is exact-match accuracy.}}{19}{table.61}\protected@file@percent }
+\newlabel{tab:math}{{9}{19}{Performance on MATH \citep {hendrycks2021math}. The metric is exact-match accuracy}{table.61}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Performance on HotpotQA \citep  {yang2018hotpotqa}. The metric is token-level F1.}}{19}{table.63}\protected@file@percent }
+\newlabel{tab:hotpot}{{10}{19}{Performance on HotpotQA \citep {yang2018hotpotqa}. The metric is token-level F1}{table.63}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Performance on SWE-bench Verified \citep  {jimenez2024swebench}. FM is file match, and the first three rows are reported by that work.}}{19}{table.65}\protected@file@percent }
+\newlabel{tab:swe}{{11}{19}{Performance on SWE-bench Verified \citep {jimenez2024swebench}. FM is file match, and the first three rows are reported by that work}{table.65}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Performance on DeepPlanning \citep  {zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work.}}{20}{table.67}\protected@file@percent }
+\newlabel{tab:dp}{{12}{20}{Performance on DeepPlanning \citep {zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work}{table.67}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Performance on the Humanity's Last Exam text-only subset \citep  {phan2025hle}. External rows are reported by that work.}}{20}{table.69}\protected@file@percent }
+\newlabel{tab:hle}{{13}{20}{Performance on the Humanity's Last Exam text-only subset \citep {phan2025hle}. External rows are reported by that work}{table.69}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Performance on DevEval \citep  {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation.}}{20}{table.71}\protected@file@percent }
+\newlabel{tab:deveval}{{14}{20}{Performance on DevEval \citep {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation}{table.71}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Performance on the DDR-Bench 10-K subset \citep  {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work.}}{21}{table.73}\protected@file@percent }
+\newlabel{tab:ddr}{{15}{21}{Performance on the DDR-Bench 10-K subset \citep {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work}{table.73}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Performance on TheAgentCompany \citep  {xu2024theagentcompany}. Score is the aggregated task score, and Steps is the average number of steps. External rows are reported by that work.}}{21}{table.75}\protected@file@percent }
+\newlabel{tab:tac}{{16}{21}{Performance on TheAgentCompany \citep {xu2024theagentcompany}. Score is the aggregated task score, and Steps is the average number of steps. External rows are reported by that work}{table.75}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Performance on MARBLE \citep  {zhu2025marble}. Overall averages Research and World scores. External rows are reported by that work.}}{21}{table.77}\protected@file@percent }
+\newlabel{tab:marble}{{17}{21}{Performance on MARBLE \citep {zhu2025marble}. Overall averages Research and World scores. External rows are reported by that work}{table.77}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces Performance on AutomationBench \citep  {shepard2026automationbench}. External rows are reported by that work.}}{22}{table.79}\protected@file@percent }
+\newlabel{tab:autobench}{{18}{22}{Performance on AutomationBench \citep {shepard2026automationbench}. External rows are reported by that work}{table.79}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {19}{\ignorespaces Performance on OfficeQA Pro \citep  {opsahlong2026officeqa}. External rows are reported by that work.}}{22}{table.81}\protected@file@percent }
+\newlabel{tab:officeqa}{{19}{22}{Performance on OfficeQA Pro \citep {opsahlong2026officeqa}. External rows are reported by that work}{table.81}{}}
 \gdef \@abspage@last{22}

@@ -278,13 +278,13 @@ OpenAgency attributes its gain to governed collaboration, though a multi-agent s
 \begin{wrapfigure}{r}{0.46\textwidth}
 \vspace{-4mm}
 \centering
-\includegraphics[width=\linewidth]{figures/evolution_space.pdf}
+\includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
 \vspace{-5mm}
-\caption{A fixed collaboration graph against the full evolving space. The fixed-graph arm holds $|\mathcal{N}|$ and $(\mathcal{H},\mu)$ at the initialization and edits only the functional division. Both OfficeQA Pro arms are scored on the same $133$ tasks.}
+\caption{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal{N}|$ at the initialization, and the division-only arm freezes the whole graph and edits only the functional division.}
 \label{fig:evo_space}
 \vspace{-3mm}
 \end{wrapfigure}
-To identify which levels of the evolving space carry the gain, we compare a fixed-graph arm against the full space on four multi-agent benchmarks. The fixed-graph arm holds the node count $|\mathcal{N}|$ and the handoff structure $(\mathcal{H},\mu)$ at the initialization and admits only edits to the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$, the space a hand-designed multi-agent system still leaves open after deployment. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches. On DevEval, DDR-Bench, and TheAgentCompany the two arms land on the same protocol, since the optimum the full space returns already sits inside the fixed-graph subspace and lifts DevEval from $82.1$ to $96.9$ and DDR-Bench from $44.0$ to $76.0$ with the graph untouched. On OfficeQA Pro the two arms separate, where six functional-division rewrites stall at $31.6$ while one added reader node and one added verifier node reach $66.2$. The level that pays is decided by the task, so fixing $|\mathcal{N}|$ and $\mathcal{H}$ at design time commits the search before any trace has been read. Holding all three levels inside one governed protocol defers that choice to the trace.
+To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Figure~\ref{fig:intro}. Holding the number of agents $|\mathcal{N}|$ at the initialization gives the fixed-count arm, which still edits the handoff structure $(\mathcal{H},\mu)$ and the functional division. Freezing the whole graph gives the division-only arm, where the optimizer reaches the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$, the space a hand-designed multi-agent system still leaves open after deployment. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to add an agent is the level that pays most. Freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before any trace has been read, and holding all three inside one governed protocol defers that choice to the trace.
 
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
@@ -322,7 +322,7 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The fixed arm edits only the functional division, while the full arm may also change the number of agents and the topology.}
 \label{fig:fixed}
 \end{figure}
-To measure what a fixed collaboration graph costs round by round, we plot the complete OfficeQA Pro record behind Section~\ref{sec:ablation_space} as two arms that share one initialization, with the fixed arm reproducing how a standard multi-agent system tunes a prompt over a hand-designed structure. Both arms record candidates the optimizer proposed and executed, none of them from the deployed chain.
+To measure what a fixed collaboration graph costs round by round, we plot the complete OfficeQA Pro evolution record as two arms that share one initialization, with the fixed arm reproducing how a standard multi-agent system tunes a prompt over a hand-designed structure. Both arms record candidates the optimizer proposed and executed, none of them from the deployed chain.
 
 Figure~\ref{fig:fixed} shows six functional-division rewrites peaking at $31.6$ in round $2$, with the four later rewrites all falling back below it. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm has a lower round too, since its third candidate edits the functional division and falls to $60.9$, which the screen rejects. A fixed graph keeps the search inside a level the trace already reports as saturated, while one admissible structural edit clears the fixed ceiling by more than thirty points, and the deployed incumbent is the round-$2$ protocol of the full arm.
 
@@ -378,12 +378,12 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume and the component measurement on which the accepted edits pay off.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} locates the component measurement on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.97\linewidth]{figures/protocol_evolution.pdf}
-\caption{Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, which form the rows. Solid ovals are agent roles, small pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. A panel shows everything the protocol carries at that round, where boxed text pinned to an element is a transition or completion predicate and the lower container holds the shared rule and culture. Elements introduced by the current round are drawn in the color of their edit level from Section~\ref{sec:self_evolving}, and elements carried from an earlier round are drawn in gray, so a round that leaves the graph unchanged still shows what it revised.}
+\caption{Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, one per row. Solid ovals are agent roles, pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. Boxed text pinned to an element is a transition or completion predicate, and the lower container holds the shared rule and culture. Elements introduced by the current round carry the color of their edit level from Section~\ref{sec:self_evolving} and earlier elements are gray, so a round that leaves the graph unchanged still shows what it revised.}
 \label{fig:case_evo}
 \end{figure}
 
@@ -391,53 +391,11 @@ Evolution also shrinks the graph when coordination is unnecessary. AutomationBen
 \section{Additional Analysis}
 \label{app:extra}
 
-\subsection{Compute Budget of Protocol Evolution}
-
-Protocol evolution installs retry edges and separate verification roles, and both consume additional compute, so part of the reported gain could be bought with tokens. To relate the compute cost of evolution to its accuracy gain, we record the average number of tokens an instance consumes at every round alongside the primary metric of that round on all fourteen benchmarks. As shown in Table~\ref{tab:budget_all} and Figure~\ref{fig:budget}, the gain does not track the budget. SWE-bench Verified absorbs $26$K extra tokens for $7.4$ points while DDR-Bench absorbs $34$K for $32.0$ points, so a comparable increment buys gains that differ by a factor of four. The ordering can also invert, since TheAgentCompany takes $20$K for $7.4$ points while DevEval takes only $14$K for $14.8$ points. What decides the outcome is which handoffs evolution keeps, so the gain reported in Section~\ref{sec:evolution_effect} is attributable to the protocol structure and not to a larger compute allowance.
-
-\begin{table}[H]
-\caption{Average tokens per instance and the primary metric across the four evolution rounds. Each metric column is in the benchmark's native metric and matches Table~\ref{tab:evolution_all}.}
-\label{tab:budget_all}
-\begin{center}
-\small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lcccccccc}
-\toprule
-& \multicolumn{4}{c}{\textbf{Tokens per instance (K)}} & \multicolumn{4}{c}{\textbf{Primary metric}} \\
-\cmidrule(lr){2-5} \cmidrule(lr){6-9}
-\textbf{Benchmark} & $v_1$ & $v_2$ & $v_3$ & $v_4$ & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
-\midrule
-HumanEval & 9 & 11 & 12 & 13 & 98.4 & 100.0 & 100.0 & 100.0 \\
-MBPP & 9 & 11 & 12 & 13 & 74.3 & 80.5 & 80.5 & 80.9 \\
-GSM8K & 8 & 10 & 11 & 12 & 98.0 & 98.0 & 98.0 & 98.0 \\
-MATH & 12 & 14 & 15 & 16 & 87.0 & 87.0 & 87.0 & 87.0 \\
-HotpotQA & 10 & 12 & 13 & 14 & 80.7 & 81.9 & 82.3 & 82.3 \\
-SWE-bench Verified & 32 & 46 & 54 & 58 & 78.8 & 85.6 & 85.8 & 86.2 \\
-DeepPlanning & 22 & 27 & 31 & 34 & 44.6 & 44.6 & 54.2 & 54.2 \\
-HLE (text-only) & 18 & 20 & 22 & 26 & 33.7 & 35.8 & 35.9 & 37.7 \\
-DevEval & 24 & 30 & 34 & 38 & 82.1 & 83.9 & 90.6 & 96.9 \\
-DDR-Bench & 34 & 48 & 56 & 68 & 44.0 & 58.9 & 66.5 & 76.0 \\
-TheAgentCompany & 46 & 55 & 62 & 66 & 46.3 & 48.8 & 51.2 & 53.7 \\
-MARBLE & 20 & 28 & 33 & 38 & 73.4 & 91.7 & 95.0 & 98.9 \\
-AutomationBench & 42 & 26 & 34 & 40 & 26.1 & 28.4 & 34.8 & 54.8 \\
-OfficeQA Pro & 8 & 26 & 33 & 40 & 31.6 & 62.4 & 67.7 & 69.9 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.66\linewidth]{figures/token_vs_score.pdf}
-\caption{Primary metric against average tokens per instance across the four evolution rounds, with markers running from $v_1$ to $v_4$ in increasing darkness. The view separates the accuracy gain from the compute cost of new roles and retry edges.}
-\label{fig:budget}
-\end{figure}
-
 \subsection{Component Measurements behind the Gain}
 
 A primary metric can improve for more than one reason, and the aggregate does not say which failure mode the evolved protocol removed. To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. As shown in Table~\ref{tab:subdim}, the two benchmarks improve at different points. On SWE-bench Verified the file-match rate restricted to instances that produced a patch starts at $84.6$ and ends at $86.2$, while the fraction of instances that produce a patch at all rises from $79.2$ to $100.0$. The gain therefore comes from closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays in a narrow band near saturation across the four rounds, while acceptance rises from $82.1$ to $96.9$, so the admitted edits act on the repository-level correctness that unit tests leave unchecked. In both cases the component that moves is the one the accepted edit was written to address, which is the correspondence a governed protocol exists to produce.
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table~\ref{tab:deveval}.}
 \label{tab:subdim}
 \begin{center}
@@ -465,7 +423,7 @@ Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 
 OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)$, whose activity during execution determines how much of the collaboration structure is actually enforced. To verify that the boundary is active during execution, we measure how often $\Gamma(n,s)$ refuses a handoff an agent proposes. On the four benchmarks of Section~\ref{sec:free_form} we log every proposed handoff during the $v_4$ runs, record the fraction $\Gamma(n,s)$ refuses, and count the runs whose outcome changes once the refusal redirects the handoff to an admissible target. As shown in Table~\ref{tab:handoff}, the boundary refuses $3.8\%$ to $8.2\%$ of proposed handoffs and changes the outcome of $2.9\%$ to $5.3\%$ of runs. Refusals are most frequent on TheAgentCompany, whose heterogeneous tool surface offers the most chances to address a collaborator that cannot serve the current state, and least frequent on the near-linear DDR-Bench pipeline. The boundary therefore stays active on all four benchmarks, ruling out the wrong collaborator at the points where it matters while leaving the common path unconstrained. These refused events are also the evidence the evolver consumes in Section~\ref{sec:self_evolving}.
 
-\begin{table}[H]
+\begin{table}[t]
 \small
 \caption{Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma(n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed.}
 \label{tab:handoff}
@@ -518,7 +476,7 @@ OfficeQA Pro & 35.3 & 21.1 & 31.6 & 62.4 & 67.7 & \textbf{69.9} \\
 \end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Performance on HumanEval \citep{chen2021humaneval}. The metric is pass@1.}
 \label{tab:humaneval}
 \begin{center}\small
@@ -535,7 +493,7 @@ Multi-agent (init) & 96.9 \\
 \end{tabular}\end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Performance on MBPP \citep{austin2021mbpp}. The metric is pass@1.}
 \label{tab:mbpp}
 \begin{center}\small
@@ -552,7 +510,7 @@ Multi-agent (init) & 73.5 \\
 \end{tabular}\end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Performance on GSM8K \citep{cobbe2021gsm8k}. The metric is exact-match accuracy.}
 \label{tab:gsm8k}
 \begin{center}\small
@@ -569,7 +527,7 @@ Multi-agent (init) & 97.4 \\
 \end{tabular}\end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Performance on MATH \citep{hendrycks2021math}. The metric is exact-match accuracy.}
 \label{tab:math}
 \begin{center}\small
@@ -586,7 +544,7 @@ Multi-agent (init) & 86.0 \\
 \end{tabular}\end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \caption{Performance on HotpotQA \citep{yang2018hotpotqa}. The metric is token-level F1.}
 \label{tab:hotpot}
 \begin{center}\small
