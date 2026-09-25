@@ -209,19 +209,19 @@ Governed collaboration and its evolution have to be separated from the executor'
 \begin{tabular}{llcccc}
 \textbf{Benchmark} & \textbf{Metric} & \textbf{Prior Ref.} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{OpenAgency} \\
 \midrule
-\multicolumn{6}{l}{\emph{General QA Tasks}} \\
+\multicolumn{6}{c}{\emph{General QA Tasks}} \\
 HumanEval & pass@1 & 92.2 & 87.5 & 96.9 & \textbf{100.0} \\
 MBPP & pass@1 & 69.3 & 73.5 & 73.5 & \textbf{80.9} \\
 GSM8K & EM & 97.6 & 97.2 & 97.4 & \textbf{98.0} \\
 MATH & EM & 80.3 & 12.9 & 32.4 & \textbf{87.0} \\
 HotpotQA & F1 & 76.4 & 75.9 & 64.0 & \textbf{82.3} \\
 \midrule
-\multicolumn{6}{l}{\emph{Long-horizon Tasks}} \\
+\multicolumn{6}{c}{\emph{Long-horizon Tasks}} \\
 SWE-bench Verified & FM & 42.8 & 75.6 & 67.0 & \textbf{86.2} \\
 DeepPlanning & Case Acc & 46.9 & 45.0 & 33.8 & \textbf{54.2} \\
 HLE (text-only) & Accuracy & 18.0 & 18.4 & 5.6 & \textbf{37.7} \\
 \midrule
-\multicolumn{6}{l}{\emph{Production-oriented Tasks}} \\
+\multicolumn{6}{c}{\emph{Production-oriented Tasks}} \\
 DevEval & AT & 62.5 & 62.5 & 82.1 & \textbf{96.9} \\
 DDR-Bench & Overall & 69.1 & 42.8 & 44.0 & \textbf{76.0} \\
 TheAgentCompany & Score & 41.5 & 46.3 & 41.5 & \textbf{53.7} \\
@@ -338,20 +338,6 @@ TheAgentCompany  & 8.2 & 5.3 \\
 \end{wraptable}
 OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)$, whose activity during execution determines how much of the collaboration structure is actually enforced. To verify that the boundary is active during execution, we measure how often $\Gamma(n,s)$ refuses a handoff an agent proposes. On the four benchmarks of Section~\ref{sec:free_form} we log every proposed handoff during the $v_4$ runs, record the fraction $\Gamma(n,s)$ refuses, and count the runs whose outcome changes once the refusal redirects the handoff to an admissible target. As shown in Table~\ref{tab:handoff}, the boundary refuses $3.8\%$ to $8.2\%$ of proposed handoffs and changes the outcome of $2.9\%$ to $5.3\%$ of runs. Refusals are most frequent on TheAgentCompany, whose heterogeneous tool surface offers the most chances to address a collaborator that cannot serve the current state, and least frequent on the near-linear DDR-Bench pipeline. Overall, the boundary stays active on all four benchmarks, and its benefit comes from ruling out the wrong collaborator at the points where it matters while leaving the common path unconstrained, and these refused events are the evidence the evolver consumes in Section~\ref{sec:self_evolving}.
 
-% \subsection{Effect of Compute Budget}
-% \label{sec:budget}
-
-% \begin{wrapfigure}{r}{0.46\textwidth}
-% \vspace{-4mm}
-% \centering
-% \includegraphics[width=\linewidth]{figures/token_vs_score.pdf}
-% \vspace{-6mm}
-% \caption{Primary metric against average tokens per instance across the four evolution rounds (markers $v_1{\to}v_4$ from light to dark), separating accuracy gain from the compute cost of new roles and retry edges.}
-% \label{fig:budget}
-% \vspace{-3mm}
-% \end{wrapfigure}
-% To relate the compute cost of protocol evolution to its accuracy gain, we plot the primary metric of OpenAgency against average tokens per instance across evolution rounds. As shown in Figure~\ref{fig:budget}, the token budget grows on most benchmarks because evolution installs retry edges and separate verification roles, and part of the improvement is therefore paid for in additional compute. However, budget and accuracy are not tied together. SWE-bench and DDR-Bench absorb comparable extra budget yet return very different gains, and evolution can also move the other way. On AutomationBench it collapses a two-node pipeline into a single self-verifying solver, which more than doubles accuracy without a net increase in budget. Overall, the outcome is decided by \emph{which} handoffs evolution keeps and not by the budget alone, which further supports treating the protocol structure as the target of adaptation.
-
 \section{Conclusion}
 
 In this paper, we introduce OpenAgency, a self-evolving multi-agent system based on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object, and it turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, outperforming the strongest prior reference and its own single-agent and unstructured multi-agent ablations.
@@ -404,7 +390,7 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the acceptance rule refused, and the rubric dimension on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
@@ -412,6 +398,101 @@ Evolution also shrinks the graph when coordination is unnecessary. AutomationBen
 \caption{Protocol evolution across rounds on the nine long-horizon and production-oriented benchmarks, which form the rows. Solid ovals are agent roles, small pills inside a dashed container are internal phases of a single-agent solver, solid edges are admissible handoffs, and dashed edges are validity or retry edges. A panel shows everything the protocol carries at that round, where boxed text pinned to an element is a transition or completion predicate and the lower container holds the shared rule and culture. Elements introduced by the current round are drawn in the color of their edit level from Section~\ref{sec:self_evolving}, and elements carried from an earlier round are drawn in gray, so a round that leaves the graph unchanged still shows what it revised.}
 \label{fig:case_evo}
 \end{figure}
+
+\clearpage
+\section{Additional Analysis}
+\label{app:extra}
+
+\subsection{Compute Budget of Protocol Evolution}
+
+Protocol evolution installs retry edges and separate verification roles, and both consume additional compute, so part of the reported gain could be bought with tokens. To relate the compute cost of evolution to its accuracy gain, we record the average number of tokens an instance consumes at every round alongside the primary metric of that round on all fourteen benchmarks. As shown in Table~\ref{tab:budget_all} and Figure~\ref{fig:budget}, the gain does not track the budget. SWE-bench Verified absorbs $26$K extra tokens for $7.4$ points while DDR-Bench absorbs $34$K for $32.0$ points, so a comparable increment buys gains that differ by a factor of four. Evolution also moves in the opposite direction when coordination is unnecessary, since AutomationBench collapses a two-node pipeline into a single self-verifying solver and gains $28.7$ points while its budget falls by $2$K. What decides the outcome is which handoffs evolution keeps, so the gain reported in Section~\ref{sec:evolution_effect} is attributable to the protocol structure and not to a larger compute allowance.
+
+\begin{table}[H]
+\caption{Average tokens per instance and the primary metric across the four evolution rounds. Each metric column is in the benchmark's native metric and matches Table~\ref{tab:evolution_all}.}
+\label{tab:budget_all}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccccc}
+\toprule
+& \multicolumn{4}{c}{\textbf{Tokens per instance (K)}} & \multicolumn{4}{c}{\textbf{Primary metric}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+\textbf{Benchmark} & $v_1$ & $v_2$ & $v_3$ & $v_4$ & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
+\midrule
+HumanEval & 9 & 11 & 12 & 13 & 98.4 & 100.0 & 100.0 & 100.0 \\
+MBPP & 9 & 11 & 12 & 13 & 74.3 & 80.5 & 80.5 & 80.9 \\
+GSM8K & 8 & 10 & 11 & 12 & 98.0 & 98.0 & 98.0 & 98.0 \\
+MATH & 12 & 14 & 15 & 16 & 87.0 & 87.0 & 87.0 & 87.0 \\
+HotpotQA & 10 & 12 & 13 & 14 & 80.7 & 81.9 & 82.3 & 82.3 \\
+SWE-bench Verified & 32 & 46 & 54 & 58 & 78.8 & 85.6 & 85.8 & 86.2 \\
+DeepPlanning & 22 & 27 & 31 & 34 & 44.6 & 44.6 & 54.2 & 54.2 \\
+HLE & 18 & 20 & 22 & 26 & 33.7 & 35.8 & 35.9 & 37.7 \\
+DevEval & 24 & 30 & 34 & 38 & 82.1 & 83.9 & 90.6 & 96.9 \\
+DDR-Bench & 34 & 48 & 56 & 68 & 44.0 & 58.9 & 66.5 & 76.0 \\
+TheAgentCompany & 46 & 55 & 62 & 66 & 46.3 & 48.8 & 51.2 & 53.7 \\
+MARBLE & 20 & 28 & 33 & 38 & 73.4 & 91.7 & 95.0 & 98.9 \\
+AutomationBench & 42 & 26 & 34 & 40 & 26.1 & 28.4 & 34.8 & 54.8 \\
+OfficeQA Pro & 8 & 26 & 33 & 40 & 31.6 & 62.4 & 67.7 & 69.9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.66\linewidth]{figures/token_vs_score.pdf}
+\caption{Primary metric against average tokens per instance across the four evolution rounds, with markers running from $v_1$ to $v_4$ in increasing darkness. The view separates the accuracy gain from the compute cost of new roles and retry edges.}
+\label{fig:budget}
+\end{figure}
+
+\subsection{Candidate Protocols Refused by the Acceptance Rule}
+
+Every round proposes several bounded edits and keeps only the one the held-out acceptance rule admits, so the reported trajectory says nothing about how the accepted edit compares with the alternatives it displaced. To expose that comparison, we score each candidate protocol proposed in the first two AutomationBench rounds on the complete $600$-task set under the same executor and tool surface. As shown in Table~\ref{tab:candidates}, adding a node improves nothing by itself. A planner placed before the executor reaches $23.6$ and a cleanup node placed after it reaches $23.2$, both below the $23.7$ of the single-agent ablation, while the two candidates that attach an explicit verification duty reach $26.1$ and $28.4$. The accepted candidate is also the smallest, since folding verification into the solver as an internal phase outscores the two-node executor-verifier pipeline it competed against. Agent count therefore carries no accuracy on its own, and what the acceptance rule selects is the edit that adds a checkable duty.
+
+\begin{table}[H]
+\caption{Candidate protocols scored on the full AutomationBench task set during the first two evolution rounds. Nodes is the number of agent roles the candidate defines, and the accepted candidate is the one the held-out acceptance rule admitted.}
+\label{tab:candidates}
+\begin{center}
+\small
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Candidate protocol} & \textbf{Nodes} & \textbf{Acc (\%)} \\
+\midrule
+Single-agent ablation & 1 & 23.7 \\
+Planner then executor & 2 & 23.6 \\
+Executor then cleanup & 2 & 23.2 \\
+Executor then verifier & 2 & 26.1 \\
+\rowcolor{gray!12}
+\textbf{Executor with an internal verification phase} & \textbf{1} & \textbf{28.4} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Dimension-level Gain on MARBLE}
+
+MARBLE scores every task along separate rubric dimensions, so its aggregate hides which quality the evolved protocol actually improves. To locate the gain, we read the rubric dimensions at the single-agent ablation and at rounds $v_2$ through $v_4$, covering the three research dimensions and the buyer and seller dimensions of the world tasks. As shown in Table~\ref{tab:marble_dims}, the dimensions improve in a definite order. Safety and feasibility move first, rising from $60.0$ at the single-agent ablation to $100.0$ by $v_3$, and innovation stays flat until the final round lifts it from $80.0$ to $100.0$ with safety holding at $93.3$, far above the $60.0$ of the single-agent ablation. The order follows the case study of Appendix~\ref{app:case_study}, where the feasibility-driven retry edge from the Critic back to the Generator is installed before the round that revises the generation predicate. Evolution therefore secures the dimensions a verification role can check before it touches the one the generation step itself decides.
+
+\begin{table}[H]
+\caption{Rubric dimensions on MARBLE across the single-agent ablation and evolution rounds $v_2$ to $v_4$. Innovation, safety, and feasibility are the research dimensions, and buyer and seller average the three world dimensions of each side.}
+\label{tab:marble_dims}
+\begin{center}
+\small
+\setlength{\tabcolsep}{9pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dimension} & \textbf{Single-agent} & $v_2$ & $v_3$ & $v_4$ \\
+\midrule
+Innovation  & 80.0 & 80.0 & 80.0 & \textbf{100.0} \\
+Safety      & 60.0 & 100.0 & 100.0 & 93.3 \\
+Feasibility & 60.0 & 80.0 & 100.0 & \textbf{100.0} \\
+Buyer       & 93.3 & 100.0 & 100.0 & \textbf{100.0} \\
+Seller      & 86.7 & 93.3 & 93.3 & \textbf{100.0} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \clearpage
 \section{Per-benchmark Detailed Results}
@@ -423,7 +504,7 @@ This appendix reports the per-benchmark results summarized in Table~\ref{tab:mai
 \caption{Primary metric across the four evolution rounds, each row in the benchmark's native metric.}
 \label{tab:evolution_all}
 \begin{center}
-\scriptsize
+\small
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -559,7 +640,7 @@ Multi-agent (init) & 79.2 & 67.0 & 56.2 \\
 \caption{Performance on DeepPlanning \citep{zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work.}
 \label{tab:dp}
 \begin{center}
-\scriptsize
+\small
 \setlength{\tabcolsep}{2pt}
 \begin{tabular}{lccccccc}
 \toprule
@@ -706,7 +787,7 @@ Multi-agent (init) & GPT-5.5 & -- & 41.5 & -- \\
 \caption{Performance on MARBLE \citep{zhu2025marble}. Overall averages Research and World scores. External rows are reported by that work.}
 \label{tab:marble}
 \begin{center}
-\scriptsize
+\small
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lcccc}
 \toprule
