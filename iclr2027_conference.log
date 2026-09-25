@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  25 SEP 2026 10:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  25 SEP 2026 10:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -561,33 +561,36 @@ Package pdftex.def Info: figures/evolution_ablation.pdf  used on input line 247
 (pdftex.def)             Requested size: 182.84575pt x 79.31496pt.
  [8 <./figures/evolution_bars.pdf> <./figures/single_vs_multi.pdf> <./figures/e
 volution_ablation.pdf>]
-(./iclr2027_conference.bbl
-Underfull \vbox (badness 1253) has occurred while \output is active []
+<figures/fixed_topology.pdf, id=818, 572.5315pt x 134.40149pt>
+File: figures/fixed_topology.pdf Graphic file (type pdf)
+<use figures/fixed_topology.pdf>
+Package pdftex.def Info: figures/fixed_topology.pdf  used on input line 285.
+(pdftex.def)             Requested size: 357.73405pt x 83.98225pt.
 
- [9]
-[10] [11] [12]) [13]
+(./iclr2027_conference.bbl [9 <./figures/fixed_topology.pdf>] [10] [11]
+[12]) [13]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 317.
+put line 308.
  [14
 
 ] [15
 
 ]
-<figures/protocol_evolution.pdf, id=947, 779.37187pt x 1164.47118pt>
+<figures/protocol_evolution.pdf, id=1005, 779.37187pt x 1164.47118pt>
 File: figures/protocol_evolution.pdf Graphic file (type pdf)
 <use figures/protocol_evolution.pdf>
-Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 391
+Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 382
 .
 (pdftex.def)             Requested size: 385.56091pt x 576.0863pt.
 
 
-LaTeX Warning: Float too large for page by 25.82123pt on input line 394.
+LaTeX Warning: Float too large for page by 25.82123pt on input line 385.
 
 [16] [17 <./figures/protocol_evolution.pdf>]
-<figures/token_vs_score.pdf, id=1085, 562.1212pt x 295.34654pt>
+<figures/token_vs_score.pdf, id=1143, 562.1212pt x 295.34654pt>
 File: figures/token_vs_score.pdf Graphic file (type pdf)
 <use figures/token_vs_score.pdf>
-Package pdftex.def Info: figures/token_vs_score.pdf  used on input line 437.
+Package pdftex.def Info: figures/token_vs_score.pdf  used on input line 428.
 (pdftex.def)             Requested size: 262.34154pt x 137.84396pt.
  [18
 
@@ -602,10 +605,10 @@ Package rerunfilecheck Info: File `iclr2027_conference.out' has not changed.
 (rerunfilecheck)             Checksum: 58E996F75024304AB60529DF929590F0;4825.
  ) 
 Here is how much of TeX's memory you used:
- 12949 strings out of 479654
- 196060 string characters out of 5883416
- 539547 words of memory out of 5000000
- 30664 multiletter control sequences out of 15000+600000
+ 12956 strings out of 479654
+ 196291 string characters out of 5883416
+ 539476 words of memory out of 5000000
+ 30670 multiletter control sequences out of 15000+600000
  500718 words of font info for 94 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
  61i,19n,75p,1579b,528s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -626,10 +629,10 @@ e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf
 ype1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/tim
 es/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on iclr2027_conference.pdf (24 pages, 511076 bytes).
+Output written on iclr2027_conference.pdf (24 pages, 527209 bytes).
 PDF statistics:
- 1397 PDF objects out of 1440 (max. 8388607)
- 787 compressed objects within 8 object streams
+ 1455 PDF objects out of 1728 (max. 8388607)
+ 796 compressed objects within 8 object streams
  160 named destinations out of 1000 (max. 500000)
- 244 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 249 words of extra memory for PDF output out of 10000 (max. 10000000)
 

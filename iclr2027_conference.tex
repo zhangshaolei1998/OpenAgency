@@ -258,7 +258,7 @@ To identify which part of the trace the evolver actually consumes, we compare th
 OpenAgency keeps the collaboration structure explicit and revisable, while free-form systems leave it implicit and standard-operating-procedure systems fix it at design time. To compare the three substrates directly, we evaluate a free-form message-exchange baseline (AutoGen) and two standard-operating-procedure baselines (ChatDev and MetaGPT) on four benchmarks. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score on all four benchmarks and the lowest SWE-bench Verified standard deviation across three random seeds, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified file match. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their procedure is fixed at design time and cannot absorb trace-level failure signals. The remaining gap therefore tracks how much of the collaboration structure stays revisable after deployment.
 
 \begin{table}[t]
-\caption{OpenAgency against free-form and SOP baselines under identical model, tools, and per-agent budgets. The baselines are AutoGen \citep{wu2023autogenenablingnextgenllm}, ChatDev \citep{qian2024chatdevcommunicativeagentssoftware}, and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. SWE Std is the SWE-bench Verified standard deviation over three random seeds.}
+\caption{OpenAgency against the free-form and SOP baselines AutoGen \citep{wu2023autogenenablingnextgenllm}, ChatDev \citep{qian2024chatdevcommunicativeagentssoftware}, and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} under identical model, tools, and per-agent budgets. SWE Std is the SWE-bench Verified standard deviation over three random seeds.}
 \label{tab:free_form}
 \begin{center}
 \small
@@ -280,28 +280,19 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 & 3.4 \\
 \subsection{Evolution under a Fixed Topology}
 \label{sec:fixed_topology}
 
-\begin{table}[H]
-\small
-\setlength{\tabcolsep}{3.4pt}
-\caption{Complete evolution record on OfficeQA Pro, labelled by the level of the evolution space each round edits. Ctx is an edit to the shared context, Top is an edit to the topology, $|\mathcal{N}|$ is the node count of the candidate, and every round is scored on the same $133$ tasks under one executor and tool budget.}
-\label{tab:fixed}
-\begin{center}
-\begin{tabular}{lccccccccccc}
-\toprule
-\textbf{Round} & \textbf{Init} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} \\
-\midrule
-Edit level & -- & Ctx & Ctx & Ctx & Ctx & Ctx & Ctx & Top & Top & Ctx & Top \\
-$|\mathcal{N}|$ & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 2 & 3 & 3 & 4 \\
-Acc@1\% & 21.1 & 14.3 & 31.6 & 24.8 & 25.6 & 27.1 & 30.8 & 62.4 & \textbf{66.2} & 60.9 & 65.4 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-To separate what a fixed collaboration graph can reach from what the full evolution space reaches, we replay the complete evolution record on OfficeQA Pro and label every round by the level of the space its edit touched. Rounds $1$ to $6$ stay inside the shared context level on a single-node graph, which is the only level available once the topology is frozen. As Table~\ref{tab:fixed} shows, those six rounds oscillate between $14.3$ and $31.6$ and never pass the $31.6$ of round $2$, so six consecutive rewrites of the shared context leave the ceiling where the initialization put it, and one of them falls below the initialization itself. Round $7$ is the first topology edit, which adds a reader node and one handoff edge and reaches $62.4$, and round $8$ adds a verifier and reaches $66.2$. Round $9$ returns to a context-only edit on that three-node graph and falls back to $60.9$, and round $10$ widens the graph to four nodes without recovering the incumbent. The level that moves the metric is the topology, which is the level a fixed graph cannot reach, and the oscillation inside a single level is what the quality screen absorbs, since the incumbent deployed after round $10$ is still the round-$8$ protocol whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.90\linewidth]{figures/fixed_topology.pdf}
+\caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The fixed arm edits only the shared context, while the full arm may also edit the topology.}
+\label{fig:fixed}
+\end{figure}
+To measure how much the collaboration protocol governs what evolution can reach, we split the complete evolution record on OfficeQA Pro into two arms that share one initialization. The fixed arm holds the graph at the single node the initialization produced, which leaves the shared context as its only editable level and reproduces how a standard multi-agent system tunes a prompt over a hand-designed structure. The full arm is the governed protocol, whose optimizer may also edit the topology and the subtask definitions. Every plotted point was proposed and executed, and no fixed-arm round became the incumbent.
+
+Figure~\ref{fig:fixed} shows six rounds of shared-context rewriting moving the metric between $14.3$ and $30.8$ without passing the $31.6$ of round $2$, with the first falling below the initialization. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm oscillates as well, because its third round edits the shared context and falls to $60.9$ while its fourth widens the graph to four nodes without recovering the incumbent, which makes oscillation a property of the search itself. A frozen graph keeps the search inside a level the trace already reports as saturated, while the governed protocol leaves the topology open, where a single admissible edit clears the fixed ceiling by more than thirty points. The deployed incumbent is the round-$2$ protocol of the full arm, whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
 
 \section{Conclusion}
 
-In this paper, we introduce OpenAgency, a self-evolving multi-agent system based on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object. It turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator and a collaboration quality screen. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, outperforming the strongest prior reference and its own single-agent and unstructured multi-agent ablations.
+In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object and turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator and a quality screen. Across fourteen benchmarks it reaches the best primary metric on each, above the strongest prior reference and its own single-agent and unstructured ablations.
 
 \bibliography{iclr2027_conference}
 \bibliographystyle{iclr2027_conference}
