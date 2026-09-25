@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  25 SEP 2026 06:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  25 SEP 2026 10:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -506,7 +506,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 37.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<figures/intro.pdf, id=130, 822.60823pt x 196.96962pt>
+<figures/intro.pdf, id=138, 822.60823pt x 196.96962pt>
 File: figures/intro.pdf Graphic file (type pdf)
 <use figures/intro.pdf>
 Package pdftex.def Info: figures/intro.pdf  used on input line 51.
@@ -521,84 +521,94 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 6
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 ) [2 <./figures/intro.pdf>] [3]
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-12.
+04.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 124.
- [4]
-Underfull \hbox (badness 8075) in paragraph at lines 158--159
-[]\OT1/ptm/b/n/10 Immutable Col-lab-o-ra-tion Trace. \OT1/ptm/m/n/10 Each ex-e-
-cu-tion pro-duces an or-dered trace $\OML/cmm/m/it/10 ^^\ \OT1/cmr/m/n/10 =
+Underfull \hbox (badness 3769) in paragraph at lines 117--118
+[]\OT1/ptm/b/n/10 Trace Di-ag-no-sis as Search Sig-nal. \OT1/ptm/m/n/10 Each ex
+-e-cu-tion pro-duces an or-dered trace $\OML/cmm/m/it/10 ^^\ \OT1/cmr/m/n/10 =
  []
 
-[5]
-<figures/main_radar.pdf, id=430, 358.19316pt x 348.37198pt>
+[4] [5]
+<figures/main_radar.pdf, id=431, 358.19316pt x 348.37198pt>
 File: figures/main_radar.pdf Graphic file (type pdf)
 <use figures/main_radar.pdf>
-Package pdftex.def Info: figures/main_radar.pdf  used on input line 197.
+Package pdftex.def Info: figures/main_radar.pdf  used on input line 158.
 (pdftex.def)             Requested size: 174.89436pt x 170.09776pt.
 
-Underfull \hbox (badness 1281) in paragraph at lines 236--237
+Underfull \hbox (badness 1281) in paragraph at lines 197--198
 \OT1/ptm/m/n/10 five single-turn bench-marks (Hu-manEval, MBPP,
  []
 
 [6 <./figures/main_radar.pdf>]
-<figures/evolution_bars.pdf, id=526, 1187.14832pt x 250.52916pt>
+<figures/evolution_bars.pdf, id=527, 1187.14832pt x 250.52916pt>
 File: figures/evolution_bars.pdf Graphic file (type pdf)
 <use figures/evolution_bars.pdf>
-Package pdftex.def Info: figures/evolution_bars.pdf  used on input line 262.
+Package pdftex.def Info: figures/evolution_bars.pdf  used on input line 223.
 (pdftex.def)             Requested size: 373.63686pt x 78.84828pt.
  [7]
-<figures/single_vs_multi.pdf, id=537, 1186.80069pt x 253.43152pt>
+<figures/single_vs_multi.pdf, id=538, 1186.80069pt x 253.43152pt>
 File: figures/single_vs_multi.pdf Graphic file (type pdf)
 <use figures/single_vs_multi.pdf>
-Package pdftex.def Info: figures/single_vs_multi.pdf  used on input line 274.
+Package pdftex.def Info: figures/single_vs_multi.pdf  used on input line 235.
 (pdftex.def)             Requested size: 373.63686pt x 79.78494pt.
-<figures/evolution_ablation.pdf, id=538, 536.37076pt x 232.66634pt>
+<figures/evolution_ablation.pdf, id=539, 536.37076pt x 232.66634pt>
 File: figures/evolution_ablation.pdf Graphic file (type pdf)
 <use figures/evolution_ablation.pdf>
-Package pdftex.def Info: figures/evolution_ablation.pdf  used on input line 285
+Package pdftex.def Info: figures/evolution_ablation.pdf  used on input line 246
 .
 (pdftex.def)             Requested size: 182.84575pt x 79.31496pt.
  [8 <./figures/evolution_bars.pdf> <./figures/single_vs_multi.pdf> <./figures/e
 volution_ablation.pdf>]
-(./iclr2027_conference.bbl [9] [10] [11]) [12] [13
+(./iclr2027_conference.bbl
+Underfull \vbox (badness 1253) has occurred while \output is active []
+
+ [9]
+[10] [11] [12]) [13]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 316.
+ [14
+
+] [15
 
 ]
-<figures/protocol_evolution.pdf, id=932, 779.37187pt x 1164.47118pt>
+<figures/protocol_evolution.pdf, id=947, 779.37187pt x 1164.47118pt>
 File: figures/protocol_evolution.pdf Graphic file (type pdf)
 <use figures/protocol_evolution.pdf>
-Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 397
+Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 390
 .
 (pdftex.def)             Requested size: 385.56091pt x 576.0863pt.
 
 
-LaTeX Warning: Float too large for page by 25.82123pt on input line 400.
+LaTeX Warning: Float too large for page by 25.82123pt on input line 393.
 
-[14] [15 <./figures/protocol_evolution.pdf>]
-<figures/token_vs_score.pdf, id=1071, 562.1212pt x 295.34654pt>
+[16] [17 <./figures/protocol_evolution.pdf>]
+<figures/token_vs_score.pdf, id=1085, 562.1212pt x 295.34654pt>
 File: figures/token_vs_score.pdf Graphic file (type pdf)
 <use figures/token_vs_score.pdf>
-Package pdftex.def Info: figures/token_vs_score.pdf  used on input line 443.
+Package pdftex.def Info: figures/token_vs_score.pdf  used on input line 436.
 (pdftex.def)             Requested size: 262.34154pt x 137.84396pt.
- [16
+ [18
 
- <./figures/token_vs_score.pdf>] [17] [18
+ <./figures/token_vs_score.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-] [19] [20] [21] (./iclr2027_conference.aux)
+ [19]
+[20] [21
+
+] [22] [23] [24] (./iclr2027_conference.aux)
 Package rerunfilecheck Info: File `iclr2027_conference.out' has not changed.
-(rerunfilecheck)             Checksum: A362C446D735847AF0744F5461D0973B;4398.
+(rerunfilecheck)             Checksum: 58E996F75024304AB60529DF929590F0;4825.
  ) 
 Here is how much of TeX's memory you used:
- 12940 strings out of 479654
- 195958 string characters out of 5883416
- 539114 words of memory out of 5000000
- 30659 multiletter control sequences out of 15000+600000
+ 12949 strings out of 479654
+ 196060 string characters out of 5883416
+ 539547 words of memory out of 5000000
+ 30664 multiletter control sequences out of 15000+600000
  500718 words of font info for 94 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
- 61i,19n,75p,1562b,508s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 61i,19n,75p,1579b,528s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb></usr/share/texlive/texmf-
@@ -616,10 +626,10 @@ e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf
 ype1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/tim
 es/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on iclr2027_conference.pdf (21 pages, 504627 bytes).
+Output written on iclr2027_conference.pdf (24 pages, 511032 bytes).
 PDF statistics:
- 1373 PDF objects out of 1440 (max. 8388607)
- 766 compressed objects within 8 object streams
- 156 named destinations out of 1000 (max. 500000)
- 228 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1397 PDF objects out of 1440 (max. 8388607)
+ 787 compressed objects within 8 object streams
+ 160 named destinations out of 1000 (max. 500000)
+ 244 words of extra memory for PDF output out of 10000 (max. 10000000)
 

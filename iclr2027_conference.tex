@@ -36,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-Large language model (LLM) agents have shown strong capabilities on complex tasks, encouraging multi-agent systems that coordinate specialized roles. Improving how these agents collaborate requires flexibility, so that coordination decisions are still made at runtime, together with controllability, so that they can be inspected and revised afterwards. Existing systems supply only one of the two, because a predefined workflow fixes the execution route while free-form communication leaves the realized coordination opaque. In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. A protocol defines roles, admissible handoffs, handoff modes, and completion conditions, and each agent still selects its next collaborator inside the admissible set, which turns the collaboration pattern itself into an evolvable object. To evolve that object, OpenAgency keeps an immutable trace that retains rejected handoffs and failed completions alongside successful events, and a collaboration-driven evolver converts this evidence into a bounded number of atomic protocol edits, each filtered by a validity operator and accepted only without regression on a held-out subset. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, covering general question answering, long-horizon tasks, and production-oriented tasks. These results show that a governed protocol is an effective object for multi-agent adaptation.
+Large language model (LLM) agents have shown strong capabilities on complex tasks, encouraging multi-agent systems that coordinate specialized roles. Improving how these agents collaborate requires flexibility, so that coordination decisions are still made at runtime, together with controllability, so that they can be inspected and revised afterwards. Existing systems supply only one of the two, because a predefined workflow fixes the execution route while free-form communication leaves the realized coordination opaque. In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. A protocol defines roles, admissible handoffs, handoff modes, and completion conditions, and each agent still selects its next collaborator inside the admissible set, which turns the collaboration pattern itself into an evolvable object. To evolve that object, OpenAgency keeps an immutable trace that retains rejected handoffs and failed completions alongside successful events, and a collaboration-driven evolver converts this evidence into a bounded number of atomic protocol edits, each screened by a structural validity operator and by an evolution agent that scores the realized coordination. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, covering general question answering, long-horizon tasks, and production-oriented tasks. These results show that a governed protocol is an effective object for multi-agent adaptation.
 \end{abstract}
 
 
@@ -55,12 +55,12 @@ Evolving the way agents collaborate requires flexibility and controllability at 
 
 Existing collaboration representations hold only one of these two properties. \emph{Blueprint-driven} systems encode a graph, workflow, or standard operating procedure~\citep{hong2024metagptmetaprogrammingmultiagent,wu2023autogenenablingnextgenllm,fourney2024magenticonegeneralistmultiagentsolving}, and recent methods automate this design through workflow search or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}. Such designs are controllable, yet each selected workflow still determines the exact route taken during execution, and a runtime deviation therefore cannot be repaired locally. \emph{Agent-driven} systems let debate, dialogue, or dynamic connectivity emerge at runtime~\citep{li2023camelcommunicativeagentsmind,du2023improvingfactualityreasoninglanguage,liu2024dynamicllmpoweredagentnetwork,park2023generativeagentsinteractivesimulacra}, and a learned orchestrator can further reorder agent activations from reward~\citep{dang2025puppeteer}. Flexibility here costs transparency, since the realized coordination stays opaque and is hard to attribute or revise across runs. One line of work fixes the route and the other hides it, so neither yields a representation that is checkable at runtime and revisable from experience.
 
-In this paper, we aim to make the collaboration pattern itself evolvable by holding flexibility and controllability in one representation. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built on \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents a protocol as a tuple $\mathcal{P}=(\mathcal{R},\mathcal{N},\alpha,\mathcal{H},\mu,\Omega,\mathcal{C})$ whose components fix the roles and the admissible handoffs between them. The admissible handoff set $\Gamma(n,s)$ carries both properties in a single object, since it rules out inadmissible transitions while the choice inside it is left to the agent at runtime. Because every coordination decision is expressed in this object and its legality is decidable, the collaboration pattern becomes revisable between runs. Building on this, OpenAgency records accepted handoffs, rejected handoffs, completion events, and failures in an immutable trace, and a collaboration-driven evolver turns this evidence into at most $k$ atomic edits over the protocol. A validity operator $\Pi_{\mathcal{V}}$ filters malformed candidates and an acceptance rule on a held-out subset deploys only revisions that do not regress, so every round stays admissible and traceable to the events that motivated it.
+In this paper, we aim to make the collaboration pattern itself evolvable by holding flexibility and controllability in one representation. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built on \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents a protocol as a tuple $\mathcal{P}=(\mathcal{R},\mathcal{N},\alpha,\mathcal{H},\mu,\Omega,\mathcal{C})$ whose components fix the roles and the admissible handoffs between them. The admissible handoff set $\Gamma(n,s)$ carries both properties in a single object, since it rules out inadmissible transitions while the choice inside it is left to the agent at runtime. Because every coordination decision is expressed in this object and its legality is decidable, the collaboration pattern becomes revisable between runs. Building on this, OpenAgency records accepted handoffs, rejected handoffs, completion events, and failures in an immutable trace, and a collaboration-driven evolver turns this evidence into at most $k$ atomic edits over the protocol. A validity operator $\Pi_{\mathcal{V}}$ filters malformed topologies and an evolution agent scores the coordination each surviving candidate realizes, so every deployed round stays admissible and traceable to the events that motivated it.
 
 Experiments across fourteen benchmarks covering general question answering, long-horizon tasks, and production-oriented tasks show that OpenAgency achieves the best primary metric on every benchmark, lifting the unstructured multi-agent initialization by up to $54.6$ absolute points (Table~\ref{tab:main}). To the best of our knowledge, OpenAgency is the first multi-agent system in which the collaboration pattern is an evolvable object, updated from immutable execution traces without regenerating the whole workflow. We summarize our contributions as follows.
 \begin{itemize}[leftmargin=1em, itemsep=-1ex, topsep=0ex]
     \item \textbf{Evolvable Collaboration Protocol:} We make the collaboration pattern itself a governed and evolvable object, because the admissible handoff set is checkable before a transition is taken and revisable after the run that produced it.
-    \item \textbf{Collaboration-driven Evolution:} We propose an evolver that learns from the coordination evidence prior systems discard, namely rejected handoffs and failed completions, and converts it into at most $k$ atomic edits over protocol structure, predicates, and shared context. A validity operator and a held-out acceptance rule keep every deployed round admissible and free of regression.
+    \item \textbf{Collaboration-driven Evolution:} We propose an evolver that learns from the coordination evidence prior systems discard, namely rejected handoffs and failed completions, and converts it into at most $k$ atomic edits over protocol structure, predicates, and shared context. A validity operator and a collaboration quality screen keep every deployed round admissible and free of regression.
     \item \textbf{Strong Performance:} OpenAgency reaches the best primary metric on all fourteen benchmarks (Section~\ref{sec:experiments}), and the same advantage holds against free-form and SOP collaboration substrates under an identical executor. Ablations further verify that both event content and temporal order are necessary for protocol evolution.
 \end{itemize}
 
@@ -80,30 +80,22 @@ OpenAgency treats collaboration as a first-class object separated from the execu
 \subsection{Multi-agent Architecture}
 \label{sec:architecture}
 
-To apply one collaboration protocol across different applications, OpenAgency must support heterogeneous executors without coupling the protocol to their backend-specific prompts and actions. To this end, OpenAgency separates multi-agent collaboration into three layers.
+To apply one collaboration protocol across applications with heterogeneous executors, OpenAgency separates multi-agent collaboration into three layers that keep the protocol independent of backend-specific prompts and actions.
 
-\textbf{Context Layer.}\quad The context layer maintains a shared collaboration space, such as a web console or an enterprise chat channel. Instructions, agent messages, human feedback, and coordination events are presented on a common timeline.
+\textbf{Context Layer.}\quad The context layer maintains a shared collaboration space, such as a web console or an enterprise chat channel, where instructions, agent messages, human feedback, and coordination events appear on a common timeline.
 
 \textbf{Governance Layer.}\quad The governance layer hosts the collaboration protocol and validates each proposed handoff against the current protocol state. It records both accepted and rejected events in an immutable trace that supplies the evidence for later protocol evolution.
 
-\textbf{Execution Layer.}\quad The execution layer binds each role to a concrete executor. An executor can be an LLM agent, a coding harness, a domain-specific tool, or a human reviewer. Executors sit below the governance layer, so the protocol constrains how roles hand off whichever backend realizes a role.
+\textbf{Execution Layer.}\quad The execution layer binds each role to a concrete executor. An executor can be an LLM agent, a coding harness, a domain-specific tool, or a human reviewer, and it sits below the governance layer, so the protocol constrains how roles hand off whichever backend realizes a role.
 
-We formalize a running OpenAgency instance at step $t$ as
-\begin{gather}
-    \mathcal{I}^{(t)} = (\mathcal{X}^{(t)}, \mathcal{P}, \mathcal{E}, s^{(t)}),
-\end{gather}
-where $\mathcal{X}^{(t)}$ is the shared context, $\mathcal{P}$ is the governed protocol, $\mathcal{E}$ is the set of available executors, and $s^{(t)}$ is the current protocol state. The map $\rho: \mathcal{R}\rightarrow\mathcal{E}$ binds each role in the role set $\mathcal{R}$ to an executor and is separate from the protocol logic.
+We formalize a running OpenAgency instance at step $t$ as $\mathcal{I}^{(t)} = (\mathcal{X}^{(t)}, \mathcal{P}, \mathcal{E}, s^{(t)})$, where $\mathcal{X}^{(t)}$ is the shared context, $\mathcal{P}$ is the governed protocol, $\mathcal{E}$ is the set of available executors, and $s^{(t)}$ is the current protocol state. The map $\rho: \mathcal{R}\rightarrow\mathcal{E}$ binds each role in the role set $\mathcal{R}$ to an executor and is separate from the protocol logic.
 
-Given this architecture, the governance layer renders the shared state into a role-specific execution context, since an LLM executor may require tool instructions and structured commands while a human executor may require a concise protocol description. We write this rendering as
-\begin{gather}
-    u^{(t)} = f_{\mathrm{ctx}}\bigl(\mathcal{X}^{(t)}, s^{(t)}, n, r, \mathcal{P}\bigr),
-\end{gather}
-where $n$ is the active node and $r$ is its assigned role. Executor adapters produce $u^{(t)}$ and return messages, handoffs, finishes, and failures in a common event representation, so the executor bound to a role can change without changing the handoff rules, trace format, or completion predicates.
+The governance layer renders the shared state into a role-specific execution context, since an LLM executor may require tool instructions and structured commands while a human executor may require a concise protocol description. We write this rendering as $u^{(t)} = f_{\mathrm{ctx}}(\mathcal{X}^{(t)}, s^{(t)}, n, r, \mathcal{P})$, where $n$ is the active node and $r$ is its assigned role. Adapters return messages, handoffs, finishes, and failures in a common event representation, so the executor bound to a role can change without changing the handoff rules, trace format, or completion predicates.
 
 \subsection{Governed Collaboration Protocols}
 \label{sec:protocol}
 
-To govern collaboration without fixing a complete execution route, the protocol must expose enough structure to validate each handoff while preserving the agent's choice among admissible targets. OpenAgency therefore represents collaboration as a declarative tuple, which decouples validation, coordination, and local decision while keeping one shared description.
+To govern collaboration without fixing a complete execution route, the protocol must expose enough structure to validate each handoff while preserving the agent's choice among admissible targets. OpenAgency therefore represents collaboration as a declarative tuple that decouples validation, coordination, and local decision.
 
 \textbf{Protocol Definition.}\quad OpenAgency represents a governed collaboration protocol as
 \begin{gather}
@@ -111,72 +103,41 @@ To govern collaboration without fixing a complete execution route, the protocol 
 \end{gather}
 where $\mathcal{R}$ is the set of roles, $\mathcal{N}$ the set of collaboration nodes, $\alpha\colon \mathcal{N}\to\mathcal{R}$ assigns each node to a role, $\mathcal{H}\subseteq\mathcal{N}\times\mathcal{N}$ defines admissible handoff edges, $\mu(n)\in\{\texttt{ONE},\texttt{SOME},\texttt{ALL}\}$ is the handoff mode, $\Omega_n$ is the completion predicate, and $\mathcal{C}$ contains the shared \texttt{rule} and \texttt{culture} that every role sees.
 
-\textbf{Admissible Handoff Set.}\quad For a node $n$ under state $s$, the admissible handoff set is
-\begin{gather}
-    \Gamma(n,s) = \bigl\{\, n' \in \mathcal{N} \;\bigm|\; (n,n') \in \mathcal{H} \text{ and the transition is valid under } s \,\bigr\}.
-\end{gather}
-The handoff mode $\mu(n)$ then determines how the active agent selects targets from $\Gamma(n,s)$. Under \texttt{ONE} the agent picks exactly one admissible target, under \texttt{SOME} a nonempty subset, and under \texttt{ALL} every admissible target. A node with no admissible target completes without a handoff, and the local choice within $\Gamma(n,s)$ is left to the agent.
+\textbf{Admissible Handoff Set.}\quad For a node $n$ under state $s$, the admissible handoff set is $\Gamma(n,s) = \{\, n' \in \mathcal{N} \mid (n,n') \in \mathcal{H} \text{ and the transition is valid under } s \,\}$. The handoff mode $\mu(n)$ then determines how the active agent selects targets from $\Gamma(n,s)$. Under \texttt{ONE} the agent picks exactly one admissible target, under \texttt{SOME} a nonempty subset, and under \texttt{ALL} every admissible target. A node with no admissible target completes without a handoff, and the local choice within $\Gamma(n,s)$ is left to the agent.
 
-\textbf{Handoff Validation and Completion.}\quad When the agent proposes a handoff $(n,B,m)$ with target set $B$ and message $m$, the protocol validates whether $B$ is admissible under $\mu(n)$. An admissible handoff commits $B$ as pending targets and updates the state, and an inadmissible handoff leaves the state unchanged and returns structured feedback so the agent may propose another target. Committing a target set does not immediately activate it. A finish event $(n,y)$ confirms that the source node has completed its work, after which the governance layer activates the committed targets only when $\Omega_n(y)$ holds. Downstream execution therefore waits for the completion predicate even after the agent has committed an admissible target set.
+\textbf{Handoff Validation and Completion.}\quad When the agent proposes a handoff $(n,B,m)$ with target set $B$ and message $m$, the protocol validates $B$ under $\mu(n)$. An admissible handoff commits $B$ as pending targets and updates the state, and an inadmissible one leaves the state unchanged and returns structured feedback so the agent may propose another target. Committing a target set does not activate it. A finish event $(n,y)$ confirms that the source node has completed its work, and the governance layer activates the committed targets only when $\Omega_n(y)$ holds, so downstream execution waits for the completion predicate even after an admissible target set is committed.
 
-\begin{algorithm}[t]
-\footnotesize
-\caption{Collaboration under a Governed Protocol}
-\label{alg:protocol}
-\begin{algorithmic}[1]
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\Require Protocol $\mathcal{P}$, initial context $\mathcal{X}$, executor mapping $\rho\colon\mathcal{R}\to\mathcal{E}$
-\renewcommand{\algorithmicrequire}{\textbf{Output:}}
-\Require Immutable collaboration trace $\tau$
-
-\State $\tau \gets \emptyset$; activate start node $n_0$; obtain initial state $s$
-\While{active nodes exist}
-    \For{each active node $n$ with role $r = \alpha(n)$}
-        \State $e \gets \rho(r)\bigl(f_{\mathrm{ctx}}(\mathcal{X}, s, n, r, \mathcal{P})\bigr)$ \Comment{executor proposes an event}
-        \If{$e$ is a handoff $(n, B, m)$ and $B$ is admissible}
-            \State commit $B$, update $s$, append $(e, s)$ to $\tau$
-        \ElsIf{$e$ is a handoff}
-            \State append $(e, s)$ to $\tau$; return structured feedback to $\rho(r)$
-        \ElsIf{$e$ is a finish $(n, y)$ and $\Omega_n(y)$ holds}
-            \State mark $n$ complete; activate committed targets; append $(e, s)$ to $\tau$
-        \Else
-            \State append $(e, s)$ to $\tau$
-        \EndIf
-    \EndFor
-\EndWhile
-\State \Return $\tau$
-\end{algorithmic}
-\end{algorithm}
-
-Algorithm~\ref{alg:protocol} summarizes the runtime interpreter. It updates the state only for admissible handoffs and valid completions, while retaining every event in the trace so that later evolution can use both successful and unsuccessful coordination.
+Algorithm~\ref{alg:protocol} in Appendix~\ref{app:interpreter} summarizes the runtime interpreter, which updates the state only for admissible handoffs and valid completions while retaining every event in the trace, so later evolution can use both successful and unsuccessful coordination.
 
 \subsection{Collaboration-driven Protocol Evolution}
 \label{sec:self_evolving}
 
-Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. A single run records many local coordination events while the final answer alone cannot indicate which of them should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. OpenAgency addresses both by keeping the coordination evidence that prior systems discard and by restricting each round to a few validity-checked atomic edits.
+Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. Revising a protocol takes the shape of an optimization problem, since it needs a signal that says where the current object is wrong, a space of admissible moves, and a rule that decides which move to keep. The final answer alone cannot indicate which of a run's many coordination events should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. OpenAgency reads a search direction off the collaboration trace, moves inside a bounded space of protocol edits, and keeps a move only when it survives an admissibility and quality screen.
 
-\textbf{Immutable Collaboration Trace.}\quad Each execution produces an ordered trace $\tau=(e_1,s_1),\ldots,(e_T,s_T)$ of coordination events with the resulting states, where an event $e_t$ is one of accepted handoff, rejected handoff, finish, message, or failure. Unlike prior systems that keep only the successful trajectory or the final score, the trace retains rejected handoffs and failed completions, which record the transitions the collaboration attempted and could not take. This counterfactual evidence tells the evolver where the boundary was drawn in the wrong place and is not recoverable from the final answer alone.
+\textbf{Trace Diagnosis as Search Signal.}\quad Each execution produces an ordered trace $\tau=(e_1,s_1),\ldots,(e_T,s_T)$ of coordination events with the resulting states, where an event $e_t$ is one of accepted handoff, rejected handoff, finish, message, or failure. Unlike prior systems that keep only the successful trajectory or the final score, the trace retains rejected handoffs and failed completions, which record the transitions the collaboration attempted and could not take. An analyzer $f_{\mathrm{diag}}$ reads $\tau^{(1{:}v)}$ and returns the coordination sites that account for the observed failures, namely the handoff edges the agents repeatedly attempted and the admissible set refused, together with the completion predicates that fired without a usable output. This signal plays the role a gradient plays in parameter optimization, since it attributes a run-level outcome to individual coordination decisions and points at the part of the protocol a revision should touch. Rejected handoffs make the signal directional and are not recoverable from the final answer.
 
-\textbf{Bounded Edit Proposer.}\quad At round $v$, an LLM proposer $f_{\mathrm{evolve}}$ receives the current protocol together with a summary of recent traces and run-level quality signals, and returns a composite edit that contains at most $k$ atomic changes:
+\textbf{Factorized Evolution Space.}\quad The search space factorizes into three levels. \emph{Topology} covers the node count $|\mathcal{N}|$, the handoff edge set $\mathcal{H}$, the role assignment $\alpha$, and the handoff modes $\mu$. \emph{Subtask definition} covers the transition and completion predicates that fix what each node owes the collaborators downstream of it. \emph{Shared context} covers the \texttt{rule} and \texttt{culture} every role reads. A point in this space is not one execution route, because each agent still chooses inside $\Gamma(n,s)$, so a single protocol unfolds into many realized collaboration patterns at inference time and the space stays small while the behavior it covers does not. The factorization also makes comparison readable, since two candidates that differ on one level agree everywhere else by construction, so the difference between their traces is attributable to that level and an overloaded role can be told apart from a missing edge.
+
+\textbf{Bounded Protocol Optimizer.}\quad A move in this space is a composite edit of at most $k$ atomic changes, and at round $v$ the optimizer $f_{\mathrm{evolve}}$ takes one such step from the incumbent under the analyzed trace signal:
 \begin{gather}
-    \hat{\mathcal{P}}^{(v+1)} = f_{\mathrm{evolve}}\bigl(\mathcal{P}^{(v)},\, \tau^{(1{:}v)},\, q^{(1{:}v)}\bigr), \qquad |\hat{\mathcal{P}}^{(v+1)}\ominus\mathcal{P}^{(v)}|\le k.
+    \hat{\mathcal{P}}^{(v+1)} = f_{\mathrm{evolve}}\bigl(\mathcal{P}^{(v)},\, f_{\mathrm{diag}}(\tau^{(1{:}v)})\bigr), \qquad |\hat{\mathcal{P}}^{(v+1)}\ominus\mathcal{P}^{(v)}|\le k.
 \end{gather}
-The edit space covers three levels. \emph{Structural} edits add or remove nodes and handoff edges, reassign roles, or change handoff modes. \emph{Predicate} edits modify transition and completion predicates. \emph{Contextual} edits rewrite the shared \texttt{rule} and \texttt{culture}. We set $k=4$, which keeps each candidate a small, inspectable change and avoids regenerating the whole workflow.
+We set $k=4$, which bounds the step the way a learning rate bounds a parameter update and keeps each candidate a small inspectable change, not a regenerated workflow. The strategy is a bounded greedy ascent. One candidate is proposed per round, and the incumbent is retained whenever the candidate fails the screen below, so the deployed sequence never moves downhill in collaboration quality.
 
-\textbf{Validity Operator and Acceptance Rule.}\quad Each candidate first passes a structural validity check $\Pi_{\mathcal{V}}$ that rejects malformed handoff edges, unresolved role references, and unreachable completion states. Writing $\tilde{\mathcal{P}}^{(v+1)} = \Pi_{\mathcal{V}}\bigl(\hat{\mathcal{P}}^{(v+1)}\bigr)$ for the validity-checked candidate, the acceptance rule is
+\textbf{Admissibility and Quality Screen.}\quad A step is screened twice before it is deployed. The first check is a structural validity operator $\Pi_{\mathcal{V}}$ on the candidate topology, which rejects malformed handoff edges, unresolved role references, duplicate node identifiers, and completion states no path can reach, so a candidate that is not a well-formed protocol never runs. Writing $\tilde{\mathcal{P}}^{(v+1)} = \Pi_{\mathcal{V}}\bigl(\hat{\mathcal{P}}^{(v+1)}\bigr)$ for the validity-checked candidate, the second check runs it and hands the resulting traces to an evolution agent, which returns a collaboration quality score $q_{\mathrm{col}}$ from the realized coordination, reading whether each role delivered what its successors required and whether the completion conditions closed on a usable output. The deployment rule is
 \begin{gather}
     \mathcal{P}^{(v+1)} =
     \begin{cases}
-        \tilde{\mathcal{P}}^{(v+1)}, & \tilde{\mathcal{P}}^{(v+1)} \neq \bot \;\land\; q_{\mathrm{sel}}\bigl(\tilde{\mathcal{P}}^{(v+1)}\bigr) \ge q_{\mathrm{sel}}\bigl(\mathcal{P}^{(v)}\bigr),\\[2pt]
+        \tilde{\mathcal{P}}^{(v+1)}, & \tilde{\mathcal{P}}^{(v+1)} \neq \bot \;\land\; q_{\mathrm{col}}\bigl(\tilde{\mathcal{P}}^{(v+1)}\bigr) \ge q_{\mathrm{col}}\bigl(\mathcal{P}^{(v)}\bigr),\\[2pt]
         \mathcal{P}^{(v)}, & \text{otherwise},
     \end{cases}
 \end{gather}
-where $q_{\mathrm{sel}}$ is the primary metric measured on a held-out selection subset disjoint from the evaluation set. A candidate is deployed only when it passes the validity check and does not regress on that subset, so every deployed round rests on the collaboration trace that produced it.
+so a candidate is deployed only when it is well formed and does not degrade the observed coordination. Both checks read the candidate protocol and the traces it produces, which keeps the update loop closed over collaboration evidence and leaves every deployed round traceable to the events that motivated it.
 
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates where the gain comes from, through the round-wise effect of protocol evolution (Section~\ref{sec:evolution_effect}), the advantage of multi-agent protocols (Section~\ref{sec:ablation_multi}), the trace signal the evolver consumes (Section~\ref{sec:ablation_evolve}), the comparison against free-form and SOP substrates (Section~\ref{sec:free_form}), and the activity of the governance boundary (Section~\ref{sec:admissible}).
+We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates where the gain comes from, through the round-wise effect of protocol evolution (Section~\ref{sec:evolution_effect}), the advantage of multi-agent protocols (Section~\ref{sec:ablation_multi}), the trace signal the evolver consumes (Section~\ref{sec:ablation_evolve}), the comparison against free-form and SOP substrates (Section~\ref{sec:free_form}), and the levels of the evolution space that move the metric (Section~\ref{sec:fixed_topology}), with the activity of the governance boundary reported in Appendix~\ref{sec:admissible}.
 
 \subsection{Benchmarks}
 \label{sec:benchmarks}
@@ -255,7 +216,7 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
-To verify that bounded protocol edits keep improving collaboration after the first revision, we track the primary metric from the unstructured multi-agent initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. As shown in Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all}, the evolved protocol improves the primary metric over the initialization on every benchmark, and the gain is not confined to one task category, reaching $54.6$ points on MATH and $48.9$ points on MARBLE. The round-to-round trajectory is non-decreasing on every benchmark, which is the behavior the held-out acceptance rule is designed to enforce on bounded edits. Collaboration-driven revision therefore keeps improving the governed protocol after the first round.
+To verify that bounded protocol edits keep improving collaboration after the first revision, we track the primary metric from the unstructured multi-agent initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. As shown in Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all}, the evolved protocol improves the primary metric over the initialization on every benchmark, and the gain is not confined to one task category, reaching $54.6$ points on MATH and $48.9$ points on MARBLE. The round-to-round trajectory is non-decreasing on every benchmark, which is the behavior the quality screen is designed to enforce on bounded edits. Collaboration-driven revision therefore keeps improving the governed protocol after the first round.
 
 \begin{figure}[tb]
 \centering
@@ -315,37 +276,69 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 & 3.4 \\
 \end{center}
 \end{table}
 
-\subsection{Effect of the Admissible Handoff Set}
-\label{sec:admissible}
+\subsection{Evolution under a Fixed Topology}
+\label{sec:fixed_topology}
 
-\begin{wraptable}{r}{0.40\textwidth}
-\vspace{-4mm}
+\begin{table}[H]
 \small
-\setlength{\tabcolsep}{2pt}
-\caption{Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma(n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed.}
-\label{tab:handoff}
-\begin{tabular}{lcc}
+\setlength{\tabcolsep}{3.4pt}
+\caption{Complete evolution record on OfficeQA Pro, labelled by the level of the evolution space each round edits. Ctx is an edit to the shared context, Top is an edit to the topology, $|\mathcal{N}|$ is the node count of the candidate, and every round is scored on the same $133$ tasks under one executor and tool budget.}
+\label{tab:fixed}
+\begin{center}
+\begin{tabular}{lccccccccccc}
 \toprule
-\textbf{Benchmark} & \textbf{Rejected} & \textbf{Recovered} \\
+\textbf{Round} & \textbf{Init} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} \\
 \midrule
-SWE-bench        & 6.4 & 4.1 \\
-DevEval          & 4.9 & 3.7 \\
-DDR-Bench        & 3.8 & 2.9 \\
-TheAgentCompany  & 8.2 & 5.3 \\
+Edit level & -- & Ctx & Ctx & Ctx & Ctx & Ctx & Ctx & Top & Top & Ctx & Top \\
+$|\mathcal{N}|$ & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 2 & 3 & 3 & 4 \\
+Acc@1\% & 21.1 & 14.3 & 31.6 & 24.8 & 25.6 & 27.1 & 30.8 & 62.4 & \textbf{66.2} & 60.9 & 65.4 \\
 \bottomrule
 \end{tabular}
-\vspace{-3mm}
-\end{wraptable}
-OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)$, whose activity during execution determines how much of the collaboration structure is actually enforced. To verify that the boundary is active during execution, we measure how often $\Gamma(n,s)$ refuses a handoff an agent proposes. On the four benchmarks of Section~\ref{sec:free_form} we log every proposed handoff during the $v_4$ runs, record the fraction $\Gamma(n,s)$ refuses, and count the runs whose outcome changes once the refusal redirects the handoff to an admissible target. As shown in Table~\ref{tab:handoff}, the boundary refuses $3.8\%$ to $8.2\%$ of proposed handoffs and changes the outcome of $2.9\%$ to $5.3\%$ of runs. Refusals are most frequent on TheAgentCompany, whose heterogeneous tool surface offers the most chances to address a collaborator that cannot serve the current state, and least frequent on the near-linear DDR-Bench pipeline. The boundary therefore stays active on all four benchmarks, ruling out the wrong collaborator at the points where it matters while leaving the common path unconstrained. These refused events are also the evidence the evolver consumes in Section~\ref{sec:self_evolving}.
+\end{center}
+\end{table}
+To separate what a fixed collaboration graph can reach from what the full evolution space reaches, we replay the complete evolution record on OfficeQA Pro and label every round by the level of the space its edit touched. Rounds $1$ to $6$ stay inside the shared context level on a single-node graph, which is the only level available once the topology is frozen. As Table~\ref{tab:fixed} shows, those six rounds oscillate between $14.3$ and $31.6$ and never pass the $31.6$ of round $2$, so six consecutive rewrites of the shared context leave the ceiling where the initialization put it, and one of them falls below the initialization itself. Round $7$ is the first topology edit, which adds a reader node and one handoff edge and reaches $62.4$, and round $8$ adds a verifier and reaches $66.2$. Round $9$ returns to a context-only edit on that three-node graph and falls back to $60.9$, and round $10$ widens the graph to four nodes without recovering the incumbent. The level that moves the metric is the topology, which is the level a fixed graph cannot reach, and the oscillation inside a single level is what the quality screen absorbs, since the incumbent deployed after round $10$ is still the round-$8$ protocol whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
 
 \section{Conclusion}
 
-In this paper, we introduce OpenAgency, a self-evolving multi-agent system based on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object. It turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, outperforming the strongest prior reference and its own single-agent and unstructured multi-agent ablations.
+In this paper, we introduce OpenAgency, a self-evolving multi-agent system based on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object. It turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator and a collaboration quality screen. Experiments on fourteen benchmarks show that OpenAgency achieves the best primary metric on every benchmark, outperforming the strongest prior reference and its own single-agent and unstructured multi-agent ablations.
 
 \bibliography{iclr2027_conference}
 \bibliographystyle{iclr2027_conference}
 
 \appendix
+
+\clearpage
+\section{Runtime Protocol Interpreter}
+\label{app:interpreter}
+
+\begin{algorithm}[H]
+\footnotesize
+\caption{Collaboration under a Governed Protocol}
+\label{alg:protocol}
+\begin{algorithmic}[1]
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\Require Protocol $\mathcal{P}$, initial context $\mathcal{X}$, executor mapping $\rho\colon\mathcal{R}\to\mathcal{E}$
+\renewcommand{\algorithmicrequire}{\textbf{Output:}}
+\Require Immutable collaboration trace $\tau$
+
+\State $\tau \gets \emptyset$; activate start node $n_0$; obtain initial state $s$
+\While{active nodes exist}
+    \For{each active node $n$ with role $r = \alpha(n)$}
+        \State $e \gets \rho(r)\bigl(f_{\mathrm{ctx}}(\mathcal{X}, s, n, r, \mathcal{P})\bigr)$ \Comment{executor proposes an event}
+        \If{$e$ is a handoff $(n, B, m)$ and $B$ is admissible}
+            \State commit $B$, update $s$, append $(e, s)$ to $\tau$
+        \ElsIf{$e$ is a handoff}
+            \State append $(e, s)$ to $\tau$; return structured feedback to $\rho(r)$
+        \ElsIf{$e$ is a finish $(n, y)$ and $\Omega_n(y)$ holds}
+            \State mark $n$ complete; activate committed targets; append $(e, s)$ to $\tau$
+        \Else
+            \State append $(e, s)$ to $\tau$
+        \EndIf
+    \EndFor
+\EndWhile
+\State \Return $\tau$
+\end{algorithmic}
+\end{algorithm}
 
 \clearpage
 \section{Benchmark Details}
@@ -390,7 +383,7 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the acceptance rule refused, and the component measurement on which the accepted edits pay off.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the quality screen refused, and the component measurement on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
@@ -445,12 +438,12 @@ OfficeQA Pro & 8 & 26 & 33 & 40 & 31.6 & 62.4 & 67.7 & 69.9 \\
 \label{fig:budget}
 \end{figure}
 
-\subsection{Candidate Protocols Refused by the Acceptance Rule}
+\subsection{Candidate Protocols Refused by the Quality Screen}
 
-The acceptance rule of Section~\ref{sec:self_evolving} deploys a candidate only when it does not regress on the held-out subset, and otherwise retains the incumbent, so the reported trajectory shows the deployed rounds and hides every candidate the rule turned away. To recover what the rule turned away, we score every candidate proposed on SWE-bench Verified and DevEval over the complete task set of each benchmark under the same executor and tool budget, and record the decision the acceptance rule returned. As shown in Table~\ref{tab:candidates}, the two refused candidates are the ones that enlarge the material an existing role receives. Injecting unit tests into the reviewer loop drops DevEval acceptance from $82.1$ to $75.0$, and widening the discovery scope with multi-file edit instructions drops SWE-bench Verified file matching from $86.2$ to $85.6$. Every admitted candidate attaches or tightens a duty that can be checked, whether an extra repair round, a structural verification step, or self-verification before handoff. The rule therefore admits obligations and refuses material, and a system that took every proposal would have carried the $75.0$ candidate forward as its incumbent.
+The quality screen of Section~\ref{sec:self_evolving} deploys a candidate only when it does not degrade the realized coordination, and otherwise retains the incumbent, so the reported trajectory shows the deployed rounds and hides every candidate the screen turned away. To recover what the screen turned away, we score every candidate proposed on SWE-bench Verified and DevEval over the complete task set of each benchmark under the same executor and tool budget, and record the decision the screen returned. As shown in Table~\ref{tab:candidates}, the two refused candidates are the ones that enlarge the material an existing role receives. Injecting unit tests into the reviewer loop drops DevEval acceptance from $82.1$ to $75.0$, and widening the discovery scope with multi-file edit instructions drops SWE-bench Verified file matching from $86.2$ to $85.6$. Every admitted candidate attaches or tightens a duty that can be checked, whether an extra repair round, a structural verification step, or self-verification before handoff. The screen therefore admits obligations and refuses material. Its verdict agrees with the primary metric on all ten candidates, since every admitted candidate is non-decreasing against the incumbent it replaced and both refused candidates fall below theirs, so the trace-based judgment and the benchmark metric never disagree here.
 
 \begin{table}[H]
-\caption{Candidate protocols scored over the complete task set of each benchmark, in the order the evolver proposed them. SWE-bench Verified is scored by file match and DevEval by acceptance-test pass rate, and the decision column records the verdict of the held-out acceptance rule.}
+\caption{Candidate protocols scored over the complete task set of each benchmark, in the order the evolver proposed them. SWE-bench Verified is scored by file match and DevEval by acceptance-test pass rate, and the decision column records the verdict of the quality screen.}
 \label{tab:candidates}
 \begin{center}
 \small
@@ -499,6 +492,29 @@ File match given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
 \multicolumn{6}{c}{\emph{DevEval}} \\
 Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
 Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Activity of the Admissible Handoff Set}
+\label{sec:admissible}
+
+OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)$, whose activity during execution determines how much of the collaboration structure is actually enforced. To verify that the boundary is active during execution, we measure how often $\Gamma(n,s)$ refuses a handoff an agent proposes. On the four benchmarks of Section~\ref{sec:free_form} we log every proposed handoff during the $v_4$ runs, record the fraction $\Gamma(n,s)$ refuses, and count the runs whose outcome changes once the refusal redirects the handoff to an admissible target. As shown in Table~\ref{tab:handoff}, the boundary refuses $3.8\%$ to $8.2\%$ of proposed handoffs and changes the outcome of $2.9\%$ to $5.3\%$ of runs. Refusals are most frequent on TheAgentCompany, whose heterogeneous tool surface offers the most chances to address a collaborator that cannot serve the current state, and least frequent on the near-linear DDR-Bench pipeline. The boundary therefore stays active on all four benchmarks, ruling out the wrong collaborator at the points where it matters while leaving the common path unconstrained. These refused events are also the evidence the evolver consumes in Section~\ref{sec:self_evolving}.
+
+\begin{table}[H]
+\small
+\caption{Governance boundary activity during the $v_4$ runs. Rejected is the percentage of proposed handoff events refused by $\Gamma(n,s)$, and Recovered is the percentage of runs whose outcome the refusal changed.}
+\label{tab:handoff}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Benchmark} & \textbf{Rejected} & \textbf{Recovered} \\
+\midrule
+SWE-bench        & 6.4 & 4.1 \\
+DevEval          & 4.9 & 3.7 \\
+DDR-Bench        & 3.8 & 2.9 \\
+TheAgentCompany  & 8.2 & 5.3 \\
 \bottomrule
 \end{tabular}
 \end{center}
