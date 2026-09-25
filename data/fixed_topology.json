@@ -5,7 +5,7 @@
   "executor": "gpt-5.5",
   "init": 21.1,
   "fixed": {
-    "label": "Fixed graph (division only)",
+    "label": "Previous collaboration protocol",
     "source": [
       "multi_v1",
       "multi_v2",

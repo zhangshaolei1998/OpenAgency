@@ -33,7 +33,7 @@ gy = [init] + D["full"]["scores"]
 
 ceiling = D["fixed"]["ceiling"]
 ax.axhline(ceiling, color=C_FIX, linestyle=":", linewidth=0.9, zorder=1)
-ax.text(3.35, ceiling + 1.6, f"fixed-graph ceiling {ceiling}", fontsize=7,
+ax.text(3.35, ceiling + 1.6, f"previous-protocol ceiling {ceiling}", fontsize=7,
         color=C_FIX, va="bottom", ha="center")
 
 ax.plot(fx, fy, linestyle="--", color=C_FIX, linewidth=1.4, zorder=2,
