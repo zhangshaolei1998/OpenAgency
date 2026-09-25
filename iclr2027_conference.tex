@@ -58,7 +58,7 @@ Existing collaboration representations hold only one of these two properties. \e
 In this paper, we aim to make the collaboration pattern itself evolvable by holding flexibility and controllability in one representation. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built on \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents a protocol as a tuple $\mathcal{P}=(\mathcal{R},\mathcal{N},\alpha,\mathcal{H},\mu,\Omega,\mathcal{C})$ whose components fix the roles and the admissible handoffs between them. The admissible handoff set $\Gamma(n,s)$ carries both properties in a single object, since it rules out inadmissible transitions while the choice inside it is left to the agent at runtime. Because every coordination decision is expressed in this object and its legality is decidable, the collaboration pattern becomes revisable between runs. Building on this, OpenAgency records accepted handoffs, rejected handoffs, completion events, and failures in an immutable trace, and a collaboration-driven evolver turns this evidence into at most $k$ atomic edits over the protocol. A validity operator $\Pi_{\mathcal{V}}$ filters malformed candidates and an acceptance rule on a held-out subset deploys only revisions that do not regress, so every round stays admissible and traceable to the events that motivated it.
 
 Experiments across fourteen benchmarks covering general question answering, long-horizon tasks, and production-oriented tasks show that OpenAgency achieves the best primary metric on every benchmark, lifting the unstructured multi-agent initialization by up to $54.6$ absolute points (Table~\ref{tab:main}). To the best of our knowledge, OpenAgency is the first multi-agent system in which the collaboration pattern is an evolvable object, updated from immutable execution traces without regenerating the whole workflow. We summarize our contributions as follows.
-\begin{itemize}[leftmargin=1em, itemsep=-1ex, topsep=0ex]
+\begin{itemize}[leftmargin=1em, itemsep=0ex, topsep=0ex]
     \item \textbf{Evolvable Collaboration Protocol:} We make the collaboration pattern itself a governed and evolvable object, because the admissible handoff set is checkable before a transition is taken and revisable after the run that produced it.
     \item \textbf{Collaboration-driven Evolution:} We propose an evolver that learns from the coordination evidence prior systems discard, namely rejected handoffs and failed completions, and converts it into at most $k$ atomic edits over protocol structure, predicates, and shared context. A validity operator and a held-out acceptance rule keep every deployed round admissible and free of regression.
     \item \textbf{Strong Performance:} OpenAgency reaches the best primary metric on all fourteen benchmarks (Section~\ref{sec:experiments}), and the same advantage holds against free-form and SOP collaboration substrates under an identical executor. Ablations further verify that both event content and temporal order are necessary for protocol evolution.
@@ -206,7 +206,7 @@ Governed collaboration and its evolution have to be separated from the executor'
 \begin{center}
 \small
 \setlength{\tabcolsep}{5pt}
-\begin{tabular}{llcccc}
+\begin{tabular}{llcccc} \toprule
 \textbf{Benchmark} & \textbf{Metric} & \textbf{Prior Ref.} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{OpenAgency} \\
 \midrule
 \multicolumn{6}{c}{\emph{General QA Tasks}} \\
