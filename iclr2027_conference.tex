@@ -193,7 +193,7 @@ Governed collaboration and its evolution have to be separated from the executor'
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{OpenAgency and its ablations, listed against each benchmark's prior reference, a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric.}
+\caption{OpenAgency and its ablations, listed against each benchmark's prior reference, a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
 \label{tab:main}
 \begin{center}
 \small
@@ -202,7 +202,7 @@ Governed collaboration and its evolution have to be separated from the executor'
 \toprule
 \textbf{Benchmark} & \textbf{Metric} & \textbf{Prior Ref.} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{OpenAgency} \\
 \midrule
-\multicolumn{6}{c}{\emph{General QA Tasks}} \\
+\multicolumn{6}{c}{\emph{General Question Answering Tasks}} \\
 HumanEval & pass@1 & 92.2 & 87.5 & 96.9 & \textbf{100.0} \\
 MBPP & pass@1 & 69.3 & 73.5 & 73.5 & \textbf{80.9} \\
 GSM8K & EM & 97.6 & 97.2 & 97.4 & \textbf{98.0} \\
@@ -416,7 +416,7 @@ MATH & 12 & 14 & 15 & 16 & 87.0 & 87.0 & 87.0 & 87.0 \\
 HotpotQA & 10 & 12 & 13 & 14 & 80.7 & 81.9 & 82.3 & 82.3 \\
 SWE-bench Verified & 32 & 46 & 54 & 58 & 78.8 & 85.6 & 85.8 & 86.2 \\
 DeepPlanning & 22 & 27 & 31 & 34 & 44.6 & 44.6 & 54.2 & 54.2 \\
-HLE & 18 & 20 & 22 & 26 & 33.7 & 35.8 & 35.9 & 37.7 \\
+HLE (text-only) & 18 & 20 & 22 & 26 & 33.7 & 35.8 & 35.9 & 37.7 \\
 DevEval & 24 & 30 & 34 & 38 & 82.1 & 83.9 & 90.6 & 96.9 \\
 DDR-Bench & 34 & 48 & 56 & 68 & 44.0 & 58.9 & 66.5 & 76.0 \\
 TheAgentCompany & 46 & 55 & 62 & 66 & 46.3 & 48.8 & 51.2 & 53.7 \\
@@ -508,7 +508,7 @@ OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)
 \toprule
 \textbf{Benchmark} & \textbf{Rejected} & \textbf{Recovered} \\
 \midrule
-SWE-bench        & 6.4 & 4.1 \\
+SWE-bench Verified & 6.4 & 4.1 \\
 DevEval          & 4.9 & 3.7 \\
 DDR-Bench        & 3.8 & 2.9 \\
 TheAgentCompany  & 8.2 & 5.3 \\
@@ -531,7 +531,7 @@ This appendix reports the per-benchmark results summarized in Table~\ref{tab:mai
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lrrrrrr}
 \toprule
-\textbf{Benchmark} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{v1} & \textbf{v2} & \textbf{v3} & \textbf{v4} \\
+\textbf{Benchmark} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
 \midrule
 HumanEval & 87.5 & 96.9 & 98.4 & 100.0 & 100.0 & \textbf{100.0} \\
 MBPP & 73.5 & 73.5 & 74.3 & 80.5 & 80.5 & \textbf{80.9} \\
@@ -540,7 +540,7 @@ MATH & 12.9 & 32.4 & 87.0 & 87.0 & 87.0 & \textbf{87.0} \\
 HotpotQA & 75.9 & 64.0 & 80.7 & 81.9 & 82.3 & \textbf{82.3} \\
 SWE-bench Verified & 75.6 & 67.0 & 78.8 & 85.6 & 85.8 & \textbf{86.2} \\
 DeepPlanning & 45.0 & 33.8 & 44.6 & 44.6 & 54.2 & \textbf{54.2} \\
-HLE & 18.4 & 5.6 & 33.7 & 35.8 & 35.9 & \textbf{37.7} \\
+HLE (text-only) & 18.4 & 5.6 & 33.7 & 35.8 & 35.9 & \textbf{37.7} \\
 DevEval & 62.5 & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 DDR-Bench & 42.8 & 44.0 & 44.0 & 58.9 & 66.5 & \textbf{76.0} \\
 TheAgentCompany & 46.3 & 41.5 & 46.3 & 48.8 & 51.2 & \textbf{53.7} \\
