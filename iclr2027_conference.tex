@@ -168,7 +168,7 @@ so a candidate is deployed only when it is well formed and does not degrade the 
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates where the gain comes from, through the round-wise effect of protocol evolution (Section~\ref{sec:evolution_effect}), the advantage of multi-agent protocols (Section~\ref{sec:ablation_multi}), the trace signal the evolver consumes (Section~\ref{sec:ablation_evolve}), the comparison against free-form and SOP substrates (Section~\ref{sec:free_form}), and the levels of the evolution space that move the metric (Section~\ref{sec:fixed_topology}), with the activity of the governance boundary reported in Appendix~\ref{sec:admissible}.
+We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates where the gain comes from, through the round-wise effect of protocol evolution (Section~\ref{sec:evolution_effect}), the advantage of multi-agent protocols (Section~\ref{sec:ablation_multi}), the levels of the evolving space that carry the gain (Section~\ref{sec:ablation_space}), the comparison against free-form and SOP substrates (Section~\ref{sec:free_form}), and what a frozen collaboration graph does round by round (Section~\ref{sec:fixed_topology}), with the activity of the governance boundary reported in Appendix~\ref{sec:admissible}.
 
 \subsection{Benchmarks}
 \label{sec:benchmarks}
@@ -272,19 +272,19 @@ OpenAgency attributes its gain to governed collaboration, though a multi-agent s
 \label{fig:svm}
 \end{figure}
 
-\subsection{Ablation of the Trace Signal}
-\label{sec:ablation_evolve}
+\subsection{Ablation of the Evolving Space}
+\label{sec:ablation_space}
 
 \begin{wrapfigure}{r}{0.46\textwidth}
 \vspace{-4mm}
 \centering
-\includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
-\vspace{-6mm}
-\caption{Ablating the trace signal fed to the evolver against a scalar-label variant and a temporally-shuffled variant. The comparison identifies which part of the trace evolution requires.}
-\label{fig:evo_ablation}
+\includegraphics[width=\linewidth]{figures/evolution_space.pdf}
+\vspace{-5mm}
+\caption{Restricting the evolving space to the functional division against the full space. The restricted arm freezes $|\mathcal{N}|$ and $(\mathcal{H},\mu)$ at the initialization. Both OfficeQA Pro arms are scored on the same $133$ tasks.}
+\label{fig:evo_space}
 \vspace{-3mm}
 \end{wrapfigure}
-To identify which part of the trace the evolver actually consumes, we compare the default \emph{Full} evolver against a \emph{Label only} variant that replaces events with a scalar success/failure label and a \emph{Shuffled trace} variant that keeps the events but breaks their temporal order. As shown in Figure~\ref{fig:evo_ablation}, both variants lower the final metric on every benchmark in the comparison, with \emph{Shuffled trace} producing the larger drop. Event content locates the coordination step that failed and temporal order records how the failure developed, and neither can be recovered from the other, so the evolver needs a trace that preserves both.
+To identify which levels of the evolving space carry the gain, we restrict the optimizer to the \emph{Functional division} level and compare the restricted arm against the unrestricted one on four multi-agent benchmarks. The restricted arm holds the node count $|\mathcal{N}|$ and the handoff structure $(\mathcal{H},\mu)$ at whatever the initialization produced and admits only edits to the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$, which is the space a hand-designed multi-agent system still leaves open after deployment. On DevEval, DDR-Bench, and TheAgentCompany the deployed chain never edited $|\mathcal{N}|$ or $\mathcal{H}$, so the restricted arm is that chain itself, while on OfficeQA Pro the two arms separate. Figure~\ref{fig:evo_space} shows the division level carrying the whole gain on the first three benchmarks, lifting DevEval from $82.1$ to $96.9$ and DDR-Bench from $44.0$ to $76.0$ with the graph untouched, and failing on the fourth, where six division rewrites stall at $31.6$ while one added reader node and one added verifier node reach $66.2$. The level that pays is decided by the task, so fixing $|\mathcal{N}|$ and $\mathcal{H}$ at design time commits the search before any trace has been read. Holding all three levels inside one governed protocol lets the optimizer place its edit budget on the level the trace reports as saturated.
 
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
@@ -322,11 +322,9 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The fixed arm edits only the functional division, while the full arm may also change the number of agents and the topology.}
 \label{fig:fixed}
 \end{figure}
-To measure how much the collaboration protocol governs what evolution can reach, we split the complete evolution record on OfficeQA Pro into two arms that share one initialization. The fixed arm holds the graph at the single node the initialization produced, which leaves the functional division as its only editable level and reproduces how a standard multi-agent system tunes a prompt over a hand-designed structure, while the full arm is the governed protocol, whose optimizer may also change the number of agents and the collaboration topology. Every plotted point was proposed and executed, and no fixed-arm round became the incumbent.
+To measure what a frozen collaboration graph costs round by round, we plot the complete OfficeQA Pro record behind Section~\ref{sec:ablation_space} as two arms that share one initialization, with the fixed arm reproducing how a standard multi-agent system tunes a prompt over a hand-designed structure. Every plotted point was proposed and executed, and no fixed-arm round became the incumbent.
 
 Figure~\ref{fig:fixed} shows six functional-division rewrites moving the metric between $14.3$ and $30.8$ without passing the $31.6$ of round $2$. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm oscillates as well, because its third round edits the functional division and falls to $60.9$, which makes oscillation a property of the search itself. A frozen graph keeps the search inside a level the trace already reports as saturated, while one admissible structural edit clears the fixed ceiling by more than thirty points. The deployed incumbent is the round-$2$ protocol of the full arm, whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
-
-To check whether the structural level is the one that always pays, we read the same record on two further benchmarks. On DDR-Bench and DevEval the optimizer kept the two-node graph it started from and carried the metric from $44.0$ to $76.0$ and from $82.1$ to $96.9$ through functional-division edits alone, while on OfficeQA Pro no amount of functional-division rewriting substituted for a structural edit. Fixing the graph at design time therefore wagers that the structural level never carries the gain, a wager that is idle on these two benchmarks and costs more than thirty points on the third, while a governed protocol makes that choice at run time from the level the trace reports as saturated.
 
 \section{Conclusion}
 
@@ -380,7 +378,7 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume, the candidate edits the quality screen refused, and the component measurement on which the accepted edits pay off.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} reports the compute budget these revisions consume and the component measurement on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
@@ -434,38 +432,6 @@ OfficeQA Pro & 8 & 26 & 33 & 40 & 31.6 & 62.4 & 67.7 & 69.9 \\
 \caption{Primary metric against average tokens per instance across the four evolution rounds, with markers running from $v_1$ to $v_4$ in increasing darkness. The view separates the accuracy gain from the compute cost of new roles and retry edges.}
 \label{fig:budget}
 \end{figure}
-
-\subsection{Candidate Protocols Refused by the Quality Screen}
-
-The quality screen of Section~\ref{sec:self_evolving} deploys a candidate only when it does not degrade the realized coordination, and otherwise retains the incumbent, so the reported trajectory shows the deployed rounds and hides every candidate the screen turned away. To recover what the screen turned away, we score every candidate proposed on SWE-bench Verified and DevEval over the complete task set of each benchmark under the same executor and tool budget, and record the decision the screen returned. As shown in Table~\ref{tab:candidates}, the two refused candidates are the ones that enlarge the material an existing role receives. Injecting unit tests into the reviewer loop drops DevEval acceptance from $82.1$ to $75.0$, and widening the discovery scope with multi-file edit instructions drops SWE-bench Verified file matching from $86.2$ to $85.6$. Every admitted candidate attaches or tightens a duty that can be checked, whether an extra repair round, a structural verification step, or self-verification before handoff. The screen therefore admits obligations and refuses material. Its verdict agrees with the primary metric on all ten candidates, since every admitted candidate is non-decreasing against the incumbent it replaced and both refused candidates fall below theirs, so the trace-based judgment and the benchmark metric never disagree here.
-
-\begin{table}[H]
-\caption{Candidate protocols scored over the complete task set of each benchmark, in the order the evolver proposed them. SWE-bench Verified is scored by file match and DevEval by acceptance-test pass rate, and the decision column records the verdict of the quality screen.}
-\label{tab:candidates}
-\begin{center}
-\small
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Candidate edit} & \textbf{Metric (\%)} & \textbf{Decision} \\
-\midrule
-\multicolumn{3}{c}{\emph{SWE-bench Verified, file match}} \\
-Three-level context with five retries & 78.8 & Accepted as $v_1$ \\
-Larger turn and timeout allowance & 85.6 & Accepted as $v_2$ \\
-Test-path enrichment with eight retries & 85.8 & Accepted as $v_3$ \\
-Test imports mapped to candidate files & 86.2 & Accepted as $v_4$ \\
-Wider discovery with multi-file edit instructions & 85.6 & Refused \\
-\midrule
-\multicolumn{3}{c}{\emph{DevEval, acceptance test}} \\
-Reviewer with two repair rounds & 82.1 & Accepted as $v_1$ \\
-Unit tests injected into the reviewer loop & 75.0 & Refused \\
-Five repair rounds with an error-pattern checklist & 83.9 & Accepted as $v_2$ \\
-Test-driven coder with structural verification & 90.6 & Accepted as $v_3$ \\
-Self-verification before handoff with root-cause grouping & 96.9 & Accepted as $v_4$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
 
 \subsection{Component Measurements behind the Gain}
 

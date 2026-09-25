@@ -1,0 +1,17 @@
+{
+  "note": "Ablation over the factorized evolving space of Section 3.3. Each arm restricts which levels the optimizer may edit. 'division_only' freezes |N| and H at the initialization and edits only the role assignment, completion predicates, and shared rule/culture. 'full' is the unrestricted space. Every value is read off an executed deployed chain, not re-simulated. On DevEval, DDR-Bench, and TheAgentCompany the deployed chain never edited |N| or H, so the division-only arm is that same chain. On OfficeQA Pro the two arms separate, and both are scored on the same 133 tasks as data/fixed_topology.json.",
+  "benchmarks": ["DevEval", "DDR-Bench", "TheAgent\nCompany", "OfficeQA\nPro"],
+  "metrics": ["AT", "Overall", "Score", "Acc@1%"],
+  "arms": {
+    "init": [82.1, 44.0, 41.5, 21.1],
+    "division_only": [96.9, 76.0, 53.7, 31.6],
+    "full": [96.9, 76.0, 53.7, 66.2]
+  },
+  "graph_edited": [false, false, false, true],
+  "source": {
+    "DevEval": "dev2_deveval_gpt55_multi{,_v2..v5}: all 2 nodes implement->review, modes ONE/ALL",
+    "DDR-Bench": "dev2_ddr_gpt55_multi{,_v1..v5}: all 2 nodes research->synthesize, modes ONE/ALL",
+    "TheAgentCompany": "dev2_tac_gpt55_multi{,_v1..v5}: all 3 nodes plan->execute->review, modes ONE/ONE/ALL",
+    "OfficeQA Pro": "data/fixed_topology.json; fixed arm multi_v1..v6 (1 node), full arm multi_v7..v10 (2,3,3,4 nodes)"
+  }
+}
