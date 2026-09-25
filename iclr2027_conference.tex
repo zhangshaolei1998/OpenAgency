@@ -710,7 +710,7 @@ Multi-agent (init)                                    & 5.6 \\
 \end{table}
 
 \begin{table}[t]
-\caption{Performance on DevEval \citep{li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate.}
+\caption{Performance on DevEval \citep{li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation.}
 \label{tab:deveval}
 \begin{center}
 \small
@@ -719,8 +719,7 @@ Multi-agent (init)                                    & 5.6 \\
 \toprule
 \textbf{Method} & \textbf{UT} & \textbf{AT} \\
 \midrule
-Prior Ref.               & 90.4 & 62.5 \\
-OpenAgency (single-agent) & 90.4 & 62.5 \\
+Direct LLM (Prior Ref.)  & 90.4 & 62.5 \\
 Multi-agent (init) & 98.1 & 82.1 \\
 \rowcolor{gray!12}
 \textbf{OpenAgency} & \textbf{99.1} & \textbf{96.9} \\
@@ -739,7 +738,7 @@ Multi-agent (init) & 98.1 & 82.1 \\
 \toprule
 \textbf{Model / System} & \textbf{Overall} & \textbf{Message-Wise} & \textbf{Trajectory-Wise} \\
 \midrule
-\multicolumn{4}{l}{\emph{Proprietary models}} \\
+\multicolumn{4}{c}{\emph{Proprietary models}} \\
 Gemini-2.5-Pro & 20.1 & 24.5 & 15.6 \\
 Gemini-3-Flash & 33.0 & 44.8 & 21.2 \\
 GPT-5.1 & 40.7 & 37.1 & 44.3 \\
@@ -747,7 +746,7 @@ GPT-5-mini & 42.0 & 46.8 & 37.1 \\
 GPT-5.2 & 43.0 & 44.9 & 41.1 \\
 Claude-Sonnet-4.5 (Prior Ref.) & 69.1 & 77.6 & 60.6 \\
 \midrule
-\multicolumn{4}{l}{\emph{Open-source models}} \\
+\multicolumn{4}{c}{\emph{Open-source models}} \\
 Llama-3.3-70B & 6.5 & 9.9 & 3.0 \\
 Qwen2.5-72B & 20.3 & 27.1 & 13.4 \\
 Qwen3-30B-A3B & 28.4 & 42.4 & 14.4 \\
@@ -856,7 +855,6 @@ GPT-5.4                    & Full PDF                & 36.1 \\
 Gemini-3.1-Pro             & Full PDF                & 42.9 \\
 GPT-5.1                    & Full PDF                & 45.1 \\
 Claude-Opus-4.5            & Full PDF                & 46.6 \\
-Claude-Opus-4.6            & Full PDF                & 48.1 \\
 Claude-Opus-4.6 (Prior Ref.) & ai\_parse\_document     & 57.1 \\
 \midrule
 Direct LLM                                               & Full PDF                & 26.3 \\
