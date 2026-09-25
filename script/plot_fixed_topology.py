@@ -33,7 +33,7 @@ gy = [init] + D["full"]["scores"]
 
 ceiling = D["fixed"]["ceiling"]
 ax.axhline(ceiling, color=C_FIX, linestyle=":", linewidth=0.9, zorder=1)
-ax.text(3.35, ceiling + 1.6, f"fixed-topology ceiling {ceiling}", fontsize=7,
+ax.text(3.35, ceiling + 1.6, f"fixed-graph ceiling {ceiling}", fontsize=7,
         color=C_FIX, va="bottom", ha="center")
 
 ax.plot(fx, fy, linestyle="--", color=C_FIX, linewidth=1.4, zorder=2,
@@ -54,7 +54,7 @@ for x, y in zip(D["fixed"]["rounds"], D["fixed"]["scores"]):
     ax.annotate(f"{y}", xy=(x, y), xytext=(0, -12), textcoords="offset points",
                 fontsize=7, color=C_FIX, ha="center")
 
-notes = ["+reader (2)", "+verifier (3)", "context edit (3)", "+solver (4)"]
+notes = ["+reader (2)", "+verifier (3)", "division edit (3)", "+solver (4)"]
 for x, y, note in zip(D["full"]["rounds"], D["full"]["scores"], notes):
     ax.annotate(f"{y}", xy=(x, y), xytext=(0, 8), textcoords="offset points",
                 fontsize=7.5, color=C_FULL, ha="center", weight="bold")

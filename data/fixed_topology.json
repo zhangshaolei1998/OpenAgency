@@ -5,7 +5,7 @@
   "executor": "gpt-5.5",
   "init": 21.1,
   "fixed": {
-    "label": "Fixed topology",
+    "label": "Fixed graph (division only)",
     "source": [
       "multi_v1",
       "multi_v2",
@@ -67,10 +67,10 @@
       4
     ],
     "edit_level": [
-      "Top",
-      "Top",
-      "Ctx",
-      "Top"
+      "Structural",
+      "Structural",
+      "Contextual",
+      "Structural"
     ]
   }
 }

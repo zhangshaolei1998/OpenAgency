@@ -65,12 +65,12 @@ Experiments across fourteen benchmarks covering general question answering, long
 
 \textbf{Agent Self-evolution.}\quad Agent systems can improve through reasoning feedback, memory, prompt optimization, or program search. Reflexion and Self-Refine use rollout feedback to revise subsequent reasoning~\citep{shinn2023reflexion,madaan2023selfrefine}, while AgentGym and experiential co-learning accumulate experience across interactions~\citep{xi2024agentgym,qian2023experientialcolearning}. DSPy, TextGrad, and OPRO optimize language-model programs or prompt strings~\citep{khattab2024dspy,yuksekgonul2024textgrad,yang2024large}. More recently, AFlow, automated agent design, and MaaS search over workflow graphs or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}, while evolving orchestration trains a central controller to reorder agent activations~\citep{dang2025puppeteer}. These methods show that collaboration structure can be optimized, but what they return is an executable topology or a controller policy, neither of which exposes a boundary that a later round can check a candidate revision against.
 
-In this work, we study which representation of collaboration can support evolution at all. OpenAgency defines a governed protocol that fixes admissible handoffs and completion conditions without prescribing one route through the graph. Agents therefore keep local choices during execution while every decision remains checkable, and this pairing is what makes the protocol revisable from immutable traces across runs. The difference from workflow search and orchestrator learning lies in the object being optimized. OpenAgency evolves the governance boundary that admits runtime decisions, while those methods optimize the executed route or the policy that produces it.
+In this work, we study which representation of collaboration can support evolution at all. OpenAgency defines a governed protocol that fixes admissible handoffs and completion conditions without prescribing one route, so agents keep local choices during execution while every decision remains checkable, which is what makes the protocol revisable from immutable traces across runs. OpenAgency therefore evolves the governance boundary that admits runtime decisions, while workflow search and orchestrator learning optimize the executed route or the policy that produces it.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.99\linewidth]{model.pdf}
-\caption{Overview of OpenAgency.}
+\includegraphics[width=0.99\linewidth]{figures/overview.pdf}
+\caption{Overview of OpenAgency. (a) Three layers keep the collaboration protocol independent of the backend that realizes each role. (b) Under one governed protocol the agents choose their own handoffs, so different tasks instantiate different collaborations. (c) The evolving agent reads the collected trajectories and returns the next protocol, moving inside the evolving space under one of three edit strategies.}
 \label{fig:intro}
 \end{figure}
 
@@ -78,7 +78,7 @@ In this work, we study which representation of collaboration can support evoluti
 \section{OpenAgency}
 \label{sec:method}
 
-OpenAgency treats collaboration as a first-class object separated from the executors that realize each role. It combines a layered architecture (Section~\ref{sec:architecture}), a governed protocol that makes coordination inspectable (Section~\ref{sec:protocol}), and bounded protocol evolution driven by execution traces (Section~\ref{sec:self_evolving}). Figure~\ref{fig:intro} illustrates the overall pipeline.
+OpenAgency treats collaboration as a first-class object separated from the executors that realize each role. It combines a layered architecture (Section~\ref{sec:architecture}), a governed protocol that makes coordination inspectable (Section~\ref{sec:protocol}), and bounded protocol evolution driven by execution traces (Section~\ref{sec:self_evolving}), as Figure~\ref{fig:intro} illustrates.
 
 
 
@@ -87,20 +87,18 @@ OpenAgency treats collaboration as a first-class object separated from the execu
 
 To apply one collaboration protocol across applications with heterogeneous executors, OpenAgency separates multi-agent collaboration into three layers that keep the protocol independent of backend-specific prompts and actions.
 
-\textbf{Context Layer.}\quad The context layer maintains a shared collaboration space, such as a web console or an enterprise chat channel, where instructions, agent messages, human feedback, and coordination events appear on a common timeline.
+\textbf{Channel Layer.}\quad The channel layer exposes the collaboration to its users through an enterprise chat workspace, a web console, or a command line, and keeps instructions, agent messages, human feedback, and coordination events on one shared timeline.
 
 \textbf{Governance Layer.}\quad The governance layer hosts the collaboration protocol and validates each proposed handoff against the current protocol state. It records both accepted and rejected events in an immutable trace that supplies the evidence for later protocol evolution.
 
 \textbf{Execution Layer.}\quad The execution layer binds each role to a concrete executor. An executor can be an LLM agent, a coding harness, a domain-specific tool, or a human reviewer, and it sits below the governance layer, so the protocol constrains how roles hand off whichever backend realizes a role.
 
-We formalize a running OpenAgency instance at step $t$ as $\mathcal{I}^{(t)} = (\mathcal{X}^{(t)}, \mathcal{P}, \mathcal{E}, s^{(t)})$, where $\mathcal{X}^{(t)}$ is the shared context, $\mathcal{P}$ is the governed protocol, $\mathcal{E}$ is the set of available executors, and $s^{(t)}$ is the current protocol state. The map $\rho: \mathcal{R}\rightarrow\mathcal{E}$ binds each role in the role set $\mathcal{R}$ to an executor and is separate from the protocol logic.
-
-The governance layer renders the shared state into a role-specific execution context, since an LLM executor may require tool instructions and structured commands while a human executor may require a concise protocol description. We write this rendering as $u^{(t)} = f_{\mathrm{ctx}}(\mathcal{X}^{(t)}, s^{(t)}, n, r, \mathcal{P})$, where $n$ is the active node and $r$ is its assigned role. Adapters return messages, handoffs, finishes, and failures in a common event representation, so the executor bound to a role can change without changing the handoff rules, trace format, or completion predicates.
+We formalize a running OpenAgency instance at step $t$ as $\mathcal{I}^{(t)} = (\mathcal{X}^{(t)}, \mathcal{P}, \mathcal{E}, s^{(t)})$, where $\mathcal{X}^{(t)}$ is the shared context, $\mathcal{P}$ is the governed protocol, $\mathcal{E}$ is the set of available executors, and $s^{(t)}$ is the current protocol state. The map $\rho: \mathcal{R}\rightarrow\mathcal{E}$ binds each role in the role set $\mathcal{R}$ to an executor and stays separate from the protocol logic. The governance layer renders the shared state into a role-specific execution context $u^{(t)} = f_{\mathrm{ctx}}(\mathcal{X}^{(t)}, s^{(t)}, n, r, \mathcal{P})$ for the active node $n$ with assigned role $r$, since an LLM executor may require tool instructions while a human executor may require a concise protocol description. Adapters return messages, handoffs, finishes, and failures in a common event representation, so the executor bound to a role can change without changing the handoff rules, trace format, or completion predicates.
 
 \subsection{Governed Collaboration Protocols}
 \label{sec:protocol}
 
-To govern collaboration without fixing a complete execution route, the protocol must expose enough structure to validate each handoff while preserving the agent's choice among admissible targets. OpenAgency therefore represents collaboration as a declarative tuple that decouples validation, coordination, and local decision.
+To govern collaboration without fixing a complete execution route, OpenAgency represents collaboration as a declarative tuple that exposes enough structure to validate each handoff while preserving the agent's choice among admissible targets.
 
 \textbf{Protocol Definition.}\quad OpenAgency represents a governed collaboration protocol as
 \begin{gather}
@@ -110,26 +108,54 @@ where $\mathcal{R}$ is the set of roles, $\mathcal{N}$ the set of collaboration 
 
 \textbf{Admissible Handoff Set.}\quad For a node $n$ under state $s$, the admissible handoff set is $\Gamma(n,s) = \{\, n' \in \mathcal{N} \mid (n,n') \in \mathcal{H} \text{ and the transition is valid under } s \,\}$. The handoff mode $\mu(n)$ then determines how the active agent selects targets from $\Gamma(n,s)$. Under \texttt{ONE} the agent picks exactly one admissible target, under \texttt{SOME} a nonempty subset, and under \texttt{ALL} every admissible target. A node with no admissible target completes without a handoff, and the local choice within $\Gamma(n,s)$ is left to the agent.
 
-\textbf{Handoff Validation and Completion.}\quad When the agent proposes a handoff $(n,B,m)$ with target set $B$ and message $m$, the protocol validates $B$ under $\mu(n)$. An admissible handoff commits $B$ as pending targets and updates the state, and an inadmissible one leaves the state unchanged and returns structured feedback so the agent may propose another target. Committing a target set does not activate it. A finish event $(n,y)$ confirms that the source node has completed its work, and the governance layer activates the committed targets only when $\Omega_n(y)$ holds, so downstream execution waits for the completion predicate even after an admissible target set is committed.
+\textbf{Handoff Validation and Completion.}\quad When the agent proposes a handoff $(n,B,m)$ with target set $B$ and message $m$, the protocol validates $B$ under $\mu(n)$. An admissible handoff commits $B$ as pending targets and updates the state, and an inadmissible one leaves the state unchanged and returns structured feedback so the agent may propose another target. Committing a target set does not activate it. A finish event $(n,y)$ confirms that the source node has completed its work, and the governance layer activates the committed targets only when $\Omega_n(y)$ holds, so downstream execution waits for the completion predicate even after an admissible target set is committed. Activation runs one further dependence check, which walks back from each committed target and confirms that every started predecessor of that target has already handed off, so a node begins only once the collaborators it depends on have delivered.
 
-Algorithm~\ref{alg:protocol} in Appendix~\ref{app:interpreter} summarizes the runtime interpreter, which updates the state only for admissible handoffs and valid completions while retaining every event in the trace, so later evolution can use both successful and unsuccessful coordination.
+Algorithm~\ref{alg:protocol} states the resulting runtime interpreter. The state advances only on admissible handoffs and valid completions, while the trace keeps every event, including the ones the boundary refused, so later evolution reads both successful and unsuccessful coordination.
+
+\begin{algorithm}[t]
+\footnotesize
+\caption{Collaboration under a Governed Protocol}
+\label{alg:protocol}
+\begin{algorithmic}[1]
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\Require Protocol $\mathcal{P}$, initial context $\mathcal{X}$, executor mapping $\rho\colon\mathcal{R}\to\mathcal{E}$
+\renewcommand{\algorithmicrequire}{\textbf{Output:}}
+\Require Immutable collaboration trace $\tau$
+
+\State $\tau \gets \emptyset$; activate start node $n_0$; obtain initial state $s$
+\While{active nodes exist}
+    \For{each active node $n$ with role $r = \alpha(n)$}
+        \State $e \gets \rho(r)\bigl(f_{\mathrm{ctx}}(\mathcal{X}, s, n, r, \mathcal{P})\bigr)$ \Comment{executor proposes an event}
+        \If{$e$ is a handoff $(n, B, m)$ and $B$ is admissible}
+            \State commit $B$ as pending targets and update $s$
+        \ElsIf{$e$ is a finish $(n, y)$ and $\Omega_n(y)$ holds}
+            \State mark $n$ complete, then activate every committed target whose started predecessors have handed off
+        \Else
+            \State return structured feedback to $\rho(r)$ \Comment{refused at the governance boundary}
+        \EndIf
+        \State append $(e, s)$ to $\tau$ \Comment{accepted and refused events are both retained}
+    \EndFor
+\EndWhile
+\State \Return $\tau$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Collaboration-driven Protocol Evolution}
 \label{sec:self_evolving}
 
-Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. Revising a protocol takes the shape of an optimization problem, since it needs a signal that says where the current object is wrong, a space of admissible moves, and a rule that decides which move to keep. The final answer alone cannot indicate which of a run's many coordination events should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. OpenAgency reads a search direction off the collaboration trace, moves inside a bounded space of protocol edits, and keeps a move only when it survives an admissibility and quality screen.
+Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. Revising a protocol takes the shape of an optimization problem, since it needs a signal that says where the current object is wrong, a space of admissible moves, and a rule that decides which move to keep. The final answer alone cannot indicate which of a run's many coordination events should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. A single evolving agent therefore drives the loop, reading a search direction off the collaboration trace, moving inside a bounded space of protocol edits, and keeping a move only when it survives an admissibility and quality screen.
 
-\textbf{Trace Diagnosis as Search Signal.}\quad Each execution produces an ordered trace $\tau=(e_1,s_1),\ldots,(e_T,s_T)$ of coordination events with the resulting states, where an event $e_t$ is one of accepted handoff, rejected handoff, finish, message, or failure. Unlike prior systems that keep only the successful trajectory or the final score, the trace retains rejected handoffs and failed completions, which record the transitions the collaboration attempted and could not take. An analyzer $f_{\mathrm{diag}}$ reads $\tau^{(1{:}v)}$ and returns the coordination sites that account for the observed failures, namely the handoff edges the agents repeatedly attempted and the admissible set refused, together with the completion predicates that fired without a usable output. This signal plays the role a gradient plays in parameter optimization, since it attributes a run-level outcome to individual coordination decisions and points at the part of the protocol a revision should touch. Rejected handoffs make the signal directional and are not recoverable from the final answer.
+\textbf{Trace Diagnosis as Search Signal.}\quad Each execution produces an ordered trace $\tau=(e_1,s_1),\ldots,(e_T,s_T)$ of coordination events with the resulting states, where an event $e_t$ is one of accepted handoff, rejected handoff, finish, message, or failure. Unlike prior systems that keep only the successful trajectory or the final score, the trace retains rejected handoffs and failed completions, which record the transitions the collaboration attempted and could not take. The evolving agent runs an analyzer $f_{\mathrm{diag}}$ over $\tau^{(1{:}v)}$ and returns the coordination sites that account for the observed failures, namely the handoff edges the agents repeatedly attempted and the admissible set refused, together with the completion predicates that fired without a usable output. This signal plays the role a gradient plays in parameter optimization, since it attributes a run-level outcome to individual coordination decisions and points at the part of the protocol a revision should touch.
 
-\textbf{Factorized Evolution Space.}\quad The search space factorizes into three levels. \emph{Topology} covers the node count $|\mathcal{N}|$, the handoff edge set $\mathcal{H}$, the role assignment $\alpha$, and the handoff modes $\mu$. \emph{Subtask definition} covers the transition and completion predicates that fix what each node owes the collaborators downstream of it. \emph{Shared context} covers the \texttt{rule} and \texttt{culture} every role reads. A point in this space is not one execution route, because each agent still chooses inside $\Gamma(n,s)$, so a single protocol unfolds into many realized collaboration patterns at inference time and the space stays small while the behavior it covers does not. The factorization also makes comparison readable, since two candidates that differ on one level agree everywhere else by construction, so the difference between their traces is attributable to that level and an overloaded role can be told apart from a missing edge.
+\textbf{Factorized Evolving Space.}\quad The search space factorizes into three levels. \emph{Number of agents} covers the node count $|\mathcal{N}|$. \emph{Collaboration topology} covers the handoff edge set $\mathcal{H}$ and the handoff modes $\mu$. \emph{Functional division} covers the role assignment $\alpha$, the completion predicates $\Omega$, and the shared \texttt{rule} and \texttt{culture} in $\mathcal{C}$, which together fix what each node owes the collaborators downstream of it. A point in this space is not one execution route, because each agent still chooses inside $\Gamma(n,s)$, so a single protocol unfolds into many realized collaboration patterns at inference time, as the four task instantiations of Figure~\ref{fig:intro} show, and the space stays small while the behavior it covers does not. The factorization also makes comparison readable, since two candidates that differ on one level agree everywhere else, so an overloaded role can be told apart from a missing edge.
 
-\textbf{Bounded Protocol Optimizer.}\quad A move in this space is a composite edit of at most $k$ atomic changes, and at round $v$ the optimizer $f_{\mathrm{evolve}}$ takes one such step from the incumbent under the analyzed trace signal:
+\textbf{Bounded Protocol Optimizer.}\quad A move in this space is a composite edit of at most $k$ atomic changes drawn from three edit strategies. A \emph{structural} edit adds or removes a node or a handoff edge, a \emph{predicate} edit rewrites a completion or transition condition, and a \emph{contextual} edit rewrites the \texttt{rule} and \texttt{culture} a role reads. At round $v$ the optimizer $f_{\mathrm{evolve}}$ takes one such step from the incumbent under the analyzed trace signal:
 \begin{gather}
     \hat{\mathcal{P}}^{(v+1)} = f_{\mathrm{evolve}}\bigl(\mathcal{P}^{(v)},\, f_{\mathrm{diag}}(\tau^{(1{:}v)})\bigr), \qquad |\hat{\mathcal{P}}^{(v+1)}\ominus\mathcal{P}^{(v)}|\le k.
 \end{gather}
-We set $k=4$, which bounds the step the way a learning rate bounds a parameter update and keeps each candidate a small inspectable change, not a regenerated workflow. The strategy is a bounded greedy ascent. One candidate is proposed per round, and the incumbent is retained whenever the candidate fails the screen below, so the deployed sequence never moves downhill in collaboration quality.
+We set $k=4$, which bounds the step the way a learning rate bounds a parameter update and keeps each candidate a small inspectable change. The strategy is a bounded greedy ascent, proposing one candidate per round and retaining the incumbent whenever the candidate fails the screen below, so the deployed sequence never moves downhill in collaboration quality.
 
-\textbf{Admissibility and Quality Screen.}\quad A step is screened twice before it is deployed. The first check is a structural validity operator $\Pi_{\mathcal{V}}$ on the candidate topology, which rejects malformed handoff edges, unresolved role references, duplicate node identifiers, and completion states no path can reach, so a candidate that is not a well-formed protocol never runs. Writing $\tilde{\mathcal{P}}^{(v+1)} = \Pi_{\mathcal{V}}\bigl(\hat{\mathcal{P}}^{(v+1)}\bigr)$ for the validity-checked candidate, the second check runs it and hands the resulting traces to an evolution agent, which returns a collaboration quality score $q_{\mathrm{col}}$ from the realized coordination, reading whether each role delivered what its successors required and whether the completion conditions closed on a usable output. The deployment rule is
+\textbf{Admissibility and Quality Screen.}\quad A step is screened twice before it is deployed. The first check is a structural validity operator $\Pi_{\mathcal{V}}$ on the candidate topology, which rejects malformed handoff edges, unresolved role references, duplicate node identifiers, and completion states no path can reach, so a candidate that is not a well-formed protocol never runs. Writing $\tilde{\mathcal{P}}^{(v+1)} = \Pi_{\mathcal{V}}\bigl(\hat{\mathcal{P}}^{(v+1)}\bigr)$ for the validity-checked candidate, the second check runs it and hands the resulting traces back to the evolving agent, which returns a collaboration quality score $q_{\mathrm{col}}$ from the realized coordination, reading whether each role delivered what its successors required and whether the completion conditions closed on a usable output. The deployment rule is
 \begin{gather}
     \mathcal{P}^{(v+1)} =
     \begin{cases}
@@ -137,7 +163,7 @@ We set $k=4$, which bounds the step the way a learning rate bounds a parameter u
         \mathcal{P}^{(v)}, & \text{otherwise},
     \end{cases}
 \end{gather}
-so a candidate is deployed only when it is well formed and does not degrade the observed coordination. Both checks read the candidate protocol and the traces it produces, which keeps the update loop closed over collaboration evidence and leaves every deployed round traceable to the events that motivated it.
+so a candidate is deployed only when it is well formed and does not degrade the observed coordination. Both checks read the candidate protocol and the traces it produces, which keeps the update loop closed over collaboration evidence.
 
 \section{Experiments}
 \label{sec:experiments}
@@ -152,7 +178,7 @@ We evaluate OpenAgency on fourteen benchmarks organized into three categories. \
 \subsection{Experimental Setup}
 \label{sec:setup}
 
-Governed collaboration and its evolution have to be separated from the executor's own capability, so we use GPT-5.5 as the underlying language model across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under an identical model and tool budget, namely a single-agent ablation with one role and no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). We report all three against a prior reference (Prior Ref.), a strong baseline from prior work that fixes the absolute level of the benchmark. The prior reference is a same-model direct-LLM baseline when the benchmark's authors report no stronger external system, and the strongest externally reported model or agent otherwise. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four rounds.
+Governed collaboration and its evolution have to be separated from the executor's own capability, so we use GPT-5.5 as the underlying language model across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under an identical model and tool budget, namely a single-agent ablation with one role and no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). We report all three against a prior reference (Prior Ref.), a strong baseline from prior work that fixes the absolute level of the benchmark, taken as the strongest externally reported model or agent and as a same-model direct-LLM baseline where no stronger external system is reported. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round, and Appendix~\ref{app:detail} lists all four.
 
 \subsection{Main Results}
 \label{sec:main_results}
@@ -167,7 +193,7 @@ Governed collaboration and its evolution have to be separated from the executor'
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{OpenAgency and its ablations, listed against each benchmark's prior reference. Prior Ref. is a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the OpenAgency single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three OpenAgency conditions run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric.}
+\caption{OpenAgency and its ablations, listed against each benchmark's prior reference, a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric.}
 \label{tab:main}
 \begin{center}
 \small
@@ -198,17 +224,18 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \bottomrule
 \end{tabular}
 \end{center}
+\vspace{-5mm}
 \end{table}
 
-\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Under a common GPT-5.5 executor, we compare OpenAgency with the single-agent ablation, the unstructured multi-agent initialization, and each benchmark's strongest prior reference. As shown in Table~\ref{tab:main}, OpenAgency obtains the best primary metric on all five benchmarks, reaching $100.0$ pass@1 on HumanEval and lifting MATH from $32.4$ to $87.0$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace repeatedly flags as ineffective, and each benchmark settles on a tight solve-critique-revise loop matched to its dominant failure mode. On HotpotQA the admissible set further rejects the collapsing edges that free-form communication produces once a single answer has to be preserved, so the protocol turns a short chain into a verified one.
+\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Under a common GPT-5.5 executor, we compare OpenAgency with its two ablations and each benchmark's strongest prior reference. As shown in Table~\ref{tab:main}, OpenAgency obtains the best primary metric on all five benchmarks, reaching $100.0$ pass@1 on HumanEval and lifting MATH from $32.4$ to $87.0$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace repeatedly flags as ineffective, and each benchmark settles on a tight solve-critique-revise loop matched to its dominant failure mode, so the protocol turns a short chain into a verified one.
 
 
-\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. We compare OpenAgency with a monolithic single-agent solver and each benchmark's strongest prior reference. Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE against $18.0$. What produces the lead is visible in the protocol each benchmark converges to. On SWE-bench the evolver installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a dedicated Verifier the user-specified constraints one at a time under the validity operator, turning a brittle end-to-end plan into a chain of locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers straight to completion and sending refused or low-confidence ones back through a retry edge, which concentrates effort on the questions that need another pass. All three shapes are reached from the same initialization, so it is the handoff and completion rules that adapt when local errors are unrecoverable.
+\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. We compare OpenAgency with a monolithic single-agent solver and each benchmark's strongest prior reference. Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE against $18.0$. What produces the lead is visible in the protocol each benchmark converges to. On SWE-bench the evolver installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a dedicated Verifier the user-specified constraints one at a time, turning a brittle end-to-end plan into a chain of locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers straight to completion and sending low-confidence ones back through a retry edge. All three shapes are reached from the same initialization, so it is the handoff and completion rules that adapt when local errors are unrecoverable.
 
 
 
 
-\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. Measured against each benchmark's strongest prior reference and against its own ablations, OpenAgency leads on all six in Table~\ref{tab:main}, improving over that reference by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template behind these numbers is read off the immutable trace and differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE. Two cases expose what the governance layer contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace to be reflected in the final report, fixing a class of silent omission that free-form multi-agent baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging. In both cases the governance layer supplies a constraint the task format alone does not, and it does so without a protocol-level rewrite.
+\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. Measured against each benchmark's strongest prior reference and against its own ablations, OpenAgency leads on all six in Table~\ref{tab:main}, improving over that reference by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template behind these numbers differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE, and two cases expose what the governance layer contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace to be reflected in the final report, fixing a class of silent omission that free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging. In both cases the governance layer supplies a constraint the task format alone does not.
 
 
 
@@ -222,23 +249,25 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
-To verify that bounded protocol edits keep improving collaboration after the first revision, we track the primary metric from the unstructured multi-agent initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. As shown in Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all}, the evolved protocol improves the primary metric over the initialization on every benchmark, and the gain is not confined to one task category, reaching $54.6$ points on MATH and $48.9$ points on MARBLE. The round-to-round trajectory is non-decreasing on every benchmark, which is the behavior the quality screen is designed to enforce on bounded edits. Collaboration-driven revision therefore keeps improving the governed protocol after the first round.
+To verify that bounded protocol edits keep improving collaboration after the first revision, we track the primary metric from the unstructured multi-agent initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. As shown in Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all}, the evolved protocol improves the primary metric over the initialization on every benchmark, reaching $54.6$ points on MATH and $48.9$ points on MARBLE. The round-to-round trajectory is non-decreasing on every benchmark, which is the behavior the quality screen enforces, so revision keeps improving the governed protocol after the first round.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=0.94\linewidth]{figures/evolution_bars.pdf}
-\caption{Round-wise trajectory of the primary metric from the multi-agent initialization $v_0$ through the evolved rounds $v_1$--$v_4$ (grey dashed lines mark each benchmark's prior reference), visualizing whether bounded edits produce monotonic gains across rounds.}
+\includegraphics[width=0.88\linewidth]{figures/evolution_bars.pdf}
+\vspace{-2mm}
+\caption{Round-wise trajectory of the primary metric from the multi-agent initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
 \label{fig:evolution}
 \end{figure}
 
 \subsection{Advantage of Multi-agent Protocols}
 \label{sec:ablation_multi}
 
-OpenAgency attributes its gain to governed collaboration, while a multi-agent system can also improve through sheer agent count. To separate the two, we compare OpenAgency with its single-agent ablation under an identical GPT-5.5 executor and tool surface. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds the single-agent ablation on every benchmark, with the widest gaps on MATH, OfficeQA Pro, and DevEval. A single node has to interleave solving and checking inside one context, while the governed protocol makes that separation explicit, either by routing a partial output to a downstream role whose completion predicate validates it independently, or by tightening a solver's internal phases when the trace shows that a separate role adds no evidence. Read together with the unstructured-initialization column of Table~\ref{tab:main}, the results confirm that the multi-agent gain traces to the protocol design, since the unstructured initialization does not reach the same level under the same agent budget.
+OpenAgency attributes its gain to governed collaboration, though a multi-agent system can also improve through sheer agent count. To separate the two, we compare it with its single-agent ablation under an identical GPT-5.5 executor and tool surface. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds the single-agent ablation on every benchmark, with the widest gaps on MATH, OfficeQA Pro, and DevEval. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role whose completion predicate validates it independently. Read together with the unstructured-initialization column of Table~\ref{tab:main}, the gain traces to the protocol design, since the same agent budget without governance does not reach the same level.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=0.94\linewidth]{figures/single_vs_multi.pdf}
+\includegraphics[width=0.88\linewidth]{figures/single_vs_multi.pdf}
+\vspace{-2mm}
 \caption{OpenAgency versus its single-agent ablation under identical model and tool budget, isolating governed collaboration from raw solver capacity.}
 \label{fig:svm}
 \end{figure}
@@ -260,26 +289,27 @@ To identify which part of the trace the evolver actually consumes, we compare th
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
 
-OpenAgency keeps the collaboration structure explicit and revisable, while free-form systems leave it implicit and standard-operating-procedure systems fix it at design time. To compare the three substrates directly, we evaluate a free-form message-exchange baselines \citep{wu2023autogenenablingnextgenllm,qian2024chatdevcommunicativeagentssoftware,hong2024metagptmetaprogrammingmultiagent,hong2024metagptmetaprogrammingmultiagent} on four benchmarks. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score on all four benchmarks and the lowest SWE-bench Verified standard deviation across three random seeds, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their procedure is fixed at design time and cannot absorb trace-level failure signals. The remaining gap therefore tracks how much of the collaboration structure stays revisable after deployment.
+OpenAgency keeps the collaboration structure explicit and revisable, while free-form systems leave it implicit and standard-operating-procedure systems fix it at design time. To compare the three substrates directly, we evaluate the free-form message-exchange baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} on four benchmarks. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score on all four benchmarks, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their procedure is fixed at design time and cannot absorb trace-level failure signals, so the remaining gap tracks how much of the collaboration structure stays revisable after deployment.
 
 \begin{table}[t]
-\caption{OpenAgency against the free-form and SOP baselines. SWE Std is the SWE-bench Verified standard deviation over three random seeds.}
+\caption{OpenAgency against the free-form and SOP baselines.}
 \label{tab:free_form}
 \begin{center}
 \small
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{System} & \textbf{SWE-bench} & \textbf{DevEval} & \textbf{DDR-Bench} & \textbf{TheAgentCompany} & \textbf{SWE Std ($\downarrow$)} \\
+\textbf{System} & \textbf{SWE-bench} & \textbf{DevEval} & \textbf{DDR-Bench} & \textbf{TheAgentCompany} \\
 \midrule
-AutoGen & 51.4 & 68.9 & 39.2 & 38.7 & 4.7 \\
-ChatDev & 57.6 & 78.3 & 44.1 & 41.9 & 2.9 \\
-MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 & 3.4 \\
+AutoGen & 51.4 & 68.9 & 39.2 & 38.7 \\
+ChatDev & 57.6 & 78.3 & 44.1 & 41.9 \\
+MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \rowcolor{gray!12}
-\textbf{OpenAgency} & \textbf{86.2} & \textbf{96.9} & \textbf{76.0} & \textbf{53.7} & \textbf{1.1} \\
+\textbf{OpenAgency} & \textbf{86.2} & \textbf{96.9} & \textbf{76.0} & \textbf{53.7} \\
 \bottomrule
 \end{tabular}
 \end{center}
+\vspace{-5mm}
 \end{table}
 
 \subsection{Advantage of Governed Collaboration Protocols for Evolution}
@@ -288,54 +318,24 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 & 3.4 \\
 \begin{figure}[tb]
 \centering
 \includegraphics[width=0.90\linewidth]{figures/fixed_topology.pdf}
-\caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The fixed arm edits only the shared context, while the full arm may also edit the topology.}
+\vspace{-2mm}
+\caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The fixed arm edits only the functional division, while the full arm may also change the number of agents and the topology.}
 \label{fig:fixed}
 \end{figure}
-To measure how much the collaboration protocol governs what evolution can reach, we split the complete evolution record on OfficeQA Pro into two arms that share one initialization. The fixed arm holds the graph at the single node the initialization produced, which leaves the shared context as its only editable level and reproduces how a standard multi-agent system tunes a prompt over a hand-designed structure. The full arm is the governed protocol, whose optimizer may also edit the topology and the subtask definitions. Every plotted point was proposed and executed, and no fixed-arm round became the incumbent.
+To measure how much the collaboration protocol governs what evolution can reach, we split the complete evolution record on OfficeQA Pro into two arms that share one initialization. The fixed arm holds the graph at the single node the initialization produced, which leaves the functional division as its only editable level and reproduces how a standard multi-agent system tunes a prompt over a hand-designed structure, while the full arm is the governed protocol, whose optimizer may also change the number of agents and the collaboration topology. Every plotted point was proposed and executed, and no fixed-arm round became the incumbent.
 
-Figure~\ref{fig:fixed} shows six rounds of shared-context rewriting moving the metric between $14.3$ and $30.8$ without passing the $31.6$ of round $2$, with the first falling below the initialization. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm oscillates as well, because its third round edits the shared context and falls to $60.9$ while its fourth widens the graph to four nodes without recovering the incumbent, which makes oscillation a property of the search itself. A frozen graph keeps the search inside a level the trace already reports as saturated, while the governed protocol leaves the topology open, where a single admissible edit clears the fixed ceiling by more than thirty points. The deployed incumbent is the round-$2$ protocol of the full arm, whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
+Figure~\ref{fig:fixed} shows six functional-division rewrites moving the metric between $14.3$ and $30.8$ without passing the $31.6$ of round $2$. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm oscillates as well, because its third round edits the functional division and falls to $60.9$, which makes oscillation a property of the search itself. A frozen graph keeps the search inside a level the trace already reports as saturated, while one admissible structural edit clears the fixed ceiling by more than thirty points. The deployed incumbent is the round-$2$ protocol of the full arm, whose stable rerun is the $v_4$ checkpoint of Table~\ref{tab:main}.
+
+To check whether the structural level is the one that always pays, we read the same record on two further benchmarks. On DDR-Bench and DevEval the optimizer kept the two-node graph it started from and carried the metric from $44.0$ to $76.0$ and from $82.1$ to $96.9$ through functional-division edits alone, while on OfficeQA Pro no amount of functional-division rewriting substituted for a structural edit. Fixing the graph at design time therefore wagers that the structural level never carries the gain, a wager that is idle on these two benchmarks and costs more than thirty points on the third, while a governed protocol makes that choice at run time from the level the trace reports as saturated.
 
 \section{Conclusion}
 
-In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object and turns ordered traces, including the rejected handoffs that prior systems discard, into bounded protocol updates filtered by a validity operator and a quality screen. Across fourteen benchmarks it reaches the best primary metric on each, above the strongest prior reference and its own single-agent and unstructured ablations.
+In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. By constraining runtime handoffs while preserving each agent's choice among admissible collaborators, OpenAgency makes the collaboration pattern an evolvable object and turns ordered traces, including the rejected handoffs prior systems discard, into bounded protocol updates filtered by a validity operator and a quality screen. Across fourteen benchmarks it reaches the best primary metric on each, above the strongest prior reference and its own ablations.
 
 \bibliography{iclr2027_conference}
 \bibliographystyle{iclr2027_conference}
 
 \appendix
-
-\clearpage
-\section{Runtime Protocol Interpreter}
-\label{app:interpreter}
-
-\begin{algorithm}[H]
-\footnotesize
-\caption{Collaboration under a Governed Protocol}
-\label{alg:protocol}
-\begin{algorithmic}[1]
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\Require Protocol $\mathcal{P}$, initial context $\mathcal{X}$, executor mapping $\rho\colon\mathcal{R}\to\mathcal{E}$
-\renewcommand{\algorithmicrequire}{\textbf{Output:}}
-\Require Immutable collaboration trace $\tau$
-
-\State $\tau \gets \emptyset$; activate start node $n_0$; obtain initial state $s$
-\While{active nodes exist}
-    \For{each active node $n$ with role $r = \alpha(n)$}
-        \State $e \gets \rho(r)\bigl(f_{\mathrm{ctx}}(\mathcal{X}, s, n, r, \mathcal{P})\bigr)$ \Comment{executor proposes an event}
-        \If{$e$ is a handoff $(n, B, m)$ and $B$ is admissible}
-            \State commit $B$, update $s$, append $(e, s)$ to $\tau$
-        \ElsIf{$e$ is a handoff}
-            \State append $(e, s)$ to $\tau$; return structured feedback to $\rho(r)$
-        \ElsIf{$e$ is a finish $(n, y)$ and $\Omega_n(y)$ holds}
-            \State mark $n$ complete; activate committed targets; append $(e, s)$ to $\tau$
-        \Else
-            \State append $(e, s)$ to $\tau$
-        \EndIf
-    \EndFor
-\EndWhile
-\State \Return $\tau$
-\end{algorithmic}
-\end{algorithm}
 
 \clearpage
 \section{Benchmark Details}
