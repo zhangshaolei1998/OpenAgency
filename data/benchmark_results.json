@@ -141,15 +141,15 @@
     },
     "MATH": {
       "metric": "exact match",
-      "prev_sota": 80.3,
-      "baseline": 80.3,
-      "single": 12.86,
-      "multi_v0": 32.4,
+      "prev_sota": 83.3,
+      "baseline": 83.3,
+      "single": 82.34,
+      "multi_v0": 86.0,
       "evolution": {
-        "v1": 87.04,
-        "v2": 87.04,
-        "v3": 87.04,
-        "v4": 87.04
+        "v1": 87.02,
+        "v2": 87.02,
+        "v3": 87.02,
+        "v4": 87.02
       },
       "source_versions": {
         "v1": "multi_v1",
@@ -157,7 +157,8 @@
         "v3": "multi_v1",
         "v4": "multi_v1"
       },
-      "unit": "%"
+      "unit": "%",
+      "scoring_note": "All seven MATH conditions rescored uniformly with extract_boxed + math_equal over the 5000-instance gold file. The archived single/v0 scores (12.86 / 0.68) were harness artifacts: those two prompts request '#### answer' while the original scorer read only \\boxed{}. v1-v4 move by <=0.12 under the rescore."
     },
     "HotpotQA": {
       "metric": "F1",

@@ -219,19 +219,19 @@
   "MATH": {
     "v1": {
       "tokens_k": 12,
-      "metric": 87.04
+      "metric": 87.02
     },
     "v2": {
       "tokens_k": 14,
-      "metric": 87.04
+      "metric": 87.02
     },
     "v3": {
       "tokens_k": 15,
-      "metric": 87.04
+      "metric": 87.02
     },
     "v4": {
       "tokens_k": 16,
-      "metric": 87.04
+      "metric": 87.02
     }
   },
   "HotpotQA": {
