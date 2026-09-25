@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: iclr2027_conference.aux
+The style file: iclr2027_conference.bst
+Database file #1: iclr2027_conference.bib
+Warning--empty journal in gpt4
+Warning--empty journal in phan2025hle
+You've used 46 entries,
+            2773 wiz_defined-function locations,
+            783 strings with 17509 characters,
+and the built_in function-call counts, 33198 in all, are:
+= -- 2407
+> -- 3852
+< -- 3
++ -- 1293
+- -- 1242
+* -- 3234
+:= -- 5490
+add.period$ -- 148
+call.type$ -- 46
+change.case$ -- 544
+chr.to.int$ -- 41
+cite$ -- 94
+duplicate$ -- 853
+empty$ -- 1600
+format.name$ -- 1290
+if$ -- 6528
+int.to.chr$ -- 6
+int.to.str$ -- 1
+missing$ -- 18
+newline$ -- 248
+num.names$ -- 184
+pop$ -- 1216
+preamble$ -- 1
+purify$ -- 498
+quote$ -- 0
+skip$ -- 980
+stack$ -- 0
+substring$ -- 92
+swap$ -- 66
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 506
+warning$ -- 2
+while$ -- 138
+width$ -- 0
+write$ -- 577
+(There were 2 warnings)

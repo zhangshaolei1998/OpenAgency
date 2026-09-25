@@ -1,0 +1,9 @@
+{
+  "note": "Ablation of the evolution algorithm (f_evolve): three variants on SWE-bench, DDR-Bench, and DevEval. full = trace + quality signal + Π_V (our default); label-only = only success/failure label, no trace; shuffled-trace = trace with time order shuffled to break causality.",
+  "benchmarks": ["SWE-bench (FM)", "DDR-Bench (Overall)", "DevEval (AT)"],
+  "variants": {
+    "full": [86.2, 76.0, 96.9],
+    "label_only": [80.4, 60.7, 84.3],
+    "shuffled_trace": [78.1, 55.8, 79.1]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "note": "Comparison against free-form / no-governance multi-agent baselines under identical model (gpt-5.5), tools, and per-agent budgets. AutoGen free-form = agents freely exchange messages; ChatDev = SOP pipeline with LLM-driven internal chat; MetaGPT = SOP roles + free intra-role messaging. Adaptation rounds = 4 rounds of author prompt/topology tuning; OpenAgency uses 4 rounds of protocol evolution. Numbers are the primary metric of each benchmark.",
+  "systems": [
+    {"name": "AutoGen (free-form)",  "rounds": 4, "scores": {"SWE-bench": 51.4, "DevEval": 68.9, "DDR-Bench": 39.2, "TheAgentCompany": 38.7, "reproducibility_std": 4.7}},
+    {"name": "ChatDev (SOP)",         "rounds": 4, "scores": {"SWE-bench": 57.6, "DevEval": 78.3, "DDR-Bench": 44.1, "TheAgentCompany": 41.9, "reproducibility_std": 2.9}},
+    {"name": "MetaGPT (SOP+chat)",    "rounds": 4, "scores": {"SWE-bench": 59.8, "DevEval": 79.5, "DDR-Bench": 46.8, "TheAgentCompany": 42.3, "reproducibility_std": 3.4}},
+    {"name": "OpenAgency (v4)",       "rounds": 4, "scores": {"SWE-bench": 86.2, "DevEval": 96.9, "DDR-Bench": 76.0, "TheAgentCompany": 53.7, "reproducibility_std": 1.1}}
+  ],
+  "reproducibility_note": "Reproducibility std is the standard deviation of the primary metric across 3 independent seeds on SWE-bench.",
+  "handoff_rejection": {
+    "note": "Percentage of proposed handoff events rejected by Γ(n, s; P) during v4 runs; and percentage of runs where the rejection actually recovered a failure by forcing the agent to pick an admissible target.",
+    "SWE-bench":       {"rejected_pct": 6.4,  "recovered_pct": 4.1},
+    "DevEval":         {"rejected_pct": 4.9,  "recovered_pct": 3.7},
+    "DDR-Bench":       {"rejected_pct": 3.8,  "recovered_pct": 2.9},
+    "TheAgentCompany": {"rejected_pct": 8.2,  "recovered_pct": 5.3}
+  }
+}

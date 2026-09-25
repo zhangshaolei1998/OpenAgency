@@ -1,0 +1,255 @@
+{
+  "note": "Approximated average per-instance token budget (K tokens), paired with primary metric per round. General reasoning benchmarks share the same protocol so their token budgets coincide; their metrics differ.",
+  "SWE-bench": {
+    "v1": {
+      "tokens_k": 32,
+      "metric": 78.8
+    },
+    "v2": {
+      "tokens_k": 46,
+      "metric": 85.6
+    },
+    "v3": {
+      "tokens_k": 54,
+      "metric": 85.8
+    },
+    "v4": {
+      "tokens_k": 58,
+      "metric": 86.2
+    }
+  },
+  "DevEval": {
+    "v1": {
+      "tokens_k": 24,
+      "metric": 82.1
+    },
+    "v2": {
+      "tokens_k": 30,
+      "metric": 83.9
+    },
+    "v3": {
+      "tokens_k": 34,
+      "metric": 90.6
+    },
+    "v4": {
+      "tokens_k": 38,
+      "metric": 96.9
+    }
+  },
+  "DDR-Bench": {
+    "v1": {
+      "tokens_k": 34,
+      "metric": 44.0
+    },
+    "v2": {
+      "tokens_k": 48,
+      "metric": 58.9
+    },
+    "v3": {
+      "tokens_k": 56,
+      "metric": 66.5
+    },
+    "v4": {
+      "tokens_k": 68,
+      "metric": 76.0
+    }
+  },
+  "TheAgentCompany": {
+    "v1": {
+      "tokens_k": 46,
+      "metric": 46.3
+    },
+    "v2": {
+      "tokens_k": 55,
+      "metric": 48.8
+    },
+    "v3": {
+      "tokens_k": 62,
+      "metric": 51.2
+    },
+    "v4": {
+      "tokens_k": 66,
+      "metric": 53.7
+    }
+  },
+  "DeepPlanning": {
+    "v1": {
+      "tokens_k": 22,
+      "metric": 44.6
+    },
+    "v2": {
+      "tokens_k": 27,
+      "metric": 44.6
+    },
+    "v3": {
+      "tokens_k": 31,
+      "metric": 54.2
+    },
+    "v4": {
+      "tokens_k": 34,
+      "metric": 54.2
+    }
+  },
+  "MARBLE": {
+    "v1": {
+      "tokens_k": 20,
+      "metric": 73.4
+    },
+    "v2": {
+      "tokens_k": 28,
+      "metric": 91.7
+    },
+    "v3": {
+      "tokens_k": 33,
+      "metric": 95.0
+    },
+    "v4": {
+      "tokens_k": 38,
+      "metric": 98.9
+    }
+  },
+  "AutomationBench": {
+    "v1": {
+      "tokens_k": 42,
+      "metric": 26.1
+    },
+    "v2": {
+      "tokens_k": 26,
+      "metric": 28.4
+    },
+    "v3": {
+      "tokens_k": 34,
+      "metric": 34.8
+    },
+    "v4": {
+      "tokens_k": 40,
+      "metric": 54.8
+    }
+  },
+  "HLE": {
+    "v1": {
+      "tokens_k": 18,
+      "metric": 33.7
+    },
+    "v2": {
+      "tokens_k": 20,
+      "metric": 35.8
+    },
+    "v3": {
+      "tokens_k": 22,
+      "metric": 35.9
+    },
+    "v4": {
+      "tokens_k": 26,
+      "metric": 37.7
+    }
+  },
+  "OfficeQA": {
+    "v1": {
+      "tokens_k": 8,
+      "metric": 31.6
+    },
+    "v2": {
+      "tokens_k": 26,
+      "metric": 62.4
+    },
+    "v3": {
+      "tokens_k": 33,
+      "metric": 67.7
+    },
+    "v4": {
+      "tokens_k": 40,
+      "metric": 69.9
+    }
+  },
+  "HumanEval": {
+    "v1": {
+      "tokens_k": 9,
+      "metric": 98.44
+    },
+    "v2": {
+      "tokens_k": 11,
+      "metric": 100.0
+    },
+    "v3": {
+      "tokens_k": 12,
+      "metric": 100.0
+    },
+    "v4": {
+      "tokens_k": 13,
+      "metric": 100.0
+    }
+  },
+  "MBPP": {
+    "v1": {
+      "tokens_k": 9,
+      "metric": 74.32
+    },
+    "v2": {
+      "tokens_k": 11,
+      "metric": 80.54
+    },
+    "v3": {
+      "tokens_k": 12,
+      "metric": 80.54
+    },
+    "v4": {
+      "tokens_k": 13,
+      "metric": 80.93
+    }
+  },
+  "GSM8K": {
+    "v1": {
+      "tokens_k": 8,
+      "metric": 97.95
+    },
+    "v2": {
+      "tokens_k": 10,
+      "metric": 97.95
+    },
+    "v3": {
+      "tokens_k": 11,
+      "metric": 97.95
+    },
+    "v4": {
+      "tokens_k": 12,
+      "metric": 97.95
+    }
+  },
+  "MATH": {
+    "v1": {
+      "tokens_k": 12,
+      "metric": 87.04
+    },
+    "v2": {
+      "tokens_k": 14,
+      "metric": 87.04
+    },
+    "v3": {
+      "tokens_k": 15,
+      "metric": 87.04
+    },
+    "v4": {
+      "tokens_k": 16,
+      "metric": 87.04
+    }
+  },
+  "HotpotQA": {
+    "v1": {
+      "tokens_k": 10,
+      "metric": 80.7
+    },
+    "v2": {
+      "tokens_k": 12,
+      "metric": 81.91
+    },
+    "v3": {
+      "tokens_k": 13,
+      "metric": 82.31
+    },
+    "v4": {
+      "tokens_k": 14,
+      "metric": 82.31
+    }
+  }
+}

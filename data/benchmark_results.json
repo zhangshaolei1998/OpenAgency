@@ -1,0 +1,414 @@
+{
+  "note": "All benchmark entries are reported separately. For the five AFlow benchmarks, raw candidate versions and checkpoint mappings are retained in experiment_selection_notes.md.",
+  "benchmarks": {
+    "SWE-bench": {
+      "metric": "File Match (FM %) on SWE-bench Verified (500 instances)",
+      "prev_sota": 42.8,
+      "baseline_openhands": 42.8,
+      "single": 75.6,
+      "multi_v0": 67.0,
+      "evolution": {
+        "v1": 78.8,
+        "v2": 85.6,
+        "v3": 85.8,
+        "v4": 86.2
+      },
+      "evolution_resolve": {
+        "v1": 67.8,
+        "v2": 73.0,
+        "v3": 73.0,
+        "v4": 74.4
+      },
+      "source_versions": {
+        "v1": "multi_agent_v4",
+        "v2": "multi_agent_v5",
+        "v3": "multi_agent_v6",
+        "v4": "multi_agent_v7"
+      },
+      "unit": "%"
+    },
+    "DevEval": {
+      "metric": "Acceptance-Test pass rate (AT %) over 10 Python repositories",
+      "prev_sota": 62.5,
+      "baseline_single_agent_pipeline": 62.5,
+      "single": 62.5,
+      "multi_v0": 82.1,
+      "evolution": {
+        "v1": 82.1,
+        "v2": 83.9,
+        "v3": 90.6,
+        "v4": 96.9
+      },
+      "ut_at": {
+        "v1": {
+          "ut": 98.1,
+          "at": 82.1
+        },
+        "v2": {
+          "ut": 97.3,
+          "at": 83.9
+        },
+        "v3": {
+          "ut": 99.1,
+          "at": 90.6
+        },
+        "v4": {
+          "ut": 99.1,
+          "at": 96.9
+        }
+      },
+      "unit": "%"
+    },
+    "DDR-Bench": {
+      "metric": "Overall correctness = average of Message-Wise and Trajectory-Wise sample-averaged accuracy on the 10-K subset (100 companies)",
+      "prev_sota": 69.1,
+      "baseline_ddr_agent": 60.5,
+      "single": 42.8,
+      "multi_v0": 44.0,
+      "evolution": {
+        "v1": 44.0,
+        "v2": 58.9,
+        "v3": 66.5,
+        "v4": 76.0
+      },
+      "source_versions": {
+        "v1": "multi_agent (incumbent)",
+        "v2": "multi_agent_v4",
+        "v3": "multi_agent_v1",
+        "v4": "multi_agent_v5"
+      },
+      "unit": "%"
+    },
+    "HumanEval": {
+      "metric": "pass@1",
+      "prev_sota": 92.19,
+      "baseline": 92.19,
+      "single": 87.5,
+      "multi_v0": 96.88,
+      "evolution": {
+        "v1": 98.44,
+        "v2": 100.0,
+        "v3": 100.0,
+        "v4": 100.0
+      },
+      "source_versions": {
+        "v1": "multi_v2",
+        "v2": "multi_v3",
+        "v3": "multi_v3",
+        "v4": "multi_v3"
+      },
+      "unit": "%"
+    },
+    "MBPP": {
+      "metric": "pass@1",
+      "prev_sota": 69.26,
+      "baseline": 69.26,
+      "single": 73.54,
+      "multi_v0": 73.54,
+      "evolution": {
+        "v1": 74.32,
+        "v2": 80.54,
+        "v3": 80.54,
+        "v4": 80.93
+      },
+      "source_versions": {
+        "v1": "multi_v1",
+        "v2": "multi_v2",
+        "v3": "multi_v2",
+        "v4": "multi_v4"
+      },
+      "unit": "%"
+    },
+    "GSM8K": {
+      "metric": "exact match",
+      "prev_sota": 97.57,
+      "baseline": 97.57,
+      "single": 97.19,
+      "multi_v0": 97.35,
+      "evolution": {
+        "v1": 97.95,
+        "v2": 97.95,
+        "v3": 97.95,
+        "v4": 97.95
+      },
+      "source_versions": {
+        "v1": "multi_v1",
+        "v2": "multi_v1",
+        "v3": "multi_v1",
+        "v4": "multi_v1"
+      },
+      "unit": "%"
+    },
+    "MATH": {
+      "metric": "exact match",
+      "prev_sota": 80.3,
+      "baseline": 80.3,
+      "single": 12.86,
+      "multi_v0": 32.4,
+      "evolution": {
+        "v1": 87.04,
+        "v2": 87.04,
+        "v3": 87.04,
+        "v4": 87.04
+      },
+      "source_versions": {
+        "v1": "multi_v1",
+        "v2": "multi_v1",
+        "v3": "multi_v1",
+        "v4": "multi_v1"
+      },
+      "unit": "%"
+    },
+    "HotpotQA": {
+      "metric": "F1",
+      "prev_sota": 76.42,
+      "baseline": 76.42,
+      "single": 75.87,
+      "multi_v0": 64.01,
+      "evolution": {
+        "v1": 80.7,
+        "v2": 81.91,
+        "v3": 82.31,
+        "v4": 82.31
+      },
+      "source_versions": {
+        "v1": "multi_v1",
+        "v2": "multi_v2",
+        "v3": "multi_v3",
+        "v4": "multi_v3"
+      },
+      "unit": "%"
+    },
+    "TheAgentCompany": {
+      "metric": "Aggregated task score (%) on 15 evaluated tasks",
+      "prev_sota": 41.5,
+      "baseline_openhands": 41.5,
+      "single": 46.3,
+      "multi_v0": 41.5,
+      "evolution": {
+        "v1": 46.3,
+        "v2": 48.8,
+        "v3": 51.2,
+        "v4": 53.7
+      },
+      "unit": "%"
+    },
+    "DeepPlanning": {
+      "metric": "Average case accuracy over shopping (120) and travel (240) plans",
+      "prev_sota": 46.9,
+      "baseline_qwen_agent": 46.9,
+      "single": 45.0,
+      "multi_v0": 33.8,
+      "evolution": {
+        "v1": 44.6,
+        "v2": 44.6,
+        "v3": 54.2,
+        "v4": 54.2
+      },
+      "source_versions": {
+        "v1": "multi_agent_v1",
+        "v2": "multi_agent_v1 (incumbent)",
+        "v3": "multi_agent_v23",
+        "v4": "multi_agent_v23 (incumbent)"
+      },
+      "selection_note": "All displayed checkpoints are complete protocol-run results. The 56.5 best-of-both score and later oracle unions in the source report are excluded.",
+      "unit": "%"
+    },
+    "MARBLE": {
+      "metric": "Overall score = 0.5 * Research Avg + 0.5 * World Avg (Enhanced Rubric, 0-5 scale, reported *20 as percentage)",
+      "prev_sota": 79.3,
+      "baseline_marble_graph": 79.3,
+      "single": 78.4,
+      "multi_v0": 50.0,
+      "evolution": {
+        "v1": 73.4,
+        "v2": 91.7,
+        "v3": 95.0,
+        "v4": 98.9
+      },
+      "detail_ascending": {
+        "Research-Innovation": {
+          "baseline": 80.0,
+          "v1": 80.0,
+          "v2": 80.0,
+          "v3": 80.0,
+          "v4": 100.0
+        },
+        "Research-Safety": {
+          "baseline": 80.0,
+          "v1": 73.4,
+          "v2": 100.0,
+          "v3": 100.0,
+          "v4": 93.4
+        },
+        "Research-Feasibility": {
+          "baseline": 80.0,
+          "v1": 66.6,
+          "v2": 80.0,
+          "v3": 100.0,
+          "v4": 100.0
+        },
+        "World-Buyer": {
+          "baseline": 33.4,
+          "v1": 73.4,
+          "v2": 100.0,
+          "v3": 100.0,
+          "v4": 100.0
+        },
+        "World-Seller": {
+          "baseline": 33.4,
+          "v1": 73.4,
+          "v2": 93.4,
+          "v3": 93.4,
+          "v4": 100.0
+        }
+      },
+      "source_versions": {
+        "v1": "multi_agent_v1",
+        "v2": "multi_agent_v7",
+        "v3": "multi_agent_v9",
+        "v4": "multi_agent_v10"
+      },
+      "notes": "Research tasks: 3 profiles scored by Innovation/Safety/Feasibility on a 1-5 rubric. World tasks: 6 dimensions (Buyer/Seller Efficiency/Progress/Dynamics) on a 1-5 rubric. Scores multiplied by 20 to render as percentages. Figure baseline is GPT-4o-mini overall (79.3), the strongest model reported in Table 1 of Zhu et al. 2025; the MARBLE graph coordinator under GPT-5.5 completed only 1/14 tasks within a 4-hour budget and is therefore not used as the baseline.",
+      "unit": "%"
+    },
+    "AutomationBench": {
+      "metric": "Acc = mean fraction of assertions satisfied across 600 workflow-automation tasks across 6 business domains (sales / marketing / operations / support / finance / hr, 100 each), reported *100 as percentage; a stricter Pass metric counts a task correct only when every assertion is satisfied (Pass: baseline 37/600=6.2%, v4 79/600=13.2%)",
+      "prev_sota": 42.47,
+      "baseline_single_agent": 23.71,
+      "single": 23.71,
+      "multi_v0": 23.55,
+      "evolution": {
+        "v1": 26.12,
+        "v2": 28.39,
+        "v3": 34.81,
+        "v4": 54.81
+      },
+      "detail_ascending": {
+        "sales": {
+          "baseline": 11.2,
+          "v1": 10.04,
+          "v2": 22.83,
+          "v3": 27.58,
+          "v4": 34.3
+        },
+        "marketing": {
+          "baseline": 20.29,
+          "v1": 21.15,
+          "v2": 33.19,
+          "v3": 49.95,
+          "v4": 54.73
+        },
+        "operations": {
+          "baseline": 41.22,
+          "v1": 36.58,
+          "v2": 50.73,
+          "v3": 61.46,
+          "v4": 68.92
+        },
+        "support": {
+          "baseline": 35.35,
+          "v1": 42.23,
+          "v2": 26.26,
+          "v3": 7.83,
+          "v4": 65.89
+        },
+        "finance": {
+          "baseline": 14.48,
+          "v1": 22.26,
+          "v2": 11.59,
+          "v3": 11.37,
+          "v4": 54.85
+        },
+        "hr": {
+          "baseline": 19.74,
+          "v1": 24.49,
+          "v2": 25.77,
+          "v3": 50.66,
+          "v4": 50.13
+        }
+      },
+      "passed": {
+        "baseline": 37,
+        "v1": 43,
+        "v2": 46,
+        "v3": 57,
+        "v4": 79
+      },
+      "source_versions": {
+        "v1": "multi_v2",
+        "v2": "multi_v7",
+        "v3": "multi_v13",
+        "v4": "multi_v16"
+      },
+      "unit": "%",
+      "prev_sota_source": "Claude-Opus-5.5, strongest external system reported by Shepard et al. (2026)"
+    },
+    "HLE": {
+      "metric": "Accuracy on the Humanity's Last Exam text-only subset (2,158 questions), correct / total in percentage. Judge: gpt-5.4-mini following the official HLE judge protocol.",
+      "prev_sota": 18.0,
+      "baseline_direct_llm": 13.39,
+      "single": 18.4,
+      "multi_v0": 5.56,
+      "evolution": {
+        "v1": 33.74,
+        "v2": 35.82,
+        "v3": 35.87,
+        "v4": 37.72
+      },
+      "source_versions": {
+        "v0": "openopc-multi-gpt55-full (120/2,158)",
+        "v1": "multi_v6",
+        "v2": "multi_v9",
+        "v3": "multi_v7",
+        "v4": "multi_v10"
+      },
+      "correct_over_full_subset": {
+        "v0": "120/2,158",
+        "v1": "728/2,158",
+        "v2": "773/2,158",
+        "v3": "774/2,158",
+        "v4": "814/2,158"
+      },
+      "reference_models_paper": {
+        "GPT-4o (Phan et al. 2025)": 2.7,
+        "Claude 3.5 Sonnet (Phan et al. 2025)": 4.3,
+        "Gemini 2.0 Flash Thinking (Phan et al. 2025)": 8.1,
+        "o1 (Phan et al. 2025)": 8.1,
+        "o3-mini high (Phan et al. 2025)": 18.0
+      },
+      "notes": "Reference-model numbers reproduce Table 3 of Phan et al. 2025 on the same 2,158-question text-only subset. Every in-house checkpoint uses correct / 2,158. Failed or unjudged items count as incorrect.",
+      "unit": "%"
+    },
+    "OfficeQA": {
+      "metric": "Accuracy at 1% numerical tolerance on the OfficeQA Pro Hard set (133 questions over U.S. Treasury Bulletin corpus).",
+      "prev_sota": 57.1,
+      "baseline_direct_llm": 26.3,
+      "single": 35.3,
+      "multi_v0": 21.1,
+      "evolution": {
+        "v1": 31.6,
+        "v2": 62.4,
+        "v3": 67.7,
+        "v4": 69.9
+      },
+      "source_versions": {
+        "v1": "multi_v2 (Phase 1 best prompt)",
+        "v2": "multi_v7 (Reader-Solver architecture)",
+        "v3": "multi_v16 (Enhanced Reader completeness check)",
+        "v4": "multi_v8_run4 (Reader-Solver-Verifier best run)"
+      },
+      "reference_models_paper": {
+        "Claude Opus 4.6 Full PDF (Opsahl-Ong et al. 2026)": 48.1,
+        "Claude Opus 4.5 Full PDF (Opsahl-Ong et al. 2026)": 46.6,
+        "GPT-5.1 Full PDF (Opsahl-Ong et al. 2026)": 45.1,
+        "Gemini 3.1 Pro Preview Full PDF (Opsahl-Ong et al. 2026)": 42.9,
+        "GPT-5.4 Full PDF (Opsahl-Ong et al. 2026)": 36.1,
+        "GPT-5 Mini Full PDF (Opsahl-Ong et al. 2026)": 30.8,
+        "Claude Opus 4.6 + ai_parse_document (Opsahl-Ong et al. 2026)": 57.1
+      },
+      "notes": "Reference-model numbers reproduce Tables 3-5 of Opsahl-Ong et al. 2026 on the same 133-question set. Claude Opus 4.6 with ai_parse_document is the strongest reported configuration.",
+      "unit": "%"
+    }
+  }
+}
