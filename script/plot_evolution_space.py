@@ -8,10 +8,10 @@ ROOT = Path(__file__).resolve().parent.parent
 D = json.load(open(ROOT / "data" / "evolution_space.json"))
 
 BENCH = D["benchmarks"]
-arms = ["init", "division_only", "full"]
+arms = ["init", "fixed_graph", "full"]
 labels = [
     "Initialization",
-    "Division only",
+    "Fixed graph",
     "Full space",
 ]
 colors = ["#bdbdbd", "#fdae61", "#c1272d"]
@@ -38,14 +38,14 @@ for j, a in enumerate(arms):
     for i, y in enumerate(ys):
         ax.text(x[i] + offset, y + 1.2, f"{y:.1f}", ha="center", va="bottom", fontsize=6.4)
 
-# mark the one benchmark where the optimizer left the division level
+# mark the one benchmark where the optimizer left the fixed graph
 i = D["graph_edited"].index(True)
-ax.annotate("", xy=(x[i] + w, D["arms"]["full"][i] - 1.5),
-            xytext=(x[i], D["arms"]["division_only"][i] + 1.5),
+lo, hi = D["arms"]["fixed_graph"][i], D["arms"]["full"][i]
+ax.annotate("", xy=(x[i] + w, hi - 1.5), xytext=(x[i], lo + 1.5),
             arrowprops=dict(arrowstyle="-|>", color="#c1272d", lw=0.9,
                             connectionstyle="arc3,rad=-0.25"), zorder=4)
-ax.text(x[i] - 0.10, (D["arms"]["division_only"][i] + D["arms"]["full"][i]) / 2 + 4,
-        "+34.6", fontsize=7, color="#c1272d", ha="right", va="center")
+ax.text(x[i] - 0.10, (lo + hi) / 2 + 4, f"+{hi - lo:.1f}",
+        fontsize=7, color="#c1272d", ha="right", va="center")
 
 ax.set_xticks(x)
 ax.set_xticklabels(BENCH, fontsize=8)
