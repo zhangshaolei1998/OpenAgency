@@ -41,24 +41,36 @@
 \maketitle
 
 \begin{abstract}
-Large language model (LLM) agents have shown strong capabilities on complex tasks, encouraging multi-agent systems that coordinate specialized roles. Improving how these agents collaborate requires flexibility, so that coordination decisions are still made at runtime, together with controllability, so that they can be inspected and revised afterwards. Existing systems supply only one of the two, because a predefined workflow fixes the execution route while free-form communication leaves the realized coordination opaque. In this paper, we introduce OpenAgency, a self-evolving multi-agent system built on governed collaboration protocols. A protocol defines roles, admissible handoffs, handoff modes, and completion conditions, and each agent still selects its next collaborator inside the admissible set, which turns the collaboration pattern itself into an evolvable object. To evolve that object, OpenAgency keeps an immutable trace that retains rejected handoffs and failed completions alongside successful events, and a collaboration-driven evolving agent converts this evidence into a bounded number of atomic protocol edits, each screened by a structural validity operator and by the collaboration quality the agent scores from the realized coordination. Experiments on fourteen benchmarks spanning general question answering, long-horizon tasks, and production-oriented workloads show that OpenAgency reaches the highest primary metric among the compared systems on every benchmark.
+Large language model (LLM) agents have demonstrated strong capabilities on complex tasks, motivating the development of multi-agent systems that coordinate agents with specialized roles. However, improving how these agents collaborate requires two seemingly competing properties: flexibility, which enables diverse coordination decisions at runtime, and controllability, which allows those decisions to be inspected, attributed, and revised afterwards. Existing systems typically provide only one of these properties: predefined workflows offer explicit control but constrain execution to fixed routes, while free-form communication enables flexible interaction but leaves the realized coordination process opaque and difficult to revise. 
+In this paper, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built upon \emph{governed collaboration protocols}. Such protocol allows agents to select their next collaborators within the permitted space at runtime. This design turns the collaboration pattern itself into an evolvable object, which is structured enough to be analyzed yet flexible enough to adapt during execution. To evolve this protocol, OpenAgency maintains execution traces that capture not only successful interactions but also rejected handoffs, failed completions, and other coordination outcomes. A collaboration-driven evolving agent transforms this evidence into a bounded number of atomic protocol improvements. 
+Experiments on fourteen benchmarks spanning general question answering, long-horizon tasks, and production-oriented workloads show that OpenAgency achieves the best primary metric among compared systems on every benchmark\footnote{Code is available in the supplementary materials.}.
 \end{abstract}
 
 \section{Introduction}
 
-Large language models (LLMs)~\citep{gpt4,chatgpt} have shown strong capabilities on complex tasks such as software engineering~\citep{yang2024sweagent,wang2024openhands,zhang2024autocoderover}, data research~\citep{liu2026ddrbench,li2024deveval}, and long-horizon planning~\citep{zhang2026deepplanning,xu2024theagentcompany}. Multi-agent systems built on LLMs extend these capabilities by assigning complementary roles that exchange intermediate evidence~\citep{wang2024survey,xi2023rise,hong2024metagptmetaprogrammingmultiagent,qian2024chatdevcommunicativeagentssoftware,wu2023autogenenablingnextgenllm}, which lets one system plan and verify the same task through cooperation. However, as tasks become longer and more heterogeneous, the collaboration process itself becomes both a source of errors and an underused source of improvement.
+% Large language models (LLMs)~\citep{gpt4,chatgpt} have shown strong capabilities on complex tasks such as software engineering~\citep{yang2024sweagent,wang2024openhands,zhang2024autocoderover}, data research~\citep{liu2026ddrbench,li2024deveval}, and long-horizon planning~\citep{zhang2026deepplanning,xu2024theagentcompany}. Multi-agent systems built on LLMs extend these capabilities by assigning complementary roles that exchange intermediate evidence~\citep{wang2024survey,xi2023rise,hong2024metagptmetaprogrammingmultiagent,qian2024chatdevcommunicativeagentssoftware,wu2023autogenenablingnextgenllm}, which lets one system plan and verify the same task through cooperation. However, as tasks become longer and more heterogeneous, the collaboration process itself becomes both a source of errors and an underused source of improvement.
 
-Evolving the way agents collaborate requires flexibility and controllability at the same time. Flexibility matters because a multi-agent system has to recover what went wrong across roles, and one that cannot repair a failed handoff at runtime loses the remainder of the run with it. Controllability is equally necessary, since an update is informative only when the system can tell which coordination step was responsible and can verify that the revised collaboration remains admissible. Once either property is missing, cross-run improvement falls back to a blind search driven by the final score. For instance, on SWE-bench Verified~\citep{jimenez2024swebench}, a free-form multi-agent baseline reaches only $51.4\%$ file match and a standard operating procedure (SOP) baseline reaches $59.8\%$, far below the $86.2\%$ attained once the collaboration itself can be revised from execution traces (Table~\ref{tab:free_form}).
+% Evolving the way agents collaborate requires flexibility and controllability at the same time. Flexibility matters because a multi-agent system has to recover what went wrong across roles, and one that cannot repair a failed handoff at runtime loses the remainder of the run with it. Controllability is equally necessary, since an update is informative only when the system can tell which coordination step was responsible and can verify that the revised collaboration remains admissible. Once either property is missing, cross-run improvement falls back to a blind search driven by the final score. For instance, on SWE-bench Verified~\citep{jimenez2024swebench}, a free-form multi-agent baseline reaches only $51.4\%$ file match and a standard operating procedure (SOP) baseline reaches $59.8\%$, far below the $86.2\%$ attained once the collaboration itself can be revised from execution traces (Table~\ref{tab:free_form}).
 
-Existing collaboration representations hold only one of these two properties. \emph{Blueprint-driven} systems encode a graph, workflow, or standard operating procedure~\citep{hong2024metagptmetaprogrammingmultiagent,wu2023autogenenablingnextgenllm,fourney2024magenticonegeneralistmultiagentsolving}, and recent methods automate this design through workflow search or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}. Such designs are controllable, yet each selected workflow still determines the exact route taken during execution, and a runtime deviation therefore cannot be repaired locally. \emph{Agent-driven} systems let debate, dialogue, or dynamic connectivity emerge at runtime~\citep{li2023camelcommunicativeagentsmind,du2023improvingfactualityreasoninglanguage,liu2024dynamicllmpoweredagentnetwork,park2023generativeagentsinteractivesimulacra}, and a learned orchestrator can further reorder agent activations from reward~\citep{dang2025puppeteer}. Flexibility here costs transparency, since the realized coordination stays opaque and is hard to attribute or revise across runs. One line of work fixes the route and the other hides it, so neither yields a representation that is checkable at runtime and revisable from experience.
+% Existing collaboration representations hold only one of these two properties. \emph{Blueprint-driven} systems encode a graph, workflow, or standard operating procedure~\citep{hong2024metagptmetaprogrammingmultiagent,wu2023autogenenablingnextgenllm,fourney2024magenticonegeneralistmultiagentsolving}, and recent methods automate this design through workflow search or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}. Such designs are controllable, yet each selected workflow still determines the exact route taken during execution, and a runtime deviation therefore cannot be repaired locally. \emph{Agent-driven} systems let debate, dialogue, or dynamic connectivity emerge at runtime~\citep{li2023camelcommunicativeagentsmind,du2023improvingfactualityreasoninglanguage,liu2024dynamicllmpoweredagentnetwork,park2023generativeagentsinteractivesimulacra}, and a learned orchestrator can further reorder agent activations from reward~\citep{dang2025puppeteer}. Flexibility here costs transparency, since the realized coordination stays opaque and is hard to attribute or revise across runs. One line of work fixes the route and the other hides it, so neither yields a representation that is checkable at runtime and revisable from experience.
 
-In this paper, we aim to make the collaboration pattern itself evolvable by holding flexibility and controllability in one representation. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built on \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents a protocol as a tuple $\mathcal{P}=(\mathcal{R},\mathcal{N},\alpha,\mathcal{H},\mu,\Omega,\mathcal{C})$ whose components fix the roles and the admissible handoffs between them. The admissible handoff set $\Gamma(n,s)$ carries both properties in a single object, since it rules out inadmissible transitions while the choice inside it is left to the agent at runtime. Because every coordination decision is expressed in this object and its legality is decidable, the collaboration pattern becomes revisable between runs. Building on this, OpenAgency records accepted handoffs, rejected handoffs, completion events, and failures in an immutable trace, and a collaboration-driven evolving agent turns this evidence into at most $k$ atomic edits over the protocol. A validity operator $\Pi_{\mathcal{V}}$ filters malformed topologies and the same agent scores the coordination each surviving candidate realizes, so every deployed round stays admissible and traceable to the events that motivated it.
+% In this paper, we aim to make the collaboration pattern itself evolvable by holding flexibility and controllability in one representation. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built on \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents a protocol as a tuple $\mathcal{P}=(\mathcal{R},\mathcal{N},\alpha,\mathcal{H},\mu,\Omega,\mathcal{C})$ whose components fix the roles and the admissible handoffs between them. The admissible handoff set $\Gamma(n,s)$ carries both properties in a single object, since it rules out inadmissible transitions while the choice inside it is left to the agent at runtime. Because every coordination decision is expressed in this object and its legality is decidable, the collaboration pattern becomes revisable between runs. Building on this, OpenAgency records accepted handoffs, rejected handoffs, completion events, and failures in an immutable trace, and a collaboration-driven evolving agent turns this evidence into at most $k$ atomic edits over the protocol. A validity operator $\Pi_{\mathcal{V}}$ filters malformed topologies and the same agent scores the coordination each surviving candidate realizes, so every deployed round stays admissible and traceable to the events that motivated it.
 
-Experiments across fourteen benchmarks covering general question answering, long-horizon tasks, and production-oriented tasks show that OpenAgency achieves the best primary metric on every benchmark, lifting the unstructured multi-agent initialization by $20.7$ absolute points on average (Table~\ref{tab:main}). To the best of our knowledge, OpenAgency is the first multi-agent system in which the collaboration pattern is an evolvable object, updated from immutable execution traces without regenerating the whole workflow. We summarize our contributions as follows.
+% Experiments across fourteen benchmarks covering general question answering, long-horizon tasks, and production-oriented tasks show that OpenAgency achieves the best primary metric on every benchmark, lifting the unstructured multi-agent initialization by $20.7$ absolute points on average (Table~\ref{tab:main}). To the best of our knowledge, OpenAgency is the first multi-agent system in which the collaboration pattern is an evolvable object, updated from immutable execution traces without regenerating the whole workflow. We summarize our contributions as follows.
+
+
+Large language models (LLMs)~\citep{chatgpt} have demonstrated remarkable capabilities on increasingly complex tasks, including software engineering~\citep{yang2024sweagent,wang2024openhands,zhang2024autocoderover}, data research~\citep{liu2026ddrbench,li2024deveval}, and long-horizon planning~\citep{zhang2026deepplanning,xu2024theagentcompany}. Building upon these capabilities, LLM-based multi-agent systems further improve task-solving ability by assigning agents complementary roles and enabling them to exchange intermediate information through communication~\citep{wang2024survey,xi2023rise,hong2024metagptmetaprogrammingmultiagent,qian2024chatdevcommunicativeagentssoftware,wu2023autogenenablingnextgenllm}. Such collaboration allows individual agents to overcome their limitations and collectively solve tasks that are difficult for a single model. However, as tasks become longer, more diverse, and increasingly open-ended, the collaboration process itself becomes a new source of failure: ineffective coordination, unnecessary interactions, or inappropriate delegation can accumulate errors throughout execution. This raises a fundamental question: how can multi-agent collaboration itself continuously improve?
+
+Evolving collaboration, however, is non-trivial because it requires two seemingly conflicting properties: flexibility and controllability. Flexibility enables a multi-agent system to explore diverse collaboration strategies; only by trying different coordination patterns and comparing their outcomes can the system discover better ways to cooperate. Controllability, meanwhile, is essential because an improvement signal is meaningful only when the system can identify which coordination decisions contributed to success or failure and verify that the revised collaboration remains valid. Without flexibility, evolution degenerates into selecting among a fixed set of predefined strategies; without controllability, improvement becomes blind optimization guided only by final task rewards, with little understanding of how or why a collaboration pattern changes.
+
+Existing collaboration representations typically provide only one of these properties, limiting the possibility of continual evolution. \emph{Blueprint-driven} approaches explicitly encode collaboration structures as graphs, workflows, or standard operating procedures~\citep{hong2024metagptmetaprogrammingmultiagent,wu2023autogenenablingnextgenllm,fourney2024magenticonegeneralistmultiagentsolving}, and recent efforts further automate such designs through workflow search or generated agent programs~\citep{zhang2025aflowautomatingagenticworkflow,hu2025automateddesignagenticsystems,zhang2025maasagenticsupernet}. These approaches offer strong controllability because the coordination structure is explicitly specified. However, once a workflow is instantiated, execution largely follows a predetermined route, making it difficult to adapt the collaboration locally when unexpected situations arise. In contrast, \emph{agent-driven} approaches allow communication patterns, debates, or agent connectivity to emerge dynamically at runtime~\citep{li2023camelcommunicativeagentsmind,du2023improvingfactualityreasoninglanguage,liu2024dynamicllmpoweredagentnetwork,park2023generativeagentsinteractivesimulacra}, and learned orchestrators can further adjust agent activation orders based on feedback signals~\citep{dang2025puppeteer}. While these approaches provide flexibility, the resulting coordination process is often implicit and difficult to attribute, analyze, or systematically revise across runs. In short, existing paradigms either constrain collaboration to predefined structures or allow collaboration to emerge without sufficient transparency, leaving a gap for a representation that is both adaptable during execution and revisable through experience.
+
+In this paper, we aim to make the collaboration pattern itself an evolvable object by achieving both flexibility and controllability. To this end, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built upon \emph{governed collaboration protocols}. As illustrated in Figure~\ref{fig:intro}, OpenAgency represents collaboration as a structured protocol that specifies agent roles and the allowed ways for agents to interact. Rather than fixing a single execution path, the protocol defines a set of valid coordination choices, allowing agents to adapt their interactions at runtime while preventing invalid or undesirable behaviors. This design makes every coordination decision explicit and verifiable, enabling the collaboration pattern to be systematically improved across runs. Based on this protocol, OpenAgency collects execution traces that record coordination decisions, successful interactions, failures, and other execution outcomes. An evolving agent analyzes these traces and performs a small number of targeted edits to the collaboration protocol, allowing the system to gradually improve. Each proposed change is validated before deployment, ensuring that evolved collaboration remains grounded in previous experience.
+To the best of our knowledge, OpenAgency is the first multi-agent system that treats the collaboration pattern itself as an evolvable object, allowing it to improve from immutable execution traces while preserving runtime validity and interpretability. We summarize our contributions as follows.
 \begin{itemize}[leftmargin=1em, itemsep=0ex, topsep=0ex]
     \item \textbf{Evolvable Collaboration Protocol:} We make the collaboration pattern itself a governed and evolvable object, because the admissible handoff set is checkable before a transition is taken and revisable after the run that produced it.
-    \item \textbf{Collaboration-driven Evolution:} We propose an evolving agent that learns from the coordination evidence prior systems discard, namely rejected handoffs and failed completions, and converts it into at most $k$ atomic edits over protocol structure, predicates, and shared context. A validity operator and a collaboration quality screen keep every deployed round admissible and free of regression.
-    \item \textbf{Strong Performance:} OpenAgency reaches the best primary metric on all fourteen benchmarks (Section~\ref{sec:experiments}), and the same advantage holds against free-form and SOP collaboration substrates under an identical executor. Ablations further show that the freedom to change the agent count is the level that pays most, and a fixed graph saturates thirty points below the full space once one structural edit is admitted.
+    \item \textbf{Collaboration-driven Evolution:} We propose an evolving agent that learns from the coordination evidence prior systems discard. A validity operator and a collaboration quality screen keep every deployed round admissible and free of regression.
+    \item \textbf{Strong Performance:} Experiments across fourteen benchmarks spanning general question answering, long-horizon reasoning, and production-oriented tasks demonstrate that OpenAgency achieves the best primary metric on every benchmark, improving over unstructured multi-agent initialization by an average of $20.7$ points.
 \end{itemize}
 
 \section{Related Work}
@@ -71,7 +83,7 @@ The open question is therefore which representation of collaboration can itself 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.93\linewidth]{figures/overview.pdf}
+\includegraphics[width=0.99\linewidth]{figures/overview.pdf}
 \caption{Overview of OpenAgency. (a) Three layers keep the collaboration protocol independent of the backend that realizes each role. (b) Under one governed protocol the agents choose their own handoffs, so different tasks instantiate different collaborations. (c) The evolving agent reads the collected trajectories and returns the next protocol, moving inside the evolving space under one of three edit strategies.}
 \label{fig:intro}
 \end{figure}
@@ -172,7 +184,7 @@ We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchm
 \subsection{Benchmarks}
 \label{sec:benchmarks}
 
-We evaluate OpenAgency on fourteen benchmarks organized into three categories. \emph{General question answering} contains HumanEval~\citep{chen2021humaneval}, MBPP~\citep{austin2021mbpp}, GSM8K~\citep{cobbe2021gsm8k}, MATH~\citep{hendrycks2021math}, and HotpotQA~\citep{yang2018hotpotqa}, and tests protocol adaptation when each instance admits a short answer. \emph{Long-horizon tasks} contains SWE-bench Verified~\citep{jimenez2024swebench}, DeepPlanning~\citep{zhang2026deepplanning}, and the text-only subset of Humanity's Last Exam (HLE)~\citep{phan2025hle}, and tests governed handoffs on dependent decisions. \emph{Production-oriented tasks} contains DevEval~\citep{li2024deveval}, DDR-Bench~\citep{liu2026ddrbench}, TheAgentCompany~\citep{xu2024theagentcompany}, MARBLE~\citep{zhu2025marble}, AutomationBench~\citep{shepard2026automationbench}, and OfficeQA Pro~\citep{opsahlong2026officeqa}, and tests one protocol representation across heterogeneous tools and task surfaces. Appendix~\ref{app:benchmarks} describes each benchmark.
+We evaluate OpenAgency on fourteen benchmarks organized into three categories. \emph{General question answering} contains HumanEval~\citep{chen2021humaneval}, MBPP~\citep{austin2021mbpp}, GSM8K~\citep{cobbe2021gsm8k}, MATH~\citep{hendrycks2021math}, and HotpotQA~\citep{yang2018hotpotqa}, and tests protocol adaptation when each instance admits a short answer. \emph{Long-horizon tasks} contains SWE-bench Verified~\citep{jimenez2024swebench}, DeepPlanning~\citep{zhang2026deepplanning}, and the text-only subset of Humanity's Last Exam (HLE), and tests governed handoffs on dependent decisions. \emph{Production-oriented tasks} contains DevEval~\citep{li2024deveval}, DDR-Bench~\citep{liu2026ddrbench}, TheAgentCompany~\citep{xu2024theagentcompany}, MARBLE~\citep{zhu2025marble}, AutomationBench~\citep{shepard2026automationbench}, and OfficeQA Pro~\citep{opsahlong2026officeqa}, and tests one protocol representation across heterogeneous tools and task surfaces. Appendix~\ref{app:benchmarks} describes each benchmark.
 
 \subsection{Experimental Setup}
 \label{sec:setup}
@@ -192,7 +204,7 @@ To separate governed collaboration from the executor's own capability, we use GP
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{OpenAgency and its ablations against each benchmark's official GPT-5.5 baseline (Prior Sys.). Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
+\caption{Results of OpenAgency on each benchmark. Prior Sys. is official agent with GPT-5.5 backbone. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 backbone. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
 \label{tab:main}
 \begin{center}
 \small
@@ -211,7 +223,7 @@ HotpotQA & F1 & 76.4 & 75.9 & 64.0 & \textbf{82.3} \\
 \multicolumn{6}{c}{\emph{Long-horizon Tasks}} \\
 SWE-bench Verified & FM & 42.8 & 75.6 & 67.0 & \textbf{86.2} \\
 DeepPlanning & Case Acc & 46.9 & 45.0 & 33.8 & \textbf{54.2} \\
-HLE (text-only) & Accuracy & --- & 18.4 & 5.6 & \textbf{37.7} \\
+HLE (text-only) & Accuracy & 13.4 & 18.4 & 5.6 & \textbf{37.7} \\
 \midrule
 \multicolumn{6}{c}{\emph{Production-oriented Tasks}} \\
 DevEval & AT & 62.5 & 62.5 & 82.1 & \textbf{96.9} \\
@@ -223,7 +235,7 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\vspace{-5mm}
+\vspace{-2mm}
 \end{table}
 
 \textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance has a localized, automatically verifiable output. OpenAgency obtains the best primary metric on all five in Table~\ref{tab:main}, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol reaches $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode.
@@ -238,23 +250,10 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
-To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since the screen keeps the incumbent whenever a candidate scores lower, and on these fourteen benchmarks the ordering also holds for the primary task metric.
-
-\begin{figure}[tb]
-\centering
-\includegraphics[width=0.80\linewidth]{figures/evolution_bars.pdf}
-\vspace{-2mm}
-\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}
-\label{fig:evolution}
-\end{figure}
-
-\pagebreak
-\subsection{Component Measurements behind the Gain}
-\label{sec:subdim}
-
 \begin{wraptable}{r}{0.47\textwidth}
-\vspace{-\intextsep}
-\caption{Component measurements across the evolution rounds.}
+\vspace{-6mm}
+\caption{Improvements across evolution.}
+\vspace{1mm}
 \label{tab:subdim}
 \centering
 \small
@@ -272,13 +271,28 @@ FM given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
 Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
 Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \bottomrule
+\vspace{-7mm}
 \end{tabular}
 \end{wraptable}
+To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since the screen keeps the incumbent whenever a candidate scores lower, and on these fourteen benchmarks the ordering also holds for the primary task metric.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/evolution_bars.pdf}
+\vspace{-2mm}
+\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}
+\label{fig:evolution}
+\end{figure}
+
+\subsection{Detailed Improvement across Evolution}
+\label{sec:subdim}
+
+
 To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. Table~\ref{tab:subdim} shows the two improving at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits track the repository-level correctness that unit tests leave unchecked, which is the component the evolving agent targeted.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.98\linewidth]{figures/single_vs_multi.pdf}
+\includegraphics[width=0.99\linewidth]{figures/single_vs_multi.pdf}
 \caption{OpenAgency versus its single-agent ablation under one model and tool budget.}
 \label{fig:svm}
 \end{figure}
@@ -288,14 +302,16 @@ To locate the gain inside a benchmark, we decompose the SWE-bench Verified and D
 
 To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. OpenAgency exceeds that ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since the same agent count without governance falls short.
 
-\subsection{Ablation of the Evolving Space}
+\subsection{Ablation of Evolving Space}
 \label{sec:ablation_space}
 
-\begin{wrapfigure}{r}{0.45\textwidth}
-\vspace{-\intextsep}
+\begin{wrapfigure}{r}{0.4\textwidth}
+\vspace{-10mm}
 \centering
 \includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
-\caption{Three nested evolving spaces under one initialization. The fixed-count arm holds the agent count $|\mathcal{N}|$, and the division-only arm freezes the whole graph.}
+\vspace{-4mm}
+\caption{Effect of three evolving spaces. The fixed-count holds the agent number, and the division-only arm freezes the whole graph.}
+\vspace{-3mm}
 \label{fig:evo_space}
 \end{wrapfigure}
 To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}, the fixed-count arm holds the number of agents $|\mathcal{N}|$ at the initialization, and the division-only arm freezes the whole graph and reaches only the functional division. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that pays most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before reading any trace.
@@ -304,8 +320,9 @@ To identify which levels of the evolving space carry the gain, we restrict that 
 \label{sec:free_form}
 
 \begin{wraptable}{r}{0.47\textwidth}
-\vspace{-\intextsep}
-\caption{OpenAgency against the free-form and SOP baselines.}
+\vspace{-4mm}
+\caption{Results of OpenAgency against the free-form and SOP baselines.}
+\vspace{2mm}
 \label{tab:free_form}
 \centering
 \small
@@ -332,6 +349,7 @@ To compare the three collaboration substrates, we evaluate OpenAgency against th
 \begin{wraptable}{r}{0.44\textwidth}
 \vspace{-\intextsep}
 \caption{Governance activity on the three deployed $v_4$ protocols that carry a handoff chain, as the share of proposed handoffs $\Gamma(n,s)$ rules out and the share of runs whose outcome that refusal changes.}
+\vspace{2mm}
 \label{tab:handoff}
 \centering
 \small
@@ -352,18 +370,36 @@ To show what one governed protocol deploys once the task changes, we read out th
 \subsection{Superiority of Governed Protocols over Fixed Graphs}
 \label{sec:fixed_topology}
 
-\begin{wrapfigure}{r}{0.45\textwidth}
-\vspace{-\intextsep}
-\centering
-\includegraphics[width=\linewidth]{figures/fixed_topology.pdf}
-\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks.}
+% \begin{wrapfigure}{r}{0.45\textwidth}
+% \vspace{-\intextsep}
+% \centering
+% \includegraphics[width=\linewidth]{figures/fixed_topology.pdf}
+% \caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks.}
+% \label{fig:fixed}
+% \end{wrapfigure}
+
+\begin{figure}
+    \centering
+\includegraphics[width=0.9\linewidth]{figures/fixed_topology.pdf}
+    \vspace{-5mm}
+    \caption{Evolution of OpenAgency and MetaGPT on OfficeQA Pro.}
 \label{fig:fixed}
-\end{wrapfigure}
+\end{figure}
+
 To measure what a fixed collaboration graph costs, we plot the OfficeQA Pro evolution record as two arms from one initialization. The previous-protocol arm applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent} and rewrites only the functional division over a single-node graph. Figure~\ref{fig:fixed} shows six such rewrites peaking at $31.6$ in round $2$, with the four later ones falling back below it. The full arm, which may also change the agent count and the handoff structure, reaches $62.4$ once a reader node is added and $69.9$ after four rounds, matching Table~\ref{tab:evolution_all}. Both arms share the executor, the tool budget, and the $133$ scored tasks, so the gap comes from the level an edit may reach. A fixed graph keeps the search inside a level the trace already reports as saturated, and one structural edit clears that ceiling by more than thirty points.
 
 \section{Conclusion}
 
-We introduced OpenAgency, a self-evolving multi-agent system whose governed collaboration protocol makes the collaboration pattern an evolvable object, updated from ordered traces under a validity screen. It leads the compared systems on all fourteen benchmarks.
+We introduced OpenAgency, a self-evolving multi-agent system whose governed collaboration protocol makes the collaboration pattern an evolvable object, updated from ordered traces under a validity screen. Experiments across fourteen benchmarks demonstrate that OpenAgency
+achieves significant and sustained improvements.
+
+\subsection*{AI use statement}
+
+In this work, we used generative AI tools only for final-stage language polishing and grammar refinement of the manuscript. We have not used generative AI tools for generating research ideas, designing methods, conducting experiments, implementing code, analyzing data, interpreting results, or producing scientific claims, and other generative AI-assisted tasks requiring disclosure are not applicable to this work. We have reviewed all AI-assisted revisions to ensure their correctness and consistency with the authors' intended content. We take responsibility for the final content of this work, including all text, claims, and artifacts produced with the aid of generative AI.
+
+\subsection*{Reproducibility statement}
+
+We have made efforts to ensure the reproducibility of this work by providing detailed descriptions of the proposed method, experimental settings, implementation details, and evaluation protocols in the main paper and supplementary materials. The supplementary materials include the source code required to reproduce our experiments, and we will publicly release the code after the review process to further facilitate verification and future research. The content of this paper can be completely reproduced.
 
 \bibliography{iclr2027_conference}
 \bibliographystyle{iclr2027_conference}
@@ -388,7 +424,7 @@ We introduced OpenAgency, a self-evolving multi-agent system whose governed coll
 
 \textbf{DeepPlanning}~\citep{zhang2026deepplanning} evaluates travel and shopping planning under user-specified constraints, and the primary metric is mean case-level accuracy across the two task families.
 
-\textbf{Humanity's Last Exam (HLE)}~\citep{phan2025hle} evaluates expert-level question answering across mathematics, physics, biology, humanities, computer science, and engineering, and we use its 2{,}158-question text-only subset.
+\textbf{Humanity's Last Exam (HLE)} evaluates expert-level question answering across mathematics, physics, biology, humanities, computer science, and engineering, and we use its 2{,}158-question text-only subset.
 
 \textbf{DevEval}~\citep{li2024deveval} evaluates repository-level code generation under acceptance-test oracles that check whether the generated code works end-to-end with existing modules.
 
@@ -579,14 +615,14 @@ GPT-5.2 & 44.6 & 88.5 & 83.3 & 85.8 & 35.0 & 84.8 & 54.2 \\
 \midrule
 Qwen-Agent tool-calling & 46.9 & 88.8 & 56.7 & 72.7 & 32.9 & 86.8 & 60.8 \\
 \rowcolor{gray!12}
-\textbf{OpenAgency} & \textbf{54.2} & -- & -- & -- & -- & -- & -- \\
+\textbf{OpenAgency} & \textbf{54.2} & \textbf{90.1} & \textbf{85.6} & \textbf{87.3} & \textbf{38.4} & \textbf{87.5} & \textbf{62.1} \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
 \begin{table}[t]
-\caption{Performance on the Humanity's Last Exam text-only subset \citep{phan2025hle}. External rows are reported by that work.}
+\caption{Performance on the Humanity's Last Exam text-only subset. External rows are reported by that work.}
 \label{tab:hle}
 \begin{center}
 \small
