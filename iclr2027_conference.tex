@@ -41,9 +41,10 @@
 \maketitle
 
 \begin{abstract}
-Large language model (LLM) agents have shown strong capabilities on complex tasks, motivating the development of multi-agent systems that coordinate agents with specialized roles. Improving how these agents collaborate, however, requires two competing properties at once, namely flexibility, which enables diverse coordination decisions at runtime, and controllability, which allows those decisions to be inspected, attributed, and revised afterwards. Existing systems typically provide only one of the two, since predefined workflows offer explicit control but constrain execution to fixed routes, while free-form communication enables flexible interaction but leaves the realized coordination process opaque and difficult to revise. 
-In this paper, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built upon \emph{governed collaboration protocols}. Such a protocol allows agents to select their next collaborators within the permitted space at runtime. This design turns the collaboration pattern itself into an evolvable object. To evolve this protocol, OpenAgency maintains execution traces that capture not only successful interactions but also rejected handoffs, failed completions, and other coordination outcomes. A collaboration-driven evolving agent transforms this evidence into a bounded number of atomic protocol improvements. 
-Experiments on fourteen benchmarks spanning general question answering, long-horizon tasks, and production-oriented workloads show that OpenAgency achieves the best primary metric among compared systems on every benchmark\footnote{Code is available in the supplementary materials.}.
+Large language model (LLM) agents have demonstrated strong capabilities in solving complex tasks, motivating the development of multi-agent systems (MAS) that coordinate agents with specialized roles. However, existing multi-agent collaboration paradigms are often static, with collaboration patterns determined a priori and remaining unchanged during execution. Enabling continuously improving collaboration requires protocols that balance flexibility and controllability: flexibility allows agents to explore diverse coordination strategies at runtime, while controllability ensures that such decisions can be used to improve collaboration.
+Existing collaboration protocols typically fall into two extremes: they are either rigidly predefined, limiting adaptation, or fully free-form, sacrificing oversight. In this paper, we introduce OpenAgency, a self-evolving multi-agent system built upon governed collaboration protocols. These protocols enable agents to dynamically select their next collaborators within a predefined yet extensible space at runtime, transforming the collaboration pattern itself into an evolvable object.
+To evolve collaboration protocols, OpenAgency maintains execution traces from agent interactions and introduces a collaboration-driven evolving agent that distills these experiences into a bounded number of atomic protocol improvements. Through this mechanism, OpenAgency allows multi-agent systems to continuously refine their collaboration strategies and adapt to diverse complex tasks while preserving control over the evolution process.
+Experiments across fourteen benchmarks spanning general question answering, long-horizon reasoning tasks, and production-oriented workloads demonstrate that OpenAgency achieves improved collaboration performance and continues to enhance its effectiveness through self-evolution. \footnote{Code is available in the supplementary material.}
 \end{abstract}
 
 \section{Introduction}
@@ -175,12 +176,12 @@ We set $k=4$, which bounds the step the way a learning rate bounds a parameter u
         \mathcal{P}^{(v)}, & \text{otherwise},
     \end{cases}
 \end{gather}
-so a candidate is deployed only when it is well formed and does not degrade the observed coordination.
+the candidate is deployed only when it is well formed and does not degrade the observed coordination.
 
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates the gain through the evolution rounds (Section~\ref{sec:evolution_effect}), their component measurements (Section~\ref{sec:subdim}), the agent count (Section~\ref{sec:ablation_multi}), the evolving space (Section~\ref{sec:ablation_space}), the free-form and SOP baselines (Section~\ref{sec:free_form}), the patterns one protocol reaches across tasks (Section~\ref{sec:admissible}), and a fixed graph (Section~\ref{sec:fixed_topology}).
+% We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates the gain through the evolution rounds (Section~\ref{sec:evolution_effect}), their component measurements (Section~\ref{sec:subdim}), the agent count (Section~\ref{sec:ablation_multi}), the evolving space (Section~\ref{sec:ablation_space}), the free-form and SOP baselines (Section~\ref{sec:free_form}), the patterns one protocol reaches across tasks (Section~\ref{sec:admissible}), and a fixed graph (Section~\ref{sec:fixed_topology}).
 
 \subsection{Benchmarks}
 \label{sec:benchmarks}
@@ -251,6 +252,20 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
+To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since the screen keeps the incumbent whenever a candidate scores lower, and on these fourteen benchmarks the ordering also holds for the primary task metric.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/evolution_bars.pdf}
+\vspace{-2mm}
+\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}
+\label{fig:evolution}
+\end{figure}
+
+\subsection{Detailed Improvement across Evolution}
+\label{sec:subdim}
+
+
 \begin{wraptable}{r}{0.47\textwidth}
 \vspace{-6mm}
 \caption{Improvements across evolution.}
@@ -275,20 +290,6 @@ Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \vspace{-7mm}
 \end{tabular}
 \end{wraptable}
-To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since the screen keeps the incumbent whenever a candidate scores lower, and on these fourteen benchmarks the ordering also holds for the primary task metric.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.98\linewidth]{figures/evolution_bars.pdf}
-\vspace{-2mm}
-\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}
-\label{fig:evolution}
-\end{figure}
-
-\subsection{Detailed Improvement across Evolution}
-\label{sec:subdim}
-
-
 To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. As shown in Table~\ref{tab:subdim}, the two improve at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits track the repository-level correctness that unit tests leave unchecked.
 
 \begin{figure}[t]
@@ -298,10 +299,7 @@ To locate the gain inside a benchmark, we decompose the SWE-bench Verified and D
 \label{fig:svm}
 \end{figure}
 
-\subsection{Advantage of Multi-agent Protocols}
-\label{sec:ablation_multi}
 
-To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds that ablation on every benchmark, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} agrees, since a multi-agent initialization without a governed protocol falls short.
 
 \subsection{Ablation of Evolving Space}
 \label{sec:ablation_space}
@@ -343,6 +341,10 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \end{wraptable}
 To compare the three ways of expressing collaboration, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. Notably, the free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal.
 
+\subsection{Advantage of Multi-agent Protocols}
+\label{sec:ablation_multi}
+
+To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds that ablation on every benchmark, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} agrees, since a multi-agent initialization without a governed protocol falls short.
 
 \subsection{Flexibility of Governed Protocols across Tasks}
 \label{sec:admissible}
@@ -368,7 +370,7 @@ Recovered (\%) & 3.7 & 2.9 & 5.3 \\
 \end{wraptable}
 To show what one governed protocol deploys once the task changes, we read out the deployed $v_4$ protocol on three production-oriented benchmarks. As shown in Table~\ref{tab:handoff}, the three protocols differ in agent count, role vocabulary, and handoff order. DevEval converges on a coder checked by a reviewer, DDR-Bench on a researcher feeding a reporter, and TheAgentCompany on a planner, an executor, and a reviewer, so one loop settles on the division each task rewards. The admissible handoff set stays active on all three chains, ruling out $3.8\%$ to $8.2\%$ of proposed handoffs and changing the outcome of $2.9\%$ to $5.3\%$ of runs. A fixed procedure commits to one of these patterns before any trace is seen, and the refused events are the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
 
-\subsection{Superiority of Governed Protocols over Fixed Graphs}
+\subsection{Superiority of Governed Protocols for Evolution}
 \label{sec:fixed_topology}
 
 % \begin{wrapfigure}{r}{0.45\textwidth}
