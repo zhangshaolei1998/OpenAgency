@@ -191,7 +191,7 @@ We evaluate OpenAgency on fourteen benchmarks organized into three categories. \
 \subsection{Experimental Setup}
 \label{sec:setup}
 
-To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tools its benchmark requires. For each benchmark, we compare three in-house conditions, a single-agent ablation with no handoff, the unstructured initialization $v_0$, and the evolved protocol after four rounds ($v_4$). All three are reported against a prior system (Prior Sys.), the official GPT-5.5 baseline for each benchmark, the strongest publicly reported GPT-5.5 result at submission time. Each benchmark evolves its own protocol, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four.
+To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tools its benchmark requires. For each benchmark, we compare three in-house conditions, a single-agent ablation with no handoff, the unstructured initialization $v_0$, and the evolved protocol after four rounds ($v_4$). All three are reported against a prior system (Prior Sys.), the strongest result reported for each benchmark at submission time. Each benchmark evolves its own protocol, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four.
 
 \subsection{Main Results}
 \label{sec:main_results}
@@ -206,7 +206,7 @@ To separate governed collaboration from the executor's own capability, we use GP
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{Results of OpenAgency on each benchmark. Prior Sys. is the previous baseline for each benchmark with the GPT-5.5 backbone. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 backbone. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
+\caption{Results of OpenAgency on each benchmark. Prior Sys. is the strongest prior result reported for each benchmark. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 backbone. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
 \label{tab:main}
 \begin{center}
 \small
