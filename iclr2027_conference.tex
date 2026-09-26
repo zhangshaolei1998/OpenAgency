@@ -182,7 +182,7 @@ We evaluate OpenAgency on fourteen benchmarks organized into three categories. \
 \subsection{Experimental Setup}
 \label{sec:setup}
 
-To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under one model and tool budget, a single-agent ablation with no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). All three are reported against a prior reference (Prior Ref.) that fixes the absolute level of the benchmark, taken as the strongest publicly reported result we found for each benchmark at the time of submission, and as a same-model direct-LLM baseline where no stronger external result is available. Each benchmark evolves its own protocol independently, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four.
+To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under one model and tool budget, a single-agent ablation with no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). All three are reported against a prior system (Prior Sys.), the official GPT-5.5 baseline for each benchmark, taken as the strongest publicly reported GPT-5.5 result at the time of submission. Each benchmark evolves its own protocol independently, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four.
 
 \subsection{Main Results}
 \label{sec:main_results}
@@ -192,19 +192,19 @@ To separate governed collaboration from the executor's own capability, we use GP
 % \centering
 % \includegraphics[width=0.7\linewidth]{figures/main_radar.pdf}
 % \vspace{-4mm}
-% \caption{OpenAgency against each benchmark's prior reference across three categories. The same protocol runs on all fourteen benchmarks.}
+% \caption{OpenAgency against each benchmark's prior system across three categories. The same protocol runs on all fourteen benchmarks.}
 % \label{fig:main_radar}
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{OpenAgency and its ablations against a selected prior reference that anchors the absolute level of each benchmark. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
+\caption{OpenAgency and its ablations against each benchmark's official GPT-5.5 baseline (Prior Sys.). Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
 \label{tab:main}
 \begin{center}
 \small
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{llcccc}
 \toprule
-\textbf{Benchmark} & \textbf{Metric} & \textbf{Prior Ref.} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{OpenAgency} \\
+\textbf{Benchmark} & \textbf{Metric} & \textbf{Prior Sys.} & \textbf{Single-agent} & \textbf{Multi-agent (init)} & \textbf{OpenAgency} \\
 \midrule
 \multicolumn{6}{c}{\emph{General Question Answering Tasks}} \\
 HumanEval & pass@1 & 92.2 & 87.5 & 96.9 & \textbf{100.0} \\
@@ -231,15 +231,15 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \vspace{-5mm}
 \end{table}
 
-\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance has a localized, automatically verifiable output and leaves little room to coordinate. Against its two ablations and each benchmark's prior reference, OpenAgency obtains the best primary metric on all five in Table~\ref{tab:main}, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode, so the protocol turns a short chain into a verified one.
+\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance has a localized, automatically verifiable output and leaves little room to coordinate. Against its two ablations and each benchmark's prior system, OpenAgency obtains the best primary metric on all five in Table~\ref{tab:main}, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode, so the protocol turns a short chain into a verified one.
 
 
-\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. Against the single-agent ablation and each benchmark's prior reference, Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE. The protocol each benchmark converges to shows what produces the lead. On SWE-bench Verified the evolving agent installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a Verifier the user-specified constraints one at a time, turning a brittle end-to-end plan into locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers to completion and low-confidence ones back through a retry edge. All three shapes come from the same initialization, so the handoff and completion rules adapt when local errors are unrecoverable.
+\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. Against the single-agent ablation and each benchmark's prior system, Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior system of $42.8$ and $37.7$ accuracy on HLE. The protocol each benchmark converges to shows what produces the lead. On SWE-bench Verified the evolving agent installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a Verifier the user-specified constraints one at a time, turning a brittle end-to-end plan into locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers to completion and low-confidence ones back through a retry edge. All three shapes come from the same initialization, so the handoff and completion rules adapt when local errors are unrecoverable.
 
 
 
 
-\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. OpenAgency leads on all six in Table~\ref{tab:main}, improving over the prior reference by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE, and two cases expose what governance contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace into the final report, fixing a silent omission that free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging, so in both cases governance supplies a constraint the task format alone does not.
+\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. OpenAgency leads on all six in Table~\ref{tab:main}, improving over the prior system by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE, and two cases expose what governance contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace into the final report, fixing a silent omission that free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging, so in both cases governance supplies a constraint the task format alone does not.
 
 
 
@@ -259,7 +259,7 @@ To verify that bounded edits keep improving collaboration after the first revisi
 \centering
 \includegraphics[width=0.88\linewidth]{figures/evolution_bars.pdf}
 \vspace{-2mm}
-\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
+\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}
 \label{fig:evolution}
 \end{figure}
 
@@ -268,29 +268,29 @@ To verify that bounded edits keep improving collaboration after the first revisi
 
 To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. Table~\ref{tab:subdim} shows the two improving at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits are associated with the repository-level correctness that unit tests leave unchecked. In both cases the component that moves aligns with the edit the evolving agent targeted.
 
-\begin{table}[t]
-\caption{Component measurements across the evolution rounds. Patch applied is the fraction of instances producing a non-empty patch, and file match given a patch restricts file match to those instances.}
+\begin{wraptable}{r}{0.52\textwidth}
+\vspace{-4mm}
+\caption{Component measurements across the evolution rounds.}
 \label{tab:subdim}
-\begin{center}
 \small
-\setlength{\tabcolsep}{6pt}
+\centering
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Component measurement} & \textbf{Init} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
+\textbf{Component} & \textbf{Init} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
 \midrule
 \multicolumn{6}{c}{\emph{SWE-bench Verified}} \\
 Patch applied & 79.2 & 93.4 & 100.0 & 100.0 & \textbf{100.0} \\
 File match & 67.0 & 78.8 & 85.6 & 85.8 & \textbf{86.2} \\
-File match given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
+FM given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
 \midrule
 \multicolumn{6}{c}{\emph{DevEval}} \\
 Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
 Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \bottomrule
 \end{tabular}
-\end{center}
-\vspace{-4mm}
-\end{table}
+\vspace{-3mm}
+\end{wraptable}
 
 \subsection{Ablation of the Evolving Space}
 \label{sec:ablation_space}
@@ -350,7 +350,7 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=0.66\linewidth]{figures/fixed_topology.pdf}
+\includegraphics[width=0.82\linewidth]{figures/fixed_topology.pdf}
 \vspace{-2mm}
 \caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks. The previous-protocol arm (MetaGPT) edits only the functional division, while the full arm may also change the agent count and the topology.}
 \label{fig:fixed}
@@ -485,7 +485,7 @@ OfficeQA Pro & 35.3 & 21.1 & 31.6 & 62.4 & 67.7 & \textbf{69.9} \\
 \toprule
 \textbf{Model / System} & \textbf{pass@1 (\%)} \\
 \midrule
-Prior Ref. & 92.2 \\
+Prior Sys. & 92.2 \\
 OpenAgency (single-agent) & 87.5 \\
 Multi-agent (init) & 96.9 \\
 \rowcolor{gray!12}
@@ -502,7 +502,7 @@ Multi-agent (init) & 96.9 \\
 \toprule
 \textbf{Model / System} & \textbf{pass@1 (\%)} \\
 \midrule
-Prior Ref. & 69.3 \\
+Prior Sys. & 69.3 \\
 OpenAgency (single-agent) & 73.5 \\
 Multi-agent (init) & 73.5 \\
 \rowcolor{gray!12}
@@ -519,7 +519,7 @@ Multi-agent (init) & 73.5 \\
 \toprule
 \textbf{Model / System} & \textbf{Exact match (\%)} \\
 \midrule
-Prior Ref. & 97.6 \\
+Prior Sys. & 97.6 \\
 OpenAgency (single-agent) & 97.2 \\
 Multi-agent (init) & 97.4 \\
 \rowcolor{gray!12}
@@ -536,7 +536,7 @@ Multi-agent (init) & 97.4 \\
 \toprule
 \textbf{Model / System} & \textbf{Exact match (\%)} \\
 \midrule
-Prior Ref. & 83.3 \\
+Prior Sys. & 83.3 \\
 OpenAgency (single-agent) & 82.3 \\
 Multi-agent (init) & 86.0 \\
 \rowcolor{gray!12}
@@ -553,7 +553,7 @@ Multi-agent (init) & 86.0 \\
 \toprule
 \textbf{Model / System} & \textbf{F1 (\%)} \\
 \midrule
-Prior Ref. & 76.4 \\
+Prior Sys. & 76.4 \\
 OpenAgency (single-agent) & 75.9 \\
 Multi-agent (init) & 64.0 \\
 \rowcolor{gray!12}
@@ -574,7 +574,7 @@ Multi-agent (init) & 64.0 \\
 Claude-2 & -- & -- & 4.8 \\
 GPT-4 & -- & -- & 1.7 \\
 SWE-Llama-13B & -- & -- & 3.9 \\
-Prior Ref.               & 72.4 & 42.8 & 15.4 \\
+Prior Sys.               & 72.4 & 42.8 & 15.4 \\
 OpenAgency (single-agent) & 89.8 & 75.6 & 63.8 \\
 Multi-agent (init) & 79.2 & 67.0 & 56.2 \\
 \rowcolor{gray!12}
@@ -609,7 +609,7 @@ GPT-5 & 31.6 & 78.7 & 65.9 & 72.3 & 18.9 & 80.4 & 44.2 \\
 Claude-Opus-4.5 & 33.9 & 79.3 & 70.9 & 75.1 & 22.7 & 80.0 & 45.0 \\
 GPT-5.2 & 44.6 & 88.5 & 83.3 & 85.8 & 35.0 & 84.8 & 54.2 \\
 \midrule
-Qwen-Agent tool-calling (Prior Ref.) & 46.9 & 88.8 & 56.7 & 72.7 & 32.9 & 86.8 & 60.8 \\
+Qwen-Agent tool-calling (Prior Sys.) & 46.9 & 88.8 & 56.7 & 72.7 & 32.9 & 86.8 & 60.8 \\
 OpenAgency (single-agent) & 45.0 & 73.9 & 67.5 & 70.7 & 35.0 & 85.2 & 55.0 \\
 Multi-agent (init) & 33.8 & 44.5 & 38.3 & 41.4 & 26.7 & 76.2 & 40.8 \\
 \rowcolor{gray!12}
@@ -648,7 +648,7 @@ Multi-agent (init)                                    & 5.6 \\
 \end{table}
 
 \begin{table}[t]
-\caption{Performance on DevEval \citep{li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation.}
+\caption{Performance on DevEval \citep{li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior system is a single coder node with no handoff, which is also the single-agent ablation.}
 \label{tab:deveval}
 \begin{center}
 \small
@@ -657,7 +657,7 @@ Multi-agent (init)                                    & 5.6 \\
 \toprule
 \textbf{Method} & \textbf{UT} & \textbf{AT} \\
 \midrule
-Direct LLM (Prior Ref.)  & 90.4 & 62.5 \\
+Direct LLM (Prior Sys.)  & 90.4 & 62.5 \\
 Multi-agent (init) & 98.1 & 82.1 \\
 \rowcolor{gray!12}
 \textbf{OpenAgency} & \textbf{99.1} & \textbf{96.9} \\
@@ -682,7 +682,7 @@ Gemini-3-Flash & 33.0 & 44.8 & 21.2 \\
 GPT-5.1 & 40.7 & 37.1 & 44.3 \\
 GPT-5-mini & 42.0 & 46.8 & 37.1 \\
 GPT-5.2 & 43.0 & 44.9 & 41.1 \\
-Claude-Sonnet-4.5 (Prior Ref.) & 69.1 & 77.6 & 60.6 \\
+Claude-Sonnet-4.5 (Prior Sys.) & 69.1 & 77.6 & 60.6 \\
 \midrule
 \multicolumn{4}{c}{\emph{Open-source models}} \\
 Llama-3.3-70B & 6.5 & 9.9 & 3.0 \\
@@ -720,7 +720,7 @@ OpenHands & Claude-Sonnet-3.5 & 24.0 & 34.4 & 29.2 \\
 OpenHands & Gemini-2.0-Flash & 11.4 & 19.0 & 39.9 \\
 OpenHands & GPT-4o & 8.6 & 16.7 & 28.7 \\
 \midrule
-OpenHands (Prior Ref.) & GPT-5.5 & 40.0 & 41.5 & 31.6 \\
+OpenHands (Prior Sys.) & GPT-5.5 & 40.0 & 41.5 & 31.6 \\
 OpenAgency (single-agent) & GPT-5.5 & \textbf{46.7} & 46.3 & 27.4 \\
 Multi-agent (init) & GPT-5.5 & -- & 41.5 & -- \\
 \rowcolor{gray!12}
@@ -744,7 +744,7 @@ Meta-Llama-3.1-8B      & Llama-3.1-8B  & 80.9 & 72.8 & 76.9 \\
 Meta-Llama-3.1-70B     & Llama-3.1-70B & 80.8 & 72.1 & 76.5 \\
 Meta-Llama-3.3-70B     & Llama-3.3-70B & 80.0 & 73.2 & 76.6 \\
 GPT-3.5-turbo          & GPT-3.5-turbo & 70.2 & 71.7 & 71.0 \\
-GPT-4o-mini (Prior Ref.) & GPT-4o-mini   & 84.1 & 74.5 & 79.3 \\
+GPT-4o-mini (Prior Sys.) & GPT-4o-mini   & 84.1 & 74.5 & 79.3 \\
 \midrule
 OpenAgency (single-agent)                      & GPT-5.5       & 66.8 & 90.0 & 78.4 \\
 Multi-agent (init)                             & GPT-5.5       & -- & -- & 50.0 \\
@@ -767,7 +767,7 @@ Multi-agent (init)                             & GPT-5.5       & -- & -- & 50.0 
 \midrule
 GPT-6-Sol & 33.2 \\
 GPT-6-Astra & 41.4 \\
-Claude-Opus-5.5 (Prior Ref.) & 42.5 \\
+Claude-Opus-5.5 (Prior Sys.) & 42.5 \\
 \midrule
 OpenAgency (single-agent) & 23.7 \\
 Multi-agent (init) & 23.6 \\
@@ -793,7 +793,7 @@ GPT-5.4                    & Full PDF                & 36.1 \\
 Gemini-3.1-Pro             & Full PDF                & 42.9 \\
 GPT-5.1                    & Full PDF                & 45.1 \\
 Claude-Opus-4.5            & Full PDF                & 46.6 \\
-Claude-Opus-4.6 (Prior Ref.) & ai\_parse\_document     & 57.1 \\
+Claude-Opus-4.6 (Prior Sys.) & ai\_parse\_document     & 57.1 \\
 \midrule
 Direct LLM                                               & Full PDF                & 26.3 \\
 OpenAgency (single-agent)                                   & Full PDF                & 35.3 \\

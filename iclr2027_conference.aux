@@ -74,27 +74,27 @@
 \newlabel{sec:setup}{{4.2}{6}{Experimental Setup}{subsection.18}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Main Results}{6}{subsection.19}\protected@file@percent }
 \newlabel{sec:main_results}{{4.3}{6}{Main Results}{subsection.19}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces OpenAgency and its ablations against a selected prior reference that anchors the absolute level of each benchmark. Multi-agent\nobreakspace  {}(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}}{7}{table.21}\protected@file@percent }
-\newlabel{tab:main}{{1}{7}{OpenAgency and its ablations against a selected prior reference that anchors the absolute level of each benchmark. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate}{table.21}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces OpenAgency and its ablations against each benchmark's official GPT-5.5 baseline (Prior Sys.). Multi-agent\nobreakspace  {}(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}}{7}{table.21}\protected@file@percent }
+\newlabel{tab:main}{{1}{7}{OpenAgency and its ablations against each benchmark's official GPT-5.5 baseline (Prior Sys.). Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate}{table.21}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Analysis}{7}{section.22}\protected@file@percent }
 \newlabel{sec:analysis}{{5}{7}{Analysis}{section.22}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Effectiveness of Protocol Evolution}{7}{subsection.23}\protected@file@percent }
 \newlabel{sec:evolution_effect}{{5.1}{7}{Effectiveness of Protocol Evolution}{subsection.23}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Component Measurements behind the Gain}{7}{subsection.26}\protected@file@percent }
 \newlabel{sec:subdim}{{5.2}{7}{Component Measurements behind the Gain}{subsection.26}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}}{8}{figure.25}\protected@file@percent }
-\newlabel{fig:evolution}{{2}{8}{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference}{figure.25}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Component measurements across the evolution rounds. Patch applied is the fraction of instances producing a non-empty patch, and file match given a patch restricts file match to those instances.}}{8}{table.28}\protected@file@percent }
-\newlabel{tab:subdim}{{2}{8}{Component measurements across the evolution rounds. Patch applied is the fraction of instances producing a non-empty patch, and file match given a patch restricts file match to those instances}{table.28}{}}
+\citation{wu2023autogenenablingnextgenllm}
+\citation{qian2024chatdevcommunicativeagentssoftware}
+\citation{hong2024metagptmetaprogrammingmultiagent}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system.}}{8}{figure.25}\protected@file@percent }
+\newlabel{fig:evolution}{{2}{8}{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior system}{figure.25}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Ablation of the Evolving Space}{8}{subsection.29}\protected@file@percent }
 \newlabel{sec:ablation_space}{{5.3}{8}{Ablation of the Evolving Space}{subsection.29}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Component measurements across the evolution rounds.}}{8}{table.28}\protected@file@percent }
+\newlabel{tab:subdim}{{2}{8}{Component measurements across the evolution rounds}{table.28}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal  {N}|$, and the division-only arm freezes the whole graph and edits only the functional division.}}{8}{figure.31}\protected@file@percent }
 \newlabel{fig:evo_space}{{3}{8}{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal {N}|$, and the division-only arm freezes the whole graph and edits only the functional division}{figure.31}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Advantage of Multi-agent Protocols}{8}{subsection.32}\protected@file@percent }
 \newlabel{sec:ablation_multi}{{5.4}{8}{Advantage of Multi-agent Protocols}{subsection.32}{}}
-\citation{wu2023autogenenablingnextgenllm}
-\citation{qian2024chatdevcommunicativeagentssoftware}
-\citation{hong2024metagptmetaprogrammingmultiagent}
 \citation{hong2024metagptmetaprogrammingmultiagent}
 \bibdata{iclr2027_conference}
 \bibcite{austin2021mbpp}{{1}{2021}{{Austin et~al.}}{{Austin, Odena, Nye, Bosma, Michalewski, Dohan, Jiang, Cai, Terry, Le, and Sutton}}}
@@ -222,8 +222,8 @@
 \newlabel{tab:dp}{{12}{20}{Performance on DeepPlanning \citep {zhang2026deepplanning}. Avg is the mean of travel and shopping case accuracy. External rows are reported by that work}{table.66}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Performance on the Humanity's Last Exam text-only subset \citep  {phan2025hle}. External rows are reported by that work.}}{20}{table.68}\protected@file@percent }
 \newlabel{tab:hle}{{13}{20}{Performance on the Humanity's Last Exam text-only subset \citep {phan2025hle}. External rows are reported by that work}{table.68}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Performance on DevEval \citep  {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation.}}{20}{table.70}\protected@file@percent }
-\newlabel{tab:deveval}{{14}{20}{Performance on DevEval \citep {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior reference is a single coder node with no handoff, which is also the single-agent ablation}{table.70}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Performance on DevEval \citep  {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior system is a single coder node with no handoff, which is also the single-agent ablation.}}{20}{table.70}\protected@file@percent }
+\newlabel{tab:deveval}{{14}{20}{Performance on DevEval \citep {li2024deveval}. UT is the unit-test pass rate and AT is the repository-level acceptance-test pass rate. The prior system is a single coder node with no handoff, which is also the single-agent ablation}{table.70}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Performance on the DDR-Bench 10-K subset \citep  {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work.}}{21}{table.72}\protected@file@percent }
 \newlabel{tab:ddr}{{15}{21}{Performance on the DDR-Bench 10-K subset \citep {liu2026ddrbench}. Overall averages Message-Wise and Trajectory-Wise accuracy. External rows are reported by that work}{table.72}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Performance on TheAgentCompany \citep  {xu2024theagentcompany}. Score is the aggregated task score, and Steps is the average number of steps. External rows are reported by that work.}}{21}{table.74}\protected@file@percent }
