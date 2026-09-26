@@ -167,7 +167,7 @@ so a candidate is deployed only when it is well formed and does not degrade the 
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates the gain through the evolution rounds (Section~\ref{sec:evolution_effect}), their component measurements (Section~\ref{sec:subdim}), the evolving space (Section~\ref{sec:ablation_space}), the agent count (Section~\ref{sec:ablation_multi}), the free-form and SOP substrates (Section~\ref{sec:free_form}), the patterns one protocol reaches across tasks (Section~\ref{sec:admissible}), and a fixed graph (Section~\ref{sec:fixed_topology}).
+We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates the gain through the evolution rounds (Section~\ref{sec:evolution_effect}), their component measurements (Section~\ref{sec:subdim}), the agent count (Section~\ref{sec:ablation_multi}), the evolving space (Section~\ref{sec:ablation_space}), the free-form and SOP substrates (Section~\ref{sec:free_form}), the patterns one protocol reaches across tasks (Section~\ref{sec:admissible}), and a fixed graph (Section~\ref{sec:fixed_topology}).
 
 \subsection{Benchmarks}
 \label{sec:benchmarks}
@@ -248,9 +248,13 @@ To verify that bounded edits keep improving collaboration after the first revisi
 \label{fig:evolution}
 \end{figure}
 
-\begin{figure}[t]
-\begin{minipage}[t]{0.48\textwidth}
-\captionof{table}{Component measurements across the evolution rounds.}
+\pagebreak
+\subsection{Component Measurements behind the Gain}
+\label{sec:subdim}
+
+\begin{wraptable}{r}{0.47\textwidth}
+\vspace{-\intextsep}
+\caption{Component measurements across the evolution rounds.}
 \label{tab:subdim}
 \centering
 \small
@@ -269,39 +273,39 @@ Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
 Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \bottomrule
 \end{tabular}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.50\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
-\caption{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal{N}|$, and the division-only arm freezes the whole graph and edits only the functional division.}
-\label{fig:evo_space}
-\end{minipage}
-\end{figure}
-
-\subsection{Component Measurements behind the Gain}
-\label{sec:subdim}
-
+\end{wraptable}
 To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. Table~\ref{tab:subdim} shows the two improving at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits track the repository-level correctness that unit tests leave unchecked, which is the component the evolving agent targeted.
 
-\subsection{Ablation of the Evolving Space}
-\label{sec:ablation_space}
-
-To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}, the fixed-count arm holds the number of agents $|\mathcal{N}|$ at the initialization, and the division-only arm freezes the whole graph and reaches only the functional division. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that pays most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before reading any trace.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/single_vs_multi.pdf}
+\caption{OpenAgency versus its single-agent ablation under one model and tool budget.}
+\label{fig:svm}
+\end{figure}
 
 \subsection{Advantage of Multi-agent Protocols}
 \label{sec:ablation_multi}
 
 To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. OpenAgency exceeds that ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since the same agent count without governance falls short.
 
-\begin{figure}[t]
-\begin{minipage}[t]{0.505\textwidth}
+\subsection{Ablation of the Evolving Space}
+\label{sec:ablation_space}
+
+\begin{wrapfigure}{r}{0.45\textwidth}
+\vspace{-\intextsep}
 \centering
-\includegraphics[width=\linewidth]{figures/single_vs_multi.pdf}
-\caption{OpenAgency versus its single-agent ablation under one model and tool budget.}
-\label{fig:svm}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.465\textwidth}
-\captionof{table}{OpenAgency against the free-form and SOP baselines.}
+\includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
+\caption{Three nested evolving spaces under one initialization. The fixed-count arm holds the agent count $|\mathcal{N}|$, and the division-only arm freezes the whole graph.}
+\label{fig:evo_space}
+\end{wrapfigure}
+To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}, the fixed-count arm holds the number of agents $|\mathcal{N}|$ at the initialization, and the division-only arm freezes the whole graph and reaches only the functional division. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that pays most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before reading any trace.
+
+\subsection{Comparison against Free-form and SOP Baselines}
+\label{sec:free_form}
+
+\begin{wraptable}{r}{0.47\textwidth}
+\vspace{-\intextsep}
+\caption{OpenAgency against the free-form and SOP baselines.}
 \label{tab:free_form}
 \centering
 \small
@@ -318,32 +322,16 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \textbf{OpenAgency} & \textbf{86.2} & \textbf{96.9} & \textbf{76.0} & \textbf{53.7} \\
 \bottomrule
 \end{tabular}
-\end{minipage}
-\end{figure}
-
-\subsection{Comparison against Free-form and SOP Baselines}
-\label{sec:free_form}
-
+\end{wraptable}
 To compare the three collaboration substrates, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal.
 
 
 \subsection{Flexibility of Governed Protocols across Tasks}
 \label{sec:admissible}
 
-To show what one governed protocol deploys once the task changes, we read out the $v_4$ protocol of each benchmark. The three protocols of Table~\ref{tab:handoff} differ in agent count, role vocabulary, and handoff order. DevEval converges on a coder checked by a reviewer, DDR-Bench on a researcher feeding a reporter, and TheAgentCompany on a planner, an executor, and a reviewer, so one loop settles on the division each task rewards. The admissible handoff set stays active on every chain, ruling out $3.8\%$ to $8.2\%$ of proposed handoffs and changing the outcome of $2.9\%$ to $5.3\%$ of runs. A fixed procedure commits to one of these patterns before any trace is seen, and the refused events are the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
-
-\subsection{Superiority of Governed Protocols over Fixed Graphs}
-\label{sec:fixed_topology}
-
-\begin{figure}[t]
-\begin{minipage}[t]{0.53\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/fixed_topology.pdf}
-\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks. The previous-protocol arm (MetaGPT) edits only the functional division.}
-\label{fig:fixed}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.44\textwidth}
-\captionof{table}{Governance activity on the three deployed $v_4$ protocols that carry a handoff chain, as the share of proposed handoffs $\Gamma(n,s)$ rules out and the share of runs whose outcome that refusal changes.}
+\begin{wraptable}{r}{0.44\textwidth}
+\vspace{-\intextsep}
+\caption{Governance activity on the three deployed $v_4$ protocols that carry a handoff chain, as the share of proposed handoffs $\Gamma(n,s)$ rules out and the share of runs whose outcome that refusal changes.}
 \label{tab:handoff}
 \centering
 \small
@@ -358,9 +346,20 @@ Refused (\%)   & 4.9 & 3.8 & 8.2 \\
 Recovered (\%) & 3.7 & 2.9 & 5.3 \\
 \bottomrule
 \end{tabular}
-\end{minipage}
-\end{figure}
-To measure what a fixed collaboration graph costs, we plot the OfficeQA Pro evolution record as two arms. The previous-protocol arm applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent}. Figure~\ref{fig:fixed} shows six such rewrites peaking at $31.6$ in round $2$, the four later ones falling back below it. The full arm, which may also change the agent count, reaches $62.4$ with one added reader node and $69.9$ after four rounds, matching Table~\ref{tab:evolution_all}. A fixed graph keeps the search inside a level the trace already reports as saturated, and one structural edit clears that ceiling by more than thirty points.
+\end{wraptable}
+To show what one governed protocol deploys once the task changes, we read out the $v_4$ protocol of each benchmark. The three protocols of Table~\ref{tab:handoff} differ in agent count, role vocabulary, and handoff order. DevEval converges on a coder checked by a reviewer, DDR-Bench on a researcher feeding a reporter, and TheAgentCompany on a planner, an executor, and a reviewer, so one loop settles on the division each task rewards. The admissible handoff set stays active on every chain, ruling out $3.8\%$ to $8.2\%$ of proposed handoffs and changing the outcome of $2.9\%$ to $5.3\%$ of runs. A fixed procedure commits to one of these patterns before any trace is seen, and the refused events are the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
+
+\subsection{Superiority of Governed Protocols over Fixed Graphs}
+\label{sec:fixed_topology}
+
+\begin{wrapfigure}{r}{0.45\textwidth}
+\vspace{-\intextsep}
+\centering
+\includegraphics[width=\linewidth]{figures/fixed_topology.pdf}
+\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks.}
+\label{fig:fixed}
+\end{wrapfigure}
+To measure what a fixed collaboration graph costs, we plot the OfficeQA Pro evolution record as two arms from one initialization. The previous-protocol arm applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent} and rewrites only the functional division over a single-node graph. Figure~\ref{fig:fixed} shows six such rewrites peaking at $31.6$ in round $2$, with the four later ones falling back below it. The full arm, which may also change the agent count and the handoff structure, reaches $62.4$ once a reader node is added and $69.9$ after four rounds, matching Table~\ref{tab:evolution_all}. Both arms share the executor, the tool budget, and the $133$ scored tasks, so the gap comes from the level an edit may reach. A fixed graph keeps the search inside a level the trace already reports as saturated, and one structural edit clears that ceiling by more than thirty points.
 
 \section{Conclusion}
 
