@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  26 SEP 2026 09:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  26 SEP 2026 10:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -568,17 +568,13 @@ Underfull \hbox (badness 2126) in paragraph at lines 312--312
 
 [8 <./figures/evolution_bars.pdf> <./figures/single_vs_multi.pdf> <./figures/ev
 olution_ablation.pdf>]
-<figures/fixed_topology.pdf, id=793, 572.5315pt x 134.40149pt>
+<figures/fixed_topology.pdf, id=793, 389.1995pt x 102.01048pt>
 File: figures/fixed_topology.pdf Graphic file (type pdf)
 <use figures/fixed_topology.pdf>
 Package pdftex.def Info: figures/fixed_topology.pdf  used on input line 386.
-(pdftex.def)             Requested size: 357.73405pt x 83.98225pt.
-
-Underfull \vbox (badness 1424) has occurred while \output is active []
-
- [9 <./figures/fixed_topology.pdf>] (./iclr2027_conference.bbl [10] [11] [12]) 
-[13]
-[14
+(pdftex.def)             Requested size: 397.48499pt x 104.18472pt.
+ [9 <./figures/fixed_topology.pdf>]
+(./iclr2027_conference.bbl [10] [11] [12]) [13] [14
 
 ]
 <figures/protocol_evolution.pdf, id=978, 779.37187pt x 1164.47118pt>
@@ -601,7 +597,7 @@ Package rerunfilecheck Info: File `iclr2027_conference.out' has not changed.
 Here is how much of TeX's memory you used:
  12937 strings out of 479654
  196227 string characters out of 5883416
- 534715 words of memory out of 5000000
+ 535715 words of memory out of 5000000
  30662 multiletter control sequences out of 15000+600000
  503381 words of font info for 97 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
@@ -623,10 +619,10 @@ e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf
 ype1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/tim
 es/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on iclr2027_conference.pdf (20 pages, 984231 bytes).
+Output written on iclr2027_conference.pdf (20 pages, 984253 bytes).
 PDF statistics:
- 1328 PDF objects out of 1440 (max. 8388607)
- 746 compressed objects within 8 object streams
+ 1326 PDF objects out of 1440 (max. 8388607)
+ 744 compressed objects within 8 object streams
  145 named destinations out of 1000 (max. 500000)
  207 words of extra memory for PDF output out of 10000 (max. 10000000)
 

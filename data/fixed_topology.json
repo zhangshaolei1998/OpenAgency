@@ -5,7 +5,7 @@
   "executor": "gpt-5.5",
   "init": 21.1,
   "fixed": {
-    "label": "Previous collaboration protocol",
+    "label": "Previous collaboration protocol (MetaGPT)",
     "source": [
       "multi_v1",
       "multi_v2",
@@ -43,10 +43,10 @@
   "full": {
     "label": "OpenAgency (full space)",
     "source": [
-      "multi_v7",
-      "multi_v8",
-      "multi_v9",
-      "multi_v10"
+      "multi_v1",
+      "multi_v2",
+      "multi_v3",
+      "multi_v4"
     ],
     "rounds": [
       1,
@@ -55,21 +55,21 @@
       4
     ],
     "scores": [
+      31.6,
       62.4,
-      66.2,
-      60.9,
-      65.4
+      67.7,
+      69.9
     ],
     "nodes": [
+      1,
       2,
-      3,
       3,
       4
     ],
     "edit_level": [
-      "Structural",
-      "Structural",
       "Contextual",
+      "Structural",
+      "Structural",
       "Structural"
     ]
   }
