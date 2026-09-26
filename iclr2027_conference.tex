@@ -133,7 +133,7 @@ Algorithm~\ref{alg:protocol} states the resulting runtime interpreter. The state
         \If{$e$ is a handoff $(n, B, m)$ and $B$ is admissible}
             \State commit $B$ as pending targets and update $s$
         \ElsIf{$e$ is a finish $(n, y)$ and $\Omega_n(y)$ holds}
-            \State mark $n$ complete, then activate every committed target whose started predecessors have handed off
+            \State mark $n$ complete, activate every committed target whose started predecessors have handed off
         \Else
             \State return structured feedback to $\rho(r)$ \Comment{refused at the governance boundary}
         \EndIf
@@ -244,6 +244,13 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 
 
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/evolution_bars.pdf}
+
+\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
+\label{fig:evolution}
+\end{figure}
 
 
 
@@ -255,13 +262,6 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 
 To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing on every benchmark in collaboration quality, since the screen keeps the incumbent whenever a candidate scores lower. On the fourteen benchmarks studied, this ordering also holds for the primary task metric.
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width=0.88\linewidth]{figures/evolution_bars.pdf}
-\vspace{-2mm}
-\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
-\label{fig:evolution}
-\end{figure}
 
 \subsection{Component Measurements behind the Gain}
 \label{sec:subdim}
@@ -289,8 +289,16 @@ Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\vspace{-4mm}
 \end{table}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/single_vs_multi.pdf}
+
+\caption{OpenAgency versus its single-agent ablation under identical model and tool budget, isolating governed collaboration from raw solver capacity.}
+\label{fig:svm}
+\end{figure}
 
 \subsection{Ablation of the Evolving Space}
 \label{sec:ablation_space}
@@ -306,23 +314,13 @@ Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \end{wrapfigure}
 To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}. Holding the number of agents $|\mathcal{N}|$ at the initialization gives the fixed-count arm, which still edits the handoff structure $(\mathcal{H},\mu)$ and the functional division, and freezing the whole graph gives the division-only arm, which reaches only the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so on these three benchmarks the freedom to change the agent count is the level that pays most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before any trace has been read, while one governed protocol defers that choice to the trace.
 
+
 \subsection{Advantage of Multi-agent Protocols}
 \label{sec:ablation_multi}
 
 To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor, identical tool access, and identical temperature. OpenAgency exceeds that ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role whose completion predicate validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since the same initial agent count without governance falls short.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.88\linewidth]{figures/single_vs_multi.pdf}
-\vspace{-2mm}
-\caption{OpenAgency versus its single-agent ablation under identical model and tool budget, isolating governed collaboration from raw solver capacity.}
-\label{fig:svm}
-\end{figure}
 
-\subsection{Comparison against Free-form and SOP Baselines}
-\label{sec:free_form}
-
-To compare the three collaboration substrates directly, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} on four benchmarks. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal, so the remaining gap tracks what stays revisable after deployment.
 
 \begin{table}[t]
 \caption{OpenAgency against the free-form and SOP baselines.}
@@ -342,19 +340,27 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \bottomrule
 \end{tabular}
 \end{center}
-\vspace{-5mm}
 \end{table}
+
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.66\linewidth]{figures/fixed_topology.pdf}
+
+\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks. The previous-protocol arm (MetaGPT) edits only the functional division, while the full arm may also change the agent count and the topology.}
+\label{fig:fixed}
+\end{figure}
+
+\subsection{Comparison against Free-form and SOP Baselines}
+\label{sec:free_form}
+
+To compare the three collaboration substrates directly, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} on four benchmarks. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal, so the remaining gap tracks what stays revisable after deployment.
+
 
 \subsection{Superiority of Governed Protocols over Fixed Graphs}
 \label{sec:fixed_topology}
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width=0.66\linewidth]{figures/fixed_topology.pdf}
-\vspace{-2mm}
-\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks. The previous-protocol arm (MetaGPT) edits only the functional division, while the full arm may also change the agent count and the topology.}
-\label{fig:fixed}
-\end{figure}
 To measure what a fixed collaboration graph costs round by round, we plot the OfficeQA Pro evolution record as two arms from one initialization. The previous-protocol arm applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent} and tunes only the functional division over that fixed structure. Figure~\ref{fig:fixed} shows six such rewrites peaking at $31.6$ in round $2$, with the four later rewrites all falling back below it. The full arm, which may also change the agent count and topology, reaches $62.4$ with one added reader node and $69.9$ after four rounds, matching Table~\ref{tab:evolution_all}. A fixed graph keeps the search inside a level the trace already reports as saturated, while one structural edit clears the previous-protocol ceiling by more than thirty points.
 
 \section{Conclusion}
@@ -694,7 +700,7 @@ Kimi-K2 & 41.0 & 51.1 & 30.8 \\
 GLM-4.6 & 48.2 & 60.3 & 36.0 \\
 DeepSeek-V3.2 & 49.2 & 60.1 & 38.2 \\
 \midrule
-DDR reference agent & 60.5 & 61.3 & 59.6 \\
+DDR reference agent (Prior Ref.) & 60.5 & 61.3 & 59.6 \\
 OpenAgency (single-agent) & 42.8 & 27.3 & 58.2 \\
 Multi-agent (init) & 44.0 & -- & -- \\
 \rowcolor{gray!12}
@@ -767,8 +773,9 @@ Multi-agent (init)                             & GPT-5.5       & -- & -- & 50.0 
 \midrule
 GPT-6-Sol & 33.2 \\
 GPT-6-Astra & 41.4 \\
-Claude-Opus-5.5 (Prior Ref.) & 42.5 \\
+Claude-Opus-5.5 & 42.5 \\
 \midrule
+GPT-5.5 (Prior Ref.)  & 23.3 \\
 OpenAgency (single-agent) & 23.7 \\
 Multi-agent (init) & 23.6 \\
 \rowcolor{gray!12}
@@ -795,7 +802,7 @@ GPT-5.1                    & Full PDF                & 45.1 \\
 Claude-Opus-4.5            & Full PDF                & 46.6 \\
 Claude-Opus-4.6 (Prior Ref.) & ai\_parse\_document     & 57.1 \\
 \midrule
-Direct LLM                                               & Full PDF                & 26.3 \\
+Direct LLM (Prior Ref.)                                              & Full PDF                & 26.3 \\
 OpenAgency (single-agent)                                   & Full PDF                & 35.3 \\
 Multi-agent (init)                                          & Full PDF                & 21.1 \\
 \rowcolor{gray!12}
