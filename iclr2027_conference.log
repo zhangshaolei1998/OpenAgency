@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  26 SEP 2026 07:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.21)  26 SEP 2026 09:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -512,7 +512,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
-1.
+2.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
@@ -520,97 +520,92 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 
 pdfTeX warning: pdflatex (file ./figures/overview.pdf): PDF inclusion: found PD
 F version <1.7>, but at most version <1.5> allowed
-<figures/overview.pdf, id=240, 912.3084pt x 383.56299pt>
+<figures/overview.pdf, id=236, 912.3084pt x 383.56299pt>
 File: figures/overview.pdf Graphic file (type pdf)
 <use figures/overview.pdf>
-Package pdftex.def Info: figures/overview.pdf  used on input line 86.
+Package pdftex.def Info: figures/overview.pdf  used on input line 87.
 (pdftex.def)             Requested size: 393.51231pt x 165.44391pt.
 
-Underfull \vbox (badness 5533) has occurred while \output is active []
+Underfull \vbox (badness 3407) has occurred while \output is active []
 
  [3 <./figures/overview.pdf>]
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-18.
+19.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 128.
+put line 129.
 
-Underfull \hbox (badness 3769) in paragraph at lines 159--160
+[4]
+Underfull \hbox (badness 3769) in paragraph at lines 160--161
 []\OT1/ptm/b/n/10 Trace Di-ag-no-sis as Search Sig-nal. \OT1/ptm/m/n/10 Each ex
 -e-cu-tion pro-duces an or-dered trace $\OML/cmm/m/it/10 ^^\ \OT1/cmr/m/n/10 =
  []
 
-[4] [5] [6]
-<figures/evolution_bars.pdf, id=524, 1187.14832pt x 250.52916pt>
+[5] [6]
+<figures/evolution_bars.pdf, id=512, 1187.14832pt x 250.52916pt>
 File: figures/evolution_bars.pdf Graphic file (type pdf)
 <use figures/evolution_bars.pdf>
-Package pdftex.def Info: figures/evolution_bars.pdf  used on input line 282.
+Package pdftex.def Info: figures/evolution_bars.pdf  used on input line 259.
 (pdftex.def)             Requested size: 389.53358pt x 82.20467pt.
  [7]
-<figures/single_vs_multi.pdf, id=537, 1186.80069pt x 253.43152pt>
+<figures/single_vs_multi.pdf, id=525, 1186.80069pt x 253.43152pt>
 File: figures/single_vs_multi.pdf Graphic file (type pdf)
 <use figures/single_vs_multi.pdf>
-Package pdftex.def Info: figures/single_vs_multi.pdf  used on input line 296.
+Package pdftex.def Info: figures/single_vs_multi.pdf  used on input line 297.
 (pdftex.def)             Requested size: 393.51231pt x 84.03096pt.
-<figures/evolution_ablation.pdf, id=540, 348.43677pt x 219.88644pt>
+<figures/evolution_ablation.pdf, id=526, 348.43677pt x 219.88644pt>
 File: figures/evolution_ablation.pdf Graphic file (type pdf)
 <use figures/evolution_ablation.pdf>
-Package pdftex.def Info: figures/evolution_ablation.pdf  used on input line 312
+Package pdftex.def Info: figures/evolution_ablation.pdf  used on input line 310
 .
 (pdftex.def)             Requested size: 158.99156pt x 100.33702pt.
 
-Underfull \hbox (badness 2126) in paragraph at lines 314--314
+Underfull \hbox (badness 2126) in paragraph at lines 312--312
 []\OT1/ptm/m/n/10 Figure 4: []Effect of three evolv-ing
- []
-
-
-Underfull \hbox (badness 2126) in paragraph at lines 314--314
-\OT1/ptm/m/n/10 spaces. The fixed-count holds the
- []
-
-
-Underfull \hbox (badness 1281) in paragraph at lines 314--314
-\OT1/ptm/m/n/10 agent num-ber, and the division-only
  []
 
 [8 <./figures/evolution_bars.pdf> <./figures/single_vs_multi.pdf> <./figures/ev
 olution_ablation.pdf>]
-<figures/fixed_topology.pdf, id=803, 572.5315pt x 134.40149pt>
+<figures/fixed_topology.pdf, id=793, 572.5315pt x 134.40149pt>
 File: figures/fixed_topology.pdf Graphic file (type pdf)
 <use figures/fixed_topology.pdf>
-Package pdftex.def Info: figures/fixed_topology.pdf  used on input line 384.
+Package pdftex.def Info: figures/fixed_topology.pdf  used on input line 386.
 (pdftex.def)             Requested size: 357.73405pt x 83.98225pt.
- [9 <./figures/fixed_topology.pdf>]
-(./iclr2027_conference.bbl [10] [11] [12]) [13] [14
+
+Underfull \vbox (badness 1424) has occurred while \output is active []
+
+ [9 <./figures/fixed_topology.pdf>] (./iclr2027_conference.bbl [10] [11] [12]) 
+[13]
+[14
 
 ]
-<figures/protocol_evolution.pdf, id=990, 779.37187pt x 1164.47118pt>
+<figures/protocol_evolution.pdf, id=978, 779.37187pt x 1164.47118pt>
 File: figures/protocol_evolution.pdf Graphic file (type pdf)
 <use figures/protocol_evolution.pdf>
-Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 456
+Package pdftex.def Info: figures/protocol_evolution.pdf  used on input line 458
 .
 (pdftex.def)             Requested size: 385.56091pt x 576.0863pt.
 
 
-LaTeX Warning: Float too large for page by 9.82123pt on input line 459.
+LaTeX Warning: Float too large for page by 9.82123pt on input line 461.
 
 [15] [16 <./figures/protocol_evolution.pdf>] [17
 
 ] [18] [19] [20]
 (./iclr2027_conference.aux)
 Package rerunfilecheck Info: File `iclr2027_conference.out' has not changed.
-(rerunfilecheck)             Checksum: A5F80CE258EE348437E30B8703CF0796;4034.
+(rerunfilecheck)             Checksum: ED4C0E63A5853F8F41F8C64352EADB8D;4011.
  ) 
 Here is how much of TeX's memory you used:
  12937 strings out of 479654
  196227 string characters out of 5883416
- 535707 words of memory out of 5000000
+ 534715 words of memory out of 5000000
  30662 multiletter control sequences out of 15000+600000
  503381 words of font info for 97 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
- 61i,19n,75p,1517b,514s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 61i,19n,75p,1517b,516s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb></usr/share/texlive/texmf-
@@ -628,10 +623,10 @@ e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf
 ype1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/tim
 es/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on iclr2027_conference.pdf (20 pages, 984388 bytes).
+Output written on iclr2027_conference.pdf (20 pages, 984231 bytes).
 PDF statistics:
- 1340 PDF objects out of 1440 (max. 8388607)
- 758 compressed objects within 8 object streams
+ 1328 PDF objects out of 1440 (max. 8388607)
+ 746 compressed objects within 8 object streams
  145 named destinations out of 1000 (max. 500000)
  207 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -155,7 +155,7 @@ Algorithm~\ref{alg:protocol} states the resulting runtime interpreter. The state
 \subsection{Collaboration-driven Protocol Evolution}
 \label{sec:self_evolving}
 
-Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. Revising a protocol takes the shape of an optimization problem, since it needs a signal that says where the protocol is wrong, a space of admissible moves, and a rule that decides which move to keep. The final answer alone cannot indicate which of a run's many coordination events should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. A single evolving agent therefore drives the loop. It reads a search direction off the collaboration trace, moves inside a bounded space of protocol edits, and keeps a move only when it survives an admissibility and quality check.
+Given a protocol whose decisions are explicit and checkable, the remaining question is how to revise it from experience. Revising a protocol takes the shape of an optimization problem, since it needs a signal that says where the current protocol is wrong, a space of admissible moves, and a rule that decides which move to keep. The final answer alone cannot indicate which of a run's many coordination events should change, and regenerating the whole workflow each round would destroy the governance boundary that makes a change inspectable. A single evolving agent therefore drives the loop. It reads a search direction off the collaboration trace, moves inside a bounded space of protocol edits, and keeps a move only when that move survives an admissibility and quality check.
 
 \textbf{Trace Diagnosis as Search Signal.}\quad Each execution produces an ordered trace $\tau=(e_1,s_1),\ldots,(e_T,s_T)$ over the $T$ coordination events of that run and the states they produce, where an event $e_t$ is one of accepted handoff, rejected handoff, finish, message, or failure. Unlike prior systems that keep only the successful trajectory or the final score, the trace retains rejected handoffs and failed completions, which record the transitions the collaboration attempted and could not take. The evolving agent runs an analyzer $f_{\mathrm{diag}}$ over $\tau^{(1{:}v)}$, the traces collected in evolution rounds $1$ through $v$, and returns the coordination sites that account for the observed failures, namely the handoff edges the agents repeatedly attempted and the admissible set refused, together with the completion predicates that fired without a usable output. This signal plays the role a gradient plays in parameter optimization, since it attributes a run-level outcome to individual coordination decisions and points at the part of the protocol a revision should touch.
 
@@ -252,7 +252,7 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
-To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. As shown in Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all}, every benchmark improves over the initialization, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since a candidate scoring lower is never deployed, and the ordering also holds for the primary task metric.
+To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing in collaboration quality, since the check keeps the deployed protocol whenever a candidate scores lower, and on these fourteen benchmarks the ordering also holds for the primary task metric.
 
 \begin{figure}[t]
 \centering
@@ -290,7 +290,7 @@ Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
 \vspace{-7mm}
 \end{tabular}
 \end{wraptable}
-To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results into components. As shown in Table~\ref{tab:subdim}, the two improve at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits track the repository-level correctness that unit tests leave unchecked.
+To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. As shown in Table~\ref{tab:subdim}, the two improve at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain is consistent with closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits track the repository-level correctness that unit tests leave unchecked.
 
 \begin{figure}[t]
 \centering
@@ -309,11 +309,11 @@ To locate the gain inside a benchmark, we decompose the SWE-bench Verified and D
 \centering
 \includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
 \vspace{-4mm}
-\caption{Effect of restricting the evolving space. Both restrictions lower the best protocol reached on all three benchmarks.}
+\caption{Effect of three evolving spaces. The fixed-count setting holds the agent number, and the division-only setting freezes the whole graph.}
 \vspace{-3mm}
 \label{fig:evo_space}
 \end{wrapfigure}
-To identify which levels of the evolving space carry the gain, we restrict it in two nested steps, freezing the agent count $|\mathcal{N}|$ and then the whole graph. As shown in Figure~\ref{fig:evo_space}, the three benchmarks give the same order. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the agent count is the level that contributes most, and freezing the remaining structure costs a further $2.3$ to $5.2$ points. In essence, a hand-designed system fixes both levels before reading any trace.
+To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full setting edits all three levels of Section~\ref{sec:self_evolving}, the fixed-count setting holds the agent count $|\mathcal{N}|$, and the division-only setting freezes the whole graph. Figure~\ref{fig:evo_space} reports the best protocol each setting reaches, and the three benchmarks order the three settings identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that contributes most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. In essence, a hand-designed system commits both structural levels before reading any trace.
 
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
@@ -339,12 +339,12 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \bottomrule
 \end{tabular}
 \end{wraptable}
-To compare the three ways of expressing collaboration, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. Notably, the free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure reads no trace-level signal.
+To compare the three ways of expressing collaboration, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. Notably, the free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal.
 
 \subsection{Advantage of Multi-agent Protocols}
 \label{sec:ablation_multi}
 
-To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and the same tools. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds that ablation on every benchmark, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} agrees, since a multi-agent initialization without governance falls short.
+To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds that ablation on every benchmark, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} agrees, since a multi-agent initialization without a governed protocol falls short.
 
 \subsection{Flexibility of Governed Protocols across Tasks}
 \label{sec:admissible}
@@ -389,7 +389,7 @@ To show what one governed protocol deploys once the task changes, we read out th
 \label{fig:fixed}
 \end{figure}
 
-To measure what a fixed collaboration graph costs, we plot the OfficeQA Pro evolution record under two settings. The previous-protocol setting applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent} and rewrites only the functional division over a single-node graph. As shown in Figure~\ref{fig:fixed}, six such rewrites peak at $31.6$ in round $2$ and then fall back. The full setting, which may also change the agent count and the handoff structure, reaches $62.4$ once a reader node is added and $69.9$ after four rounds. Both share the executor, the tool budget, and the $133$ tasks, so the gap comes from the level an edit may reach. A fixed graph keeps the search inside a level the trace already reports as saturated, and one structural edit clears that ceiling by more than thirty points.
+To measure what a fixed collaboration graph costs, we plot the OfficeQA Pro evolution record under two settings from one initialization. The previous-protocol setting applies MetaGPT~\citep{hong2024metagptmetaprogrammingmultiagent} and rewrites only the functional division over a single-node graph. As shown in Figure~\ref{fig:fixed}, six such rewrites peak at $31.6$ in round $2$, and the four later ones fall back below it. The full setting, which may also change the agent count and the handoff structure, reaches $62.4$ once a reader node is added and $69.9$ after four rounds, matching Table~\ref{tab:evolution_all}. Both settings share the executor, the tool budget, and the $133$ scored tasks, so the gap comes from the level an edit may reach. A fixed graph keeps the search inside a level the trace already reports as saturated, and one structural edit clears that ceiling by more than thirty points.
 
 \section{Conclusion}
 
