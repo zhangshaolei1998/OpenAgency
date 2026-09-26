@@ -1,4 +1,4 @@
-\begin{thebibliography}{46}
+\begin{thebibliography}{44}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -51,11 +51,12 @@ Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz
 \newblock Training verifiers to solve math word problems, 2021.
 \newblock URL \url{https://arxiv.org/abs/2110.14168}.
 
-\bibitem[Dang et~al.(2025)Dang, Qian, et~al.]{dang2025puppeteer}
-Yufan Dang, Chen Qian, et~al.
-\newblock Multi-agent collaboration via evolving orchestration.
-\newblock In \emph{Advances in Neural Information Processing Systems
-  (NeurIPS)}, 2025.
+\bibitem[Dang et~al.(2025)Dang, Qian, Luo, Fan, Xie, Shi, Chen, Yang, Che,
+  Tian, Xiong, Han, Liu, and Sun]{dang2025puppeteer}
+Yufan Dang, Chen Qian, Xueheng Luo, Jingru Fan, Zihao Xie, Ruijie Shi, Weize
+  Chen, Cheng Yang, Xiaoyin Che, Ye~Tian, Xuantang Xiong, Lei Han, Zhiyuan Liu,
+  and Maosong Sun.
+\newblock Multi-agent collaboration via evolving orchestration, 2025.
 \newblock URL \url{https://arxiv.org/abs/2505.19591}.
 
 \bibitem[Du et~al.(2023)Du, Li, Torralba, Tenenbaum, and
@@ -109,14 +110,16 @@ Carlos~E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir
   (ICLR)}, 2024.
 \newblock URL \url{https://arxiv.org/abs/2310.06770}.
 
-\bibitem[Khattab et~al.(2024)Khattab, Singhvi, Maheshwari, Zhang, Santhanam,
-  Vardhamanan, Haq, Sharma, et~al.]{khattab2024dspy}
+\bibitem[Khattab et~al.(2024)Khattab, Singhvi, Maheshwari, Zhang, Santhanam, A,
+  Haq, Sharma, Joshi, Moazam, Miller, Zaharia, and Potts]{khattab2024dspy}
 Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav
-  Santhanam, Sri Vardhamanan, Saiful Haq, Ashutosh Sharma, et~al.
-\newblock {DSPy}: Compiling declarative language model calls into
-  self-improving pipelines.
-\newblock In \emph{International Conference on Learning Representations
-  (ICLR)}, 2024.
+  Santhanam, Sri~Vardhamanan A, Saiful Haq, Ashutosh Sharma, Thomas~T. Joshi,
+  Hanna Moazam, Heather Miller, Matei Zaharia, and Christopher Potts.
+\newblock {DSP}y: Compiling declarative language model calls into
+  state-of-the-art pipelines.
+\newblock In \emph{The Twelfth International Conference on Learning
+  Representations}, 2024.
+\newblock URL \url{https://openreview.net/forum?id=sY5N0zY5Od}.
 
 \bibitem[Li et~al.(2023)Li, Hammoud, Itani, Khizbullin, and
   Ghanem]{li2023camelcommunicativeagentsmind}
@@ -159,23 +162,19 @@ Zijun Liu, Yanzhe Zhang, Peng Li, Yang Liu, and Diyi Yang.
 \newblock URL \url{https://arxiv.org/abs/2310.02170}.
 
 \bibitem[Madaan et~al.(2023)Madaan, Tandon, Gupta, Hallinan, Gao, Wiegreffe,
-  Alon, Dziri, et~al.]{madaan2023selfrefine}
+  Alon, Dziri, Prabhumoye, Yang, Gupta, Majumder, Hermann, Welleck,
+  Yazdanbakhsh, and Clark]{madaan2023selfrefine}
 Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah
-  Wiegreffe, Uri Alon, Nouha Dziri, et~al.
+  Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, Shashank
+  Gupta, Bodhisattwa~Prasad Majumder, Katherine Hermann, Sean Welleck, Amir
+  Yazdanbakhsh, and Peter Clark.
 \newblock Self-refine: Iterative refinement with self-feedback.
-\newblock In \emph{Advances in Neural Information Processing Systems
-  (NeurIPS)}, 2023.
+\newblock 2023.
 
 \bibitem[{OpenAI}(2022)]{chatgpt}
 {OpenAI}.
 \newblock Introducing {ChatGPT}.
 \newblock \url{https://openai.com/blog/chatgpt}, 2022.
-
-\bibitem[{OpenAI}(2023)]{gpt4}
-{OpenAI}.
-\newblock {GPT-4} technical report.
-\newblock 2023.
-\newblock URL \url{https://arxiv.org/abs/2303.08774}.
 
 \bibitem[Opsahl-Ong et~al.(2026)Opsahl-Ong, Singhvi, Collins, Zhou, Wang,
   Baheti, Oertell, Portes, Havens, Elsen, Bendersky, Zaharia, and
@@ -193,20 +192,6 @@ Joon~Sung Park, Joseph~C. O'Brien, Carrie~J. Cai, Meredith~Ringel Morris, Percy
   Liang, and Michael~S. Bernstein.
 \newblock Generative agents: Interactive simulacra of human behavior, 2023.
 \newblock URL \url{https://arxiv.org/abs/2304.03442}.
-
-\bibitem[Phan et~al.(2025)Phan, Gatti, Han, Li, Hu, Zhang, Zhang, Shaaban,
-  Ling, Shi, Choi, Agrawal, Chopra, Khoja, Ren, Hausenloy, Zhang, Mazeika, Yue,
-  Wang, Hendrycks, et~al.]{phan2025hle}
-Long Phan, Alice Gatti, Ziwen Han, Nathaniel Li, Josephina Hu, Hugh Zhang, Chen
-  Bo~Calvin Zhang, Mohamed Shaaban, John Ling, Sean Shi, Michael Choi, Anish
-  Agrawal, Arnav Chopra, Adam Khoja, Richard Ren, Jason Hausenloy, Oliver
-  Zhang, Mantas Mazeika, Summer Yue, Alexandr Wang, Dan Hendrycks, et~al.
-\newblock Humanity's last exam.
-\newblock 2025.
-\newblock URL \url{https://arxiv.org/abs/2501.14249}.
-\newblock 2,500 subject-diverse, expert-level questions across mathematics,
-  physics, biology, humanities, computer science, and engineering. Public
-  leaderboard at \url{https://agi.safe.ai/dashboard}.
 
 \bibitem[Qian et~al.(2023)Qian, Dang, Li, Liu, Xie, Wang, Chen, Yang, Cong,
   Che, Liu, and Sun]{qian2023experientialcolearning}
@@ -244,20 +229,28 @@ Qiushi Sun, Zhangyue Yin, Xiang Li, Zhiyong Wu, Xipeng Qiu, and Lingpeng Kong.
   multi-model collaboration, 2023.
 \newblock URL \url{https://arxiv.org/abs/2310.00280}.
 
-\bibitem[Wang et~al.(2024{\natexlab{a}})Wang, Ma, Feng, Zhang, Yang, Zhang,
-  Chen, Tang, et~al.]{wang2024survey}
+\bibitem[Wang et~al.(2024)Wang, Ma, Feng, Zhang, Yang, Zhang, Chen, Tang, Chen,
+  Lin, Zhao, Wei, and Wen]{wang2024survey}
 Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao Yang, Jingsen Zhang, Zhiyuan
-  Chen, Jiakai Tang, et~al.
+  Chen, Jiakai Tang, Xu~Chen, Yankai Lin, Wayne~Xin Zhao, Zhewei Wei, and
+  Jirong Wen.
 \newblock A survey on large language model based autonomous agents.
-\newblock \emph{Frontiers of Computer Science}, 2024{\natexlab{a}}.
+\newblock \emph{Frontiers of Computer Science}, 18\penalty0 (6), March 2024.
+\newblock ISSN 2095-2236.
+\newblock \doi{10.1007/s11704-024-40231-1}.
+\newblock URL \url{http://dx.doi.org/10.1007/s11704-024-40231-1}.
 
-\bibitem[Wang et~al.(2024{\natexlab{b}})Wang, Li, Song, Xu, Tang, Zhuge, Pan,
-  Song, et~al.]{wang2024openhands}
+\bibitem[Wang et~al.(2025)Wang, Li, Song, Xu, Tang, Zhuge, Pan, Song, Li,
+  Singh, Tran, Li, Ma, Zheng, Qian, Shao, Muennighoff, Zhang, Hui, Lin,
+  Brennan, Peng, Ji, and Neubig]{wang2024openhands}
 Xingyao Wang, Boxuan Li, Yufan Song, Frank~F. Xu, Xiangru Tang, Mingchen Zhuge,
-  Jiayi Pan, Yueqi Song, et~al.
-\newblock {OpenHands}: An open platform for {AI} software developers as
-  generalist agents.
-\newblock \emph{arXiv preprint arXiv:2407.16741}, 2024{\natexlab{b}}.
+  Jiayi Pan, Yueqi Song, Bowen Li, Jaskirat Singh, Hoang~H. Tran, Fuqiang Li,
+  Ren Ma, Mingzhang Zheng, Bill Qian, Yanjun Shao, Niklas Muennighoff, Yizhe
+  Zhang, Binyuan Hui, Junyang Lin, Robert Brennan, Hao Peng, Heng Ji, and
+  Graham Neubig.
+\newblock Openhands: An open platform for ai software developers as generalist
+  agents, 2025.
+\newblock URL \url{https://arxiv.org/abs/2407.16741}.
 
 \bibitem[Wu et~al.(2023)Wu, Bansal, Zhang, Wu, Li, Zhu, Jiang, Zhang, Zhang,
   Liu, Awadallah, White, Burger, and Wang]{wu2023autogenenablingnextgenllm}
@@ -268,13 +261,17 @@ Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu,
   conversation, 2023.
 \newblock URL \url{https://arxiv.org/abs/2308.08155}.
 
-\bibitem[Xi et~al.(2023)Xi, Chen, Guo, He, Ding, Hong, Zhang, Wang,
-  et~al.]{xi2023rise}
+\bibitem[Xi et~al.(2023)Xi, Chen, Guo, He, Ding, Hong, Zhang, Wang, Jin, Zhou,
+  Zheng, Fan, Wang, Xiong, Zhou, Wang, Jiang, Zou, Liu, Yin, Dou, Weng, Cheng,
+  Zhang, Qin, Zheng, Qiu, Huang, and Gui]{xi2023rise}
 Zhiheng Xi, Wenxiang Chen, Xin Guo, Wei He, Yiwen Ding, Boyang Hong, Ming
-  Zhang, Junzhe Wang, et~al.
+  Zhang, Junzhe Wang, Senjie Jin, Enyu Zhou, Rui Zheng, Xiaoran Fan, Xiao Wang,
+  Limao Xiong, Yuhao Zhou, Weiran Wang, Changhao Jiang, Yicheng Zou, Xiangyang
+  Liu, Zhangyue Yin, Shihan Dou, Rongxiang Weng, Wensen Cheng, Qi~Zhang,
+  Wenjuan Qin, Yongyan Zheng, Xipeng Qiu, Xuanjing Huang, and Tao Gui.
 \newblock The rise and potential of large language model based agents: A
-  survey.
-\newblock \emph{arXiv preprint arXiv:2309.07864}, 2023.
+  survey, 2023.
+\newblock URL \url{https://arxiv.org/abs/2309.07864}.
 
 \bibitem[Xi et~al.(2024)Xi, Ding, Chen, Hong, Guo, Wang, Yang, Liao, Guo, He,
   Gao, Chen, Zheng, Zou, Gui, Zhang, Qiu, Huang, Wu, and Jiang]{xi2024agentgym}
