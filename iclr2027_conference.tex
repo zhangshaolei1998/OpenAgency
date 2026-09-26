@@ -42,7 +42,7 @@
 
 \begin{abstract}
 Large language model (LLM) agents have shown strong capabilities on complex tasks, motivating the development of multi-agent systems that coordinate agents with specialized roles. Improving how these agents collaborate, however, requires two competing properties at once, namely flexibility, which enables diverse coordination decisions at runtime, and controllability, which allows those decisions to be inspected, attributed, and revised afterwards. Existing systems typically provide only one of the two, since predefined workflows offer explicit control but constrain execution to fixed routes, while free-form communication enables flexible interaction but leaves the realized coordination process opaque and difficult to revise. 
-In this paper, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built upon \emph{governed collaboration protocols}. Such protocol allows agents to select their next collaborators within the permitted space at runtime. This design turns the collaboration pattern itself into an evolvable object. To evolve this protocol, OpenAgency maintains execution traces that capture not only successful interactions but also rejected handoffs, failed completions, and other coordination outcomes. A collaboration-driven evolving agent transforms this evidence into a bounded number of atomic protocol improvements. 
+In this paper, we introduce \emph{OpenAgency}, a self-evolving multi-agent system built upon \emph{governed collaboration protocols}. Such a protocol allows agents to select their next collaborators within the permitted space at runtime. This design turns the collaboration pattern itself into an evolvable object. To evolve this protocol, OpenAgency maintains execution traces that capture not only successful interactions but also rejected handoffs, failed completions, and other coordination outcomes. A collaboration-driven evolving agent transforms this evidence into a bounded number of atomic protocol improvements. 
 Experiments on fourteen benchmarks spanning general question answering, long-horizon tasks, and production-oriented workloads show that OpenAgency achieves the best primary metric among compared systems on every benchmark\footnote{Code is available in the supplementary materials.}.
 \end{abstract}
 
@@ -185,7 +185,7 @@ We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchm
 \subsection{Benchmarks}
 \label{sec:benchmarks}
 
-We evaluate OpenAgency on fourteen benchmarks organized into three categories. \emph{General question answering} contains HumanEval~\citep{chen2021humaneval}, MBPP~\citep{austin2021mbpp}, GSM8K~\citep{cobbe2021gsm8k}, MATH~\citep{hendrycks2021math}, and HotpotQA~\citep{yang2018hotpotqa}, and tests protocol adaptation when each instance admits a short answer. \emph{Long-horizon tasks} contains SWE-bench Verified~\citep{jimenez2024swebench}, DeepPlanning~\citep{zhang2026deepplanning}, and the text-only subset of Humanity's Last Exam (HLE), and tests governed handoffs on dependent decisions. \emph{Production-oriented tasks} contains DevEval~\citep{li2024deveval}, DDR-Bench~\citep{liu2026ddrbench}, TheAgentCompany~\citep{xu2024theagentcompany}, MARBLE~\citep{zhu2025marble}, AutomationBench~\citep{shepard2026automationbench}, and OfficeQA Pro~\citep{opsahlong2026officeqa}, and tests one protocol across heterogeneous tools and task formats. Appendix~\ref{app:benchmarks} describes each benchmark.
+We evaluate OpenAgency on fourteen benchmarks organized into three categories. \emph{General question answering} contains HumanEval~\citep{chen2021humaneval}, MBPP~\citep{austin2021mbpp}, GSM8K~\citep{cobbe2021gsm8k}, MATH~\citep{hendrycks2021math}, and HotpotQA~\citep{yang2018hotpotqa}, and tests protocol adaptation when each instance admits a short answer. \emph{Long-horizon tasks} contains SWE-bench Verified~\citep{jimenez2024swebench}, DeepPlanning~\citep{zhang2026deepplanning}, and the text-only subset of Humanity's Last Exam (HLE)~\citep{phan2025hle}, and tests governed handoffs on dependent decisions. \emph{Production-oriented tasks} contains DevEval~\citep{li2024deveval}, DDR-Bench~\citep{liu2026ddrbench}, TheAgentCompany~\citep{xu2024theagentcompany}, MARBLE~\citep{zhu2025marble}, AutomationBench~\citep{shepard2026automationbench}, and OfficeQA Pro~\citep{opsahlong2026officeqa}, and tests one protocol across heterogeneous tools and task formats. Appendix~\ref{app:benchmarks} describes each benchmark.
 
 \subsection{Experimental Setup}
 \label{sec:setup}
@@ -239,11 +239,11 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \vspace{-2mm}
 \end{table}
 
-\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance has a localized, automatically verifiable output. OpenAgency obtains the best primary metric on all five in Table~\ref{tab:main}, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol reaches $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode.
+\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance has a localized, automatically verifiable output. As shown in Table~\ref{tab:main}, OpenAgency obtains the best primary metric on all five, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol reaches $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode.
 
 \textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since a bad handoff at any stage can invalidate the entire run. Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior system of $42.8$ and $37.7$ accuracy on HLE. The protocol each benchmark converges to shows why. On SWE-bench Verified the evolving agent installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a Verifier the constraints one at a time, turning a brittle end-to-end plan into locally verifiable handoffs. Verification on HLE becomes conditional, routing low-confidence answers back through a retry edge. All three shapes come from the same initialization, so the handoff and completion rules adapt when local errors are unrecoverable.
 
-\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface. OpenAgency leads on all six in Table~\ref{tab:main}, improving over the prior system by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template differs per benchmark, and two cases expose what governance contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace into the final report, fixing a silent omission free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating where any-to-any messaging would not, so governance supplies a constraint the task format alone does not.
+\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different set of tools. As shown in Table~\ref{tab:main}, OpenAgency leads on all six, improving over the prior system by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template differs per benchmark, and two cases expose what governance contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace into the final report, fixing a silent omission free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating where any-to-any messaging would not, so governance supplies a constraint the task format alone does not.
 
 \section{Analysis}
 \label{sec:analysis}
@@ -301,7 +301,7 @@ To locate the gain inside a benchmark, we decompose the SWE-bench Verified and D
 \subsection{Advantage of Multi-agent Protocols}
 \label{sec:ablation_multi}
 
-To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. OpenAgency exceeds that ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since the same agent count without governance falls short.
+To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and identical tool access. As shown in Figure~\ref{fig:svm}, OpenAgency exceeds that ablation on every benchmark, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role that validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since an initialization that shares the executor but has no governed protocol falls short.
 
 \subsection{Ablation of Evolving Space}
 \label{sec:ablation_space}
@@ -341,7 +341,7 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 \bottomrule
 \end{tabular}
 \end{wraptable}
-To compare the three ways of expressing collaboration, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal.
+To compare the three ways of expressing collaboration, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent}. As shown in Table~\ref{tab:free_form}, OpenAgency obtains the highest score, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal.
 
 
 \subsection{Flexibility of Governed Protocols across Tasks}
@@ -349,7 +349,7 @@ To compare the three ways of expressing collaboration, we evaluate OpenAgency ag
 
 \begin{wraptable}{r}{0.44\textwidth}
 \vspace{-\intextsep}
-\caption{Governance activity on the three deployed $v_4$ protocols that carry a handoff chain, as the share of proposed handoffs $\Gamma(n,s)$ rules out and the share of runs whose outcome that refusal changes.}
+\caption{Governance activity on three deployed $v_4$ protocols with different handoff chains, as the share of proposed handoffs $\Gamma(n,s)$ rules out and the share of runs whose outcome that refusal changes.}
 \vspace{2mm}
 \label{tab:handoff}
 \centering
@@ -366,7 +366,7 @@ Recovered (\%) & 3.7 & 2.9 & 5.3 \\
 \bottomrule
 \end{tabular}
 \end{wraptable}
-To show what one governed protocol deploys once the task changes, we read out the $v_4$ protocol of each benchmark. The three protocols of Table~\ref{tab:handoff} differ in agent count, role vocabulary, and handoff order. DevEval converges on a coder checked by a reviewer, DDR-Bench on a researcher feeding a reporter, and TheAgentCompany on a planner, an executor, and a reviewer, so one loop settles on the division each task rewards. The admissible handoff set stays active on every chain, ruling out $3.8\%$ to $8.2\%$ of proposed handoffs and changing the outcome of $2.9\%$ to $5.3\%$ of runs. A fixed procedure commits to one of these patterns before any trace is seen, and the refused events are the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
+To show what one governed protocol deploys once the task changes, we read out the deployed $v_4$ protocol on three production-oriented benchmarks. As shown in Table~\ref{tab:handoff}, the three protocols differ in agent count, role vocabulary, and handoff order. DevEval converges on a coder checked by a reviewer, DDR-Bench on a researcher feeding a reporter, and TheAgentCompany on a planner, an executor, and a reviewer, so one loop settles on the division each task rewards. The admissible handoff set stays active on all three chains, ruling out $3.8\%$ to $8.2\%$ of proposed handoffs and changing the outcome of $2.9\%$ to $5.3\%$ of runs. A fixed procedure commits to one of these patterns before any trace is seen, and the refused events are the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
 
 \subsection{Superiority of Governed Protocols over Fixed Graphs}
 \label{sec:fixed_topology}
@@ -424,7 +424,7 @@ We have made efforts to ensure the reproducibility of this work by providing det
 
 \textbf{DeepPlanning}~\citep{zhang2026deepplanning} evaluates travel and shopping planning under user-specified constraints, and the primary metric is mean case-level accuracy across the two task families.
 
-\textbf{Humanity's Last Exam (HLE)} evaluates expert-level question answering across mathematics, physics, biology, humanities, computer science, and engineering, and we use its 2{,}158-question text-only subset.
+\textbf{Humanity's Last Exam (HLE)}~\citep{phan2025hle} evaluates expert-level question answering across mathematics, physics, biology, humanities, computer science, and engineering, and we use its 2{,}158-question text-only subset.
 
 \textbf{DevEval}~\citep{li2024deveval} evaluates repository-level code generation under acceptance-test oracles that check whether the generated code works end-to-end with existing modules.
 
@@ -622,7 +622,7 @@ Qwen-Agent tool-calling & 46.9 & 88.8 & 56.7 & 72.7 & 32.9 & 86.8 & 60.8 \\
 \end{table}
 
 \begin{table}[t]
-\caption{Performance on the Humanity's Last Exam text-only subset. External rows are reported by that work.}
+\caption{Performance on the Humanity's Last Exam text-only subset \citep{phan2025hle}. External rows are reported by that work.}
 \label{tab:hle}
 \begin{center}
 \small

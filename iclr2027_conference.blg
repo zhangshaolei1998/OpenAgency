@@ -9,46 +9,47 @@ Reallocated ex_buf (elt_size=1) to 40000 items from 20000.
 Reallocated out_buf (elt_size=1) to 40000 items from 20000.
 Reallocated name_tok (elt_size=4) to 40000 items from 20000.
 Reallocated name_sep_char (elt_size=1) to 40000 items from 20000.
+Reallocated str_pool (elt_size=1) to 130000 items from 65000.
 Warning--empty booktitle in madaan2023selfrefine
-You've used 44 entries,
+You've used 45 entries,
             2773 wiz_defined-function locations,
-            784 strings with 18111 characters,
-and the built_in function-call counts, 34629 in all, are:
-= -- 2483
-> -- 4197
+            794 strings with 39732 characters,
+and the built_in function-call counts, 90051 in all, are:
+= -- 5829
+> -- 14100
 < -- 2
-+ -- 1404
-- -- 1356
-* -- 3452
-:= -- 5743
-add.period$ -- 142
-call.type$ -- 44
-change.case$ -- 583
-chr.to.int$ -- 40
-cite$ -- 89
-duplicate$ -- 797
-empty$ -- 1534
-format.name$ -- 1402
-if$ -- 6772
++ -- 4705
+- -- 4656
+* -- 10092
+:= -- 15705
+add.period$ -- 148
+call.type$ -- 45
+change.case$ -- 1686
+chr.to.int$ -- 41
+cite$ -- 91
+duplicate$ -- 818
+empty$ -- 1579
+format.name$ -- 4703
+if$ -- 16764
 int.to.chr$ -- 5
 int.to.str$ -- 1
-missing$ -- 13
-newline$ -- 238
-num.names$ -- 176
-pop$ -- 1293
+missing$ -- 14
+newline$ -- 246
+num.names$ -- 180
+pop$ -- 3494
 preamble$ -- 1
-purify$ -- 539
+purify$ -- 1641
 quote$ -- 0
-skip$ -- 1000
+skip$ -- 2111
 stack$ -- 0
-substring$ -- 88
-swap$ -- 63
+substring$ -- 123
+swap$ -- 65
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 484
+type$ -- 495
 warning$ -- 1
-while$ -- 132
+while$ -- 136
 width$ -- 0
-write$ -- 555
+write$ -- 574
 (There was 1 warning)
