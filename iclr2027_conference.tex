@@ -17,6 +17,10 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{wrapfig}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{5pt}
+\setlength{\belowcaptionskip}{0pt}
 \title{OpenAgency: Self-Evolving Multi-Agent System via Governed Collaboration Protocols}
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the \iclrfinalcopy macro remains commented out below.
@@ -168,7 +172,7 @@ so a candidate is deployed only when it is well formed and does not degrade the 
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates where the gain comes from. It covers the round-wise effect of protocol evolution (Section~\ref{sec:evolution_effect}), the advantage of multi-agent protocols (Section~\ref{sec:ablation_multi}), the levels of the evolving space that matter (Section~\ref{sec:ablation_space}), the comparison against free-form and SOP substrates (Section~\ref{sec:free_form}), and what a fixed collaboration graph does round by round (Section~\ref{sec:fixed_topology}). Appendix~\ref{sec:admissible} reports the activity of the governance boundary.
+We evaluate the governed protocol of Section~\ref{sec:method} on fourteen benchmarks (Section~\ref{sec:benchmarks}) under one executor and tool budget (Section~\ref{sec:setup}), and report the main comparison in Section~\ref{sec:main_results}. Section~\ref{sec:analysis} then locates the gain, through protocol evolution round by round (Section~\ref{sec:evolution_effect}), its component measurements (Section~\ref{sec:subdim}), the levels of the evolving space (Section~\ref{sec:ablation_space}), multi-agent protocols (Section~\ref{sec:ablation_multi}), free-form and SOP substrates (Section~\ref{sec:free_form}), and a fixed collaboration graph (Section~\ref{sec:fixed_topology}). Appendix~\ref{sec:admissible} reports the activity of the governance boundary.
 
 \subsection{Benchmarks}
 \label{sec:benchmarks}
@@ -178,7 +182,7 @@ We evaluate OpenAgency on fourteen benchmarks organized into three categories. \
 \subsection{Experimental Setup}
 \label{sec:setup}
 
-To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under an identical model and tool budget, namely a single-agent ablation with one role and no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). We report all three against a prior reference (Prior Ref.) that fixes the absolute level of the benchmark, taken as the strongest externally reported model or agent, and as a same-model direct-LLM baseline where no stronger external system is reported. Each benchmark evolves its own protocol independently, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round, and Appendix~\ref{app:detail} lists all four.
+To separate governed collaboration from the executor's own capability, we use GPT-5.5 across all benchmarks, and each role receives the tool surface its benchmark requires. For each benchmark, we compare three in-house conditions under one model and tool budget, a single-agent ablation with no handoff, the unstructured multi-agent initialization $v_0$, and the evolved protocol after four rounds ($v_4$). All three are reported against a prior reference (Prior Ref.) that fixes the absolute level of the benchmark, taken as the strongest externally reported model or agent, and as a same-model direct-LLM baseline where no stronger external system is reported. Each benchmark evolves its own protocol independently, and the evolving agent reads only execution traces, so no task label or reference answer reaches it, following the label-free self-refinement setting of \citet{shinn2023reflexion} and \citet{madaan2023selfrefine}. Model, temperature, and tool budget stay fixed across rounds, and only the protocol template changes. Table~\ref{tab:main} reports the final round and Appendix~\ref{app:detail} lists all four.
 
 \subsection{Main Results}
 \label{sec:main_results}
@@ -193,7 +197,7 @@ To separate governed collaboration from the executor's own capability, we use GP
 % \vspace{-4mm}
 % \end{wrapfigure}
 \begin{table}[t]
-\caption{OpenAgency and its ablations, listed against each benchmark's prior reference, a strong baseline from prior work that fixes the absolute level of the benchmark. Single-agent is the single-agent ablation, Multi-agent~(init) is the unstructured initialization, and OpenAgency is the evolved protocol. The three run under an identical GPT-5.5 executor and tool budget, and each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
+\caption{OpenAgency and its ablations against each benchmark's prior reference, a strong baseline from prior work that fixes the absolute level of the benchmark. Multi-agent~(init) is the unstructured initialization and OpenAgency is the evolved protocol, both sharing the GPT-5.5 executor and tool budget of the single-agent ablation. Each row uses the benchmark's native metric, where EM is exact match, FM is file match, and AT is the acceptance-test pass rate.}
 \label{tab:main}
 \begin{center}
 \small
@@ -227,15 +231,15 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \vspace{-5mm}
 \end{table}
 
-\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Under a common GPT-5.5 executor, we compare OpenAgency with its two ablations and each benchmark's strongest prior reference. As shown in Table~\ref{tab:main}, OpenAgency obtains the best primary metric on all five benchmarks, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace repeatedly flags as ineffective, and each benchmark settles on a tight solve-critique-revise loop matched to its dominant failure mode, so the protocol turns a short chain into a verified one.
+\textbf{Capability on General Question Answering.}\quad The five single-turn benchmarks (HumanEval, MBPP, GSM8K, MATH, HotpotQA) probe \emph{short-chain reasoning capabilities}, since each instance admits a single well-defined answer and leaves little room to coordinate. Against its two ablations and each benchmark's prior reference, OpenAgency obtains the best primary metric on all five in Table~\ref{tab:main}, reaching $100.0$ pass@1 on HumanEval and lifting MBPP from $73.5$ to $80.9$ over the initialization. Agent count alone does not produce this gain, since the unstructured initialization trails the single-agent ablation on HotpotQA at $64.0$ against $75.9$ F1 while the governed protocol carries the same benchmark to $82.3$. Evolution prunes handoffs whose upstream output the trace flags as ineffective, and each benchmark settles on a solve-critique-revise loop matched to its dominant failure mode, so the protocol turns a short chain into a verified one.
 
 
-\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. We compare OpenAgency with a monolithic single-agent solver and each benchmark's strongest prior reference. Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE against $18.0$. What produces the lead is visible in the protocol each benchmark converges to. On SWE-bench Verified the evolving agent installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a dedicated Verifier the user-specified constraints one at a time, turning a brittle end-to-end plan into a chain of locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers straight to completion and sending low-confidence ones back through a retry edge. All three shapes are reached from the same initialization, so it is the handoff and completion rules that adapt when local errors are unrecoverable.
+\textbf{Capability on Long-horizon Tasks.}\quad SWE-bench Verified, DeepPlanning, and HLE stress \emph{long-horizon reasoning capabilities}, since each instance requires several dependent decisions and a bad handoff at any stage can invalidate the entire run. Against the single-agent ablation and each benchmark's prior reference, Table~\ref{tab:main} reports a lead on all three, reaching $86.2$ file match on SWE-bench Verified against a prior reference of $42.8$ and $37.7$ accuracy on HLE against $18.0$. The protocol each benchmark converges to shows what produces the lead. On SWE-bench Verified the evolving agent installs a retry edge when a patch fails and splits an overloaded Verifier into structural and semantic components. The DeepPlanning protocol hands a Verifier the user-specified constraints one at a time, turning a brittle end-to-end plan into locally verifiable handoffs. Verification on HLE becomes conditional, routing high-confidence answers to completion and low-confidence ones back through a retry edge. All three shapes come from the same initialization, so the handoff and completion rules adapt when local errors are unrecoverable.
 
 
 
 
-\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. Measured against each benchmark's strongest prior reference and against its own ablations, OpenAgency leads on all six in Table~\ref{tab:main}, improving over that reference by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template behind these numbers differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE, and two cases expose what the governance layer contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace to be reflected in the final report, fixing a class of silent omission that free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging. In both cases the governance layer supplies a constraint the task format alone does not.
+\textbf{Capability on Production-oriented Tasks.}\quad The six production-oriented benchmarks (DevEval, DDR-Bench, TheAgentCompany, MARBLE, AutomationBench, OfficeQA Pro) test \emph{cross-domain deployment capabilities}, since each exposes a different tool surface and task format. OpenAgency leads on all six in Table~\ref{tab:main}, improving over the prior reference by $34.4$ points on DevEval, $19.6$ points on MARBLE, and $12.8$ points on OfficeQA Pro. The template differs per benchmark, from a Reader-Solver-Verifier chain on OfficeQA Pro to a Generator-Critic-Reviser pipeline on MARBLE, and two cases expose what governance contributes. On DDR-Bench, an Auditor role introduced during evolution forces every quantitative finding in the trace into the final report, fixing a silent omission that free-form baselines leave undetected. The admissible-set constraint on MARBLE keeps each handoff terminating under a protocol that would otherwise allow any-to-any messaging, so in both cases governance supplies a constraint the task format alone does not.
 
 
 
@@ -249,28 +253,44 @@ OfficeQA Pro & Acc@1\% & 57.1 & 35.3 & 21.1 & \textbf{69.9} \\
 \subsection{Effectiveness of Protocol Evolution}
 \label{sec:evolution_effect}
 
-To verify that bounded protocol edits keep improving collaboration after the first revision, we track the primary metric from the unstructured multi-agent initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing on every benchmark, since the screen keeps the incumbent whenever a candidate scores lower on collaboration quality.
+To verify that bounded edits keep improving collaboration after the first revision, we track the primary metric from the initialization $v_0$ to the evolved rounds $v_1$ through $v_4$ on all fourteen benchmarks. Figure~\ref{fig:evolution} and Table~\ref{tab:evolution_all} record an improvement over the initialization on every benchmark, reaching $48.9$ points on MARBLE and $48.8$ points on OfficeQA Pro. The deployed sequence is non-decreasing on every benchmark, since the screen keeps the incumbent whenever a candidate scores lower on collaboration quality.
 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=0.88\linewidth]{figures/evolution_bars.pdf}
 \vspace{-2mm}
-\caption{Round-wise trajectory of the primary metric from the multi-agent initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
+\caption{Round-wise trajectory of the primary metric from the initialization $v_0$ through the evolved rounds $v_1$--$v_4$. Grey dashed lines mark each benchmark's prior reference.}
 \label{fig:evolution}
 \end{figure}
 
-\subsection{Advantage of Multi-agent Protocols}
-\label{sec:ablation_multi}
+\subsection{Component Measurements behind the Gain}
+\label{sec:subdim}
 
-To attribute the gain to governance and not to agent count alone, we compare OpenAgency with its single-agent ablation under an identical GPT-5.5 executor and tool surface. OpenAgency exceeds the single-agent ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role whose completion predicate validates it independently. The unstructured-initialization column of Table~\ref{tab:main} places the gain on the protocol design, since the same agent budget without governance falls short.
+To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. Table~\ref{tab:subdim} shows the two improving at different points. On SWE-bench Verified the file-match rate given a patch moves only from $84.6$ to $86.2$, while the fraction of instances producing a patch at all rises from $79.2$ to $100.0$, so the gain closes the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays near saturation while acceptance rises from $82.1$ to $96.9$, so the admitted edits act on the repository-level correctness that unit tests leave unchecked. In both cases the component that moves is the one the accepted edit was written to address.
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width=0.88\linewidth]{figures/single_vs_multi.pdf}
-\vspace{-2mm}
-\caption{OpenAgency versus its single-agent ablation under identical model and tool budget, isolating governed collaboration from raw solver capacity.}
-\label{fig:svm}
-\end{figure}
+\begin{table}[t]
+\caption{Component measurements across the evolution rounds. Patch applied is the fraction of instances producing a non-empty patch, and file match given a patch restricts file match to those instances.}
+\label{tab:subdim}
+\begin{center}
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Component measurement} & \textbf{Init} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
+\midrule
+\multicolumn{6}{c}{\emph{SWE-bench Verified}} \\
+Patch applied & 79.2 & 93.4 & 100.0 & 100.0 & \textbf{100.0} \\
+File match & 67.0 & 78.8 & 85.6 & 85.8 & \textbf{86.2} \\
+File match given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
+\midrule
+\multicolumn{6}{c}{\emph{DevEval}} \\
+Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
+Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{-4mm}
+\end{table}
 
 \subsection{Ablation of the Evolving Space}
 \label{sec:ablation_space}
@@ -280,16 +300,29 @@ To attribute the gain to governance and not to agent count alone, we compare Ope
 \centering
 \includegraphics[width=\linewidth]{figures/evolution_ablation.pdf}
 \vspace{-5mm}
-\caption{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal{N}|$ at the initialization, and the division-only arm freezes the whole graph and edits only the functional division.}
+\caption{Three nested evolving spaces under one initialization and one evolution loop. The fixed-count arm holds the number of agents $|\mathcal{N}|$, and the division-only arm freezes the whole graph and edits only the functional division.}
 \label{fig:evo_space}
 \vspace{-3mm}
 \end{wrapfigure}
-To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}. Holding the number of agents $|\mathcal{N}|$ at the initialization gives the fixed-count arm, which still edits the handoff structure $(\mathcal{H},\mu)$ and the functional division. Freezing the whole graph gives the division-only arm, where the optimizer reaches the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that pays most. Freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before any trace has been read, while one governed protocol defers that choice to the trace.
+To identify which levels of the evolving space carry the gain, we restrict that space in two nested steps and rerun the same evolution loop on three benchmarks. The full arm edits all three levels of Section~\ref{sec:self_evolving}. Holding the number of agents $|\mathcal{N}|$ at the initialization gives the fixed-count arm, which still edits the handoff structure $(\mathcal{H},\mu)$ and the functional division, and freezing the whole graph gives the division-only arm, which reaches only the role assignment $\alpha$, the completion predicates $\Omega$, and the shared $\mathcal{C}$. Figure~\ref{fig:evo_space} reports the best protocol each arm reaches, and the three benchmarks order the arms identically. Freezing the agent count alone costs $5.8$ points on SWE-bench Verified, $12.6$ on DevEval, and $15.3$ on DDR-Bench, so the freedom to change the agent count is the level that pays most, and freezing the remaining handoff structure costs a further $2.3$ to $5.2$ points. A hand-designed system commits both structural levels before any trace has been read, while one governed protocol defers that choice to the trace.
+
+\subsection{Advantage of Multi-agent Protocols}
+\label{sec:ablation_multi}
+
+To attribute the gain to governance and not to agent count, we compare OpenAgency with its single-agent ablation under one GPT-5.5 executor and tool surface. OpenAgency exceeds that ablation on every benchmark in Figure~\ref{fig:svm}, with the widest gaps on OfficeQA Pro, DevEval, and DDR-Bench. A single node interleaves solving and checking inside one context, while the governed protocol routes a partial output to a downstream role whose completion predicate validates it independently. The initialization column of Table~\ref{tab:main} places the gain on protocol design, since the same agent budget without governance falls short.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/single_vs_multi.pdf}
+\vspace{-2mm}
+\caption{OpenAgency versus its single-agent ablation under identical model and tool budget, isolating governed collaboration from raw solver capacity.}
+\label{fig:svm}
+\end{figure}
 
 \subsection{Comparison against Free-form and SOP Baselines}
 \label{sec:free_form}
 
-To compare the three collaboration substrates directly, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} on four benchmarks. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced. Their fixed procedure absorbs no trace-level failure signal, so the remaining gap tracks what stays revisable after deployment.
+To compare the three collaboration substrates directly, we evaluate OpenAgency against the free-form baseline AutoGen \citep{wu2023autogenenablingnextgenllm} and the SOP baselines ChatDev \citep{qian2024chatdevcommunicativeagentssoftware} and MetaGPT \citep{hong2024metagptmetaprogrammingmultiagent} on four benchmarks. OpenAgency obtains the highest score in Table~\ref{tab:free_form}, exceeding the strongest SOP baseline by $26.4$ points on SWE-bench Verified. The free-form baseline is the weakest everywhere, and the SOP baselines recover part of the gap because the collaboration order is enforced, yet their fixed procedure absorbs no trace-level failure signal, so the remaining gap tracks what stays revisable after deployment.
 
 \begin{table}[t]
 \caption{OpenAgency against the free-form and SOP baselines.}
@@ -317,14 +350,12 @@ MetaGPT & 59.8 & 79.5 & 46.8 & 42.3 \\
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/fixed_topology.pdf}
+\includegraphics[width=0.66\linewidth]{figures/fixed_topology.pdf}
 \vspace{-2mm}
-\caption{Evolution on OfficeQA Pro under a fixed collaboration graph against evolution over the full space, from one initialization and scored on the same $133$ tasks. The previous-protocol arm edits only the functional division, while the full arm may also change the number of agents and the topology.}
+\caption{Evolution on OfficeQA Pro from one initialization, scored on the same $133$ tasks. The previous-protocol arm edits only the functional division, while the full arm may also change the agent count and the topology.}
 \label{fig:fixed}
 \end{figure}
-To measure what a fixed collaboration graph costs round by round, we plot the OfficeQA Pro evolution record as two arms from one initialization, where the previous-protocol arm reproduces how a standard multi-agent system tunes a prompt over that fixed structure. Every plotted point is a candidate the optimizer proposed and executed.
-
-Figure~\ref{fig:fixed} shows six functional-division rewrites peaking at $31.6$ in round $2$, with the four later rewrites all falling back below it. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm has a lower round too, where a functional-division candidate falls to $60.9$ and the screen rejects it. A fixed graph keeps the search inside a level the trace already reports as saturated, while one admissible structural edit clears the previous-protocol ceiling by more than thirty points.
+To measure what a fixed collaboration graph costs round by round, we plot the OfficeQA Pro evolution record as two arms from one initialization, where the previous-protocol arm tunes a prompt over that fixed structure and every plotted point is a candidate the optimizer proposed and executed. Figure~\ref{fig:fixed} shows six functional-division rewrites peaking at $31.6$ in round $2$, with the four later rewrites all falling back below it. Widening the graph moves it at once, since one added reader node reaches $62.4$ and one added verifier node reaches $66.2$. The full arm has a lower round too, where a functional-division candidate falls to $60.9$ and the screen rejects it. A fixed graph keeps the search inside a level the trace already reports as saturated, while one admissible structural edit clears the previous-protocol ceiling by more than thirty points.
 
 \section{Conclusion}
 
@@ -378,7 +409,7 @@ On the coding and planning benchmarks, evolution mainly redistributes verificati
 
 On the retrieval and research benchmarks, evolution adds evidence-preserving roles. The DDR-Bench protocol fixes the Researcher-to-Reporter handoff to forward the raw evidence set, splits a single reporting phase into two, and installs a quantitative Auditor. OfficeQA Pro converts a monolithic solver into a Reader-Solver-Verifier chain over an external document store. MARBLE replaces the initial Reviewer-Brainstormer-Writer handoff with a compact Generator-Critic-Reviser pipeline and adds a feasibility-driven retry edge from the Critic back to the Generator.
 
-Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Appendix~\ref{app:extra} locates the component measurement on which the accepted edits pay off.
+Evolution also shrinks the graph when coordination is unnecessary. AutomationBench collapses a two-node Executor-Verifier pipeline into a single-node solver with progressively tightened internal phases, while HLE grows a confidence-routed subgraph that skips verification on high-confidence answers and adds a retry edge on refused ones. Section~\ref{sec:subdim} locates the component measurement on which the accepted edits pay off.
 
 \begin{figure}[!ht]
 \centering
@@ -388,37 +419,7 @@ Evolution also shrinks the graph when coordination is unnecessary. AutomationBen
 \end{figure}
 
 \clearpage
-\section{Additional Analysis}
-\label{app:extra}
-
-\subsection{Component Measurements behind the Gain}
-
-A primary metric can improve for more than one reason, and the aggregate does not say which failure mode the evolved protocol removed. To locate the gain inside a benchmark, we decompose the SWE-bench Verified and DevEval results of every round into their component measurements. As shown in Table~\ref{tab:subdim}, the two benchmarks improve at different points. On SWE-bench Verified the file-match rate restricted to instances that produced a patch starts at $84.6$ and ends at $86.2$, while the fraction of instances that produce a patch at all rises from $79.2$ to $100.0$. The gain therefore comes from closing the no-output failure mode that the retry edges of Section~\ref{sec:self_evolving} target. On DevEval the unit-test rate stays in a narrow band near saturation across the four rounds, while acceptance rises from $82.1$ to $96.9$, so the admitted edits act on the repository-level correctness that unit tests leave unchecked. In both cases the component that moves is the one the accepted edit was written to address, which is the correspondence a governed protocol exists to produce.
-
-\begin{table}[t]
-\caption{Component measurements across the evolution rounds on SWE-bench Verified and DevEval. Patch applied is the fraction of instances producing a non-empty patch, file match given a patch restricts file match to those instances, and unit test and acceptance test are the two pass rates of Table~\ref{tab:deveval}.}
-\label{tab:subdim}
-\begin{center}
-\small
-\setlength{\tabcolsep}{8pt}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Component measurement} & \textbf{Init} & $v_1$ & $v_2$ & $v_3$ & $v_4$ \\
-\midrule
-\multicolumn{6}{c}{\emph{SWE-bench Verified}} \\
-Patch applied & 79.2 & 93.4 & 100.0 & 100.0 & \textbf{100.0} \\
-File match & 67.0 & 78.8 & 85.6 & 85.8 & \textbf{86.2} \\
-File match given a patch & 84.6 & 84.4 & 85.6 & 85.8 & \textbf{86.2} \\
-\midrule
-\multicolumn{6}{c}{\emph{DevEval}} \\
-Unit test & 98.1 & 98.1 & 97.3 & 99.1 & \textbf{99.1} \\
-Acceptance test & 82.1 & 82.1 & 83.9 & 90.6 & \textbf{96.9} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\subsection{Activity of the Admissible Handoff Set}
+\section{Activity of the Admissible Handoff Set}
 \label{sec:admissible}
 
 OpenAgency governs collaboration through the admissible handoff set $\Gamma(n,s)$, whose activity during execution determines how much of the collaboration structure is actually enforced. To verify that the boundary is active during execution, we measure how often $\Gamma(n,s)$ refuses a handoff an agent proposes. On the four benchmarks of Section~\ref{sec:free_form} we log every proposed handoff during the $v_4$ runs, record the fraction $\Gamma(n,s)$ refuses, and count the runs whose outcome changes once the refusal redirects the handoff to an admissible target. As shown in Table~\ref{tab:handoff}, the boundary refuses $3.8\%$ to $8.2\%$ of proposed handoffs and changes the outcome of $2.9\%$ to $5.3\%$ of runs. Refusals are most frequent on TheAgentCompany, whose heterogeneous tool surface offers the most chances to address a collaborator that cannot serve the current state, and least frequent on the near-linear DDR-Bench pipeline. The boundary therefore stays active on all four benchmarks, ruling out the wrong collaborator at the points where it matters while leaving the common path unconstrained. These refused events are also the evidence the evolving agent consumes in Section~\ref{sec:self_evolving}.
